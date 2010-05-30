@@ -11,6 +11,15 @@ namespace LiteMVC\App;
 
 class Autoload
 {
+
+	/**
+	 * List of autoload namespace/paths
+	 *
+	 * @var array
+	 */
+	private $_paths = array(
+		'LiteMVC' => '/framework'
+	);
 	
 	/**
 	 * Autoload a class
@@ -20,7 +29,7 @@ class Autoload
 	 */
 	public static function loader($class)
 	{
-		
+		echo $class;
 	}
 	
 	/**
@@ -41,6 +50,11 @@ class Autoload
 	public function unregister()
 	{
 		spl_autoload_unregister(__NAMESPACE__ . '\Autoload::loader');
+	}
+	
+	public function addPath($namespace, $path)
+	{
+		$this->_paths[$namespace] = $path;
 	}
 	
 }

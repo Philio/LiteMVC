@@ -63,6 +63,7 @@ class App {
 		$loader->register();
 		// Save autoloader as an application resource
 		$this->setResource('Autoloader', $loader);
+		new App\Test();
 	}
 	
 }
