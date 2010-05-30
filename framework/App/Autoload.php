@@ -18,7 +18,7 @@ class Autoload
 	 * @var array
 	 */
 	private $_paths = array(
-		'LiteMVC' => '/framework'
+		'LiteMVC' => \PATH . '/framework'
 	);
 	
 	/**
@@ -51,7 +51,13 @@ class Autoload
 	{
 		spl_autoload_unregister(__NAMESPACE__ . '\Autoload::loader');
 	}
-	
+
+        /**
+         * Add an autoload path
+         *
+         * @param string $namespace
+         * @param string $path
+         */
 	public function addPath($namespace, $path)
 	{
 		$this->_paths[$namespace] = $path;
