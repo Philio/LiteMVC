@@ -10,8 +10,6 @@
 namespace LiteMVC;
 
 // Require autoloader class
-use LiteMVC\Cache;
-
 require_once 'App/Autoload.php';
 
 // Namespace aliases
@@ -24,7 +22,7 @@ class App {
 	 * 
 	 * @var array
 	 */
-	private $_resources = array();
+	protected $_resources = array();
 
 	/**
 	 * File paths
@@ -108,15 +106,29 @@ class App {
 	 * Load an application resource
 	 * 
 	 * @param string $name
+	 * @param Config $config
 	 * @return bool
 	 */
-	public function loadResource($name)
+	public function loadResource($name, $config)
 	{
 		// Attempt to load a class from the specified name
 		$class = 'LiteMVC\\' . $name;
 		if (class_exists($class)) {
 			$obj = new $class();
 			$this->setResource($name, $obj);
+			// Call any methods defined in config
+			if ($config->callfunc instanceof App\Config) {
+				$methods = $config->callfunc->toArray();
+				foreach ($methods as $method) {
+					// Check if any params should be used with the function call
+					if ($config->$method instanceof App\Config && $config->$method->params instanceof App\Config) {
+						$params = $config->{$method}->params->toArray();
+						call_user_func_array(array($obj, $method), $params);
+					} else {
+						$obj->$method();
+					}
+				}
+			}
 			return true;
 		}
 		return false;
@@ -150,20 +162,10 @@ class App {
 		$this->setResource('Cache', $cache);
 		$this->setResource('Config', $config['obj']);
 		// Load resources from config
-		$load = $this->getResource('Config')->init->load->toArray();
+		$load = $config['obj']->init->load->toArray();
 		if (is_array($load) && count($load)) {
 			foreach ($load as $resource) {
-				$this->loadResource($resource);
-			}
-		}
-		// Call functions within resources
-		$call = $this->getResource('Config')->init->callfunc->toArray();
-		if (is_array($call) && count($call)) {
-			foreach ($call as $func) {
-				list($resource, $method) = explode('.', $func);
-				if ($this->isResource($resource)) {
-					$this->getResource($resource)->$method();
-				}
+				$this->loadResource($resource, $config['obj']->$resource);
 			}
 		}
 	}
