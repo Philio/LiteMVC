@@ -91,6 +91,24 @@ class App {
 	}
 	
 	/**
+	 * Load an application resource
+	 * 
+	 * @param string $name
+	 * @return bool
+	 */
+	public function loadResource($name)
+	{
+		// Attempt to load a class from the specified name
+		$class = 'LiteMVC\\' . $name;
+		if (class_exists($class)) {
+			$obj = new $class();
+			$this->setResource($name, $obj);
+			return true;
+		}
+		return false;
+	}
+	
+	/**
 	 * Initialise the applicatoin
 	 *
 	 * @param string $configFile
@@ -114,8 +132,16 @@ class App {
 			// Update cache
 			$cache->set(self::Cache_Prefix . '_' . self::Cache_Config, $config, 0, self::CacheLifetime_Config);
 		}
-		// Save as application resource
+		// Save application resources
+		$this->setResource('Cache', $cache);
 		$this->setResource('Config', $config['obj']);
+		// Load resources from config
+		$load = $this->getResource('Config')->init->load->toArray();
+		if (count($load)) {
+			foreach ($load as $resource) {
+				$this->loadResource($resource);
+			}
+		}
 	}
 	
 }
