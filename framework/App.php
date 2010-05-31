@@ -65,6 +65,20 @@ class App {
 	}
 
 	/**
+	 * Check if an application resource exists
+	 * 
+	 * @param string $name
+	 * @return bool
+	 */
+	public function isResource($name)
+	{
+		if (isset($this->_resources[$name]) && is_object($this->_resources[$name])) {
+			return true;
+		}
+		return false;
+	}
+	
+	/**
 	 * Get an application resource
 	 * 
 	 * @param string $name
@@ -137,9 +151,19 @@ class App {
 		$this->setResource('Config', $config['obj']);
 		// Load resources from config
 		$load = $this->getResource('Config')->init->load->toArray();
-		if (count($load)) {
+		if (is_array($load) && count($load)) {
 			foreach ($load as $resource) {
 				$this->loadResource($resource);
+			}
+		}
+		// Call functions within resources
+		$call = $this->getResource('Config')->init->callfunc->toArray();
+		if (is_array($call) && count($call)) {
+			foreach ($call as $func) {
+				list($resource, $method) = explode('.', $func);
+				if ($this->isResource($resource)) {
+					$this->getResource($resource)->$method();
+				}
 			}
 		}
 	}
