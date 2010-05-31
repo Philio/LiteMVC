@@ -83,6 +83,7 @@ class App {
 	{
 		// Load configuration
 		$config = new App\Config\Ini(\PATH . self::Path_Config . $configFile, \ENVIRONMENT);
+		var_dump($config);
 	}
 	
 }
