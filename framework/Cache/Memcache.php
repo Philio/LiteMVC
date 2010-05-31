@@ -14,7 +14,14 @@ use LiteMVC\Cache\Memcache as Memcache;
 
 class Memcache extends \Memcache
 {
-	
+
+	/**
+	 * Main application object
+	 *
+	 * @var LiteMVC\App
+	 */
+	private $_app;
+
 	/**
 	 * Constructor
 	 * 
@@ -23,6 +30,15 @@ class Memcache extends \Memcache
 	 */
 	public function __construct($servers)
 	{
+		// If App object provided, extract config
+		if ($servers instanceof LiteMVC\App) {
+			$this->_app = $servers;
+			// Get memcache config from App object
+			$config = $this->_app->getResource('Config');
+			if ($config->Memcache->servers instanceof LiteMVC\App\Config) {
+				$servers = $config->Memcache->servers->toArray();
+			}
+		}
 		// Add specified servers to pool
 		if (is_array($servers)) {
 			foreach ($servers as $server) {

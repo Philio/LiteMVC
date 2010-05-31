@@ -132,9 +132,9 @@ class App {
 		// If no memcache use a file cache
 		if (is_null($cache)) {
 			$cache = new Cache\File(\PATH . self::Path_Cache);
-			$this->setResource('Cache', $cache);
+			$this->setResource('Cache\File', $cache);
 		} else {
-			$this->setResource('Memcache', $cache);
+			$this->setResource('Cache\Memcache', $cache);
 		}
 		// Check modification time of config file
 		$fmt = filemtime(\PATH . self::Path_Config . $configFile);
