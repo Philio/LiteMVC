@@ -81,6 +81,7 @@ class App {
 	public function init($configFile, LiteMVC\Memcache $cache = null)
 	{
 		$config = new App\Config\Ini(\PATH . self::Path_Config . $configFile, \ENVIRONMENT);
+		var_dump($config);
 	}
 	
 }
