@@ -30,7 +30,7 @@ class App {
 	 * @param string $name
 	 * @return object
 	 */
-	public function getResource(string $name)
+	public function getResource($name)
 	{
 		if (isset($this->_resources[$name])) {
 			return $this->_resources[$name];
@@ -45,7 +45,7 @@ class App {
 	 * @param object $object
 	 * @return void
 	 */
-	public function setResource(string $name, object $object)
+	public function setResource($name, $object)
 	{
 		$this->_resources[$name] = $object;
 	}
@@ -71,7 +71,7 @@ class App {
 	 * @param string $configFile
 	 * @param Memcache $cache
 	 */
-	public function init(string $configFile, LiteMVC\Memcache $cache = null)
+	public function init($configFile, LiteMVC\Memcache $cache = null)
 	{
 		
 	}
