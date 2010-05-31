@@ -114,21 +114,8 @@ class App {
 		// Attempt to load a class from the specified name
 		$class = 'LiteMVC\\' . $name;
 		if (class_exists($class)) {
-			$obj = new $class();
+			$obj = new $class($this);
 			$this->setResource($name, $obj);
-			// Call any methods defined in config
-			if ($config->callfunc instanceof App\Config) {
-				$methods = $config->callfunc->toArray();
-				foreach ($methods as $method) {
-					// Check if any params should be used with the function call
-					if ($config->$method instanceof App\Config && $config->$method->params instanceof App\Config) {
-						$params = $config->{$method}->params->toArray();
-						call_user_func_array(array($obj, $method), $params);
-					} else {
-						$obj->$method();
-					}
-				}
-			}
 			return true;
 		}
 		return false;

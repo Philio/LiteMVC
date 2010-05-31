@@ -13,25 +13,33 @@ class Error
 {
 	
 	/**
+	 * Main application object
+	 *
+	 * @var App
+	 */
+	private $_app;
+
+	/**
 	 * Error codes (PHP errors)
 	 * 
 	 * @var array
 	 */
 	protected $_codes = array(
-		\E_ERROR           => 'PHP Error',
-		\E_WARNING         => 'PHP Warning',
-		\E_PARSE           => 'PHP Parse Error',
-		\E_NOTICE          => 'PHP Notice',
-		\E_CORE_ERROR      => 'PHP Core Error',
-		\E_CORE_WARNING    => 'PHP Core Warning',
-		\E_COMPILE_ERROR   => 'PHP Compile Error',
-		\E_COMPILE_WARNING => 'PHP Compile Warning',
-		\E_USER_ERROR      => 'PHP User Error',
-		\E_USER_WARNING    => 'PHP User Warning',
-		\E_USER_NOTICE     => 'PHP User Notice',
-		\E_STRICT          => 'PHP Strict',
-		\E_DEPRECATED      => 'PHP Deprecated',
-		\E_USER_DEPRECATED => 'PHP User Deprecated'
+		\E_ERROR             => 'PHP Error',
+		\E_WARNING           => 'PHP Warning',
+		\E_PARSE             => 'PHP Parse Error',
+		\E_NOTICE            => 'PHP Notice',
+		\E_CORE_ERROR        => 'PHP Core Error',
+		\E_CORE_WARNING      => 'PHP Core Warning',
+		\E_COMPILE_ERROR     => 'PHP Compile Error',
+		\E_COMPILE_WARNING   => 'PHP Compile Warning',
+		\E_USER_ERROR        => 'PHP User Error',
+		\E_USER_WARNING      => 'PHP User Warning',
+		\E_USER_NOTICE       => 'PHP User Notice',
+		\E_STRICT            => 'PHP Strict',
+		\E_RECOVERABLE_ERROR => 'PHP Recoverable Error',
+		\E_DEPRECATED        => 'PHP Deprecated',
+		\E_USER_DEPRECATED   => 'PHP User Deprecated'
 	);
 	
 	/**
@@ -89,6 +97,28 @@ class Error
 	 * @var array
 	 */
 	protected $_log = array();
+
+	/**
+	 * Constructor
+	 *
+	 * @param App $app
+	 * @return void
+	 */
+	public function  __construct(App $app) {
+		$this->_app = $app;
+		// Read any config options
+		$config = $this->_app->getResource('Config');
+		// Set display
+		if ($config->Error->display == true) {
+			$this->setDisplay(true);
+		}
+		// Set template
+		if ($config->Error->template) {
+			$this->setTemplate($config->Error->template);
+		}
+		// Register handlers
+		$this->register();
+	}
 	
 	/**
 	 * Register handlers
