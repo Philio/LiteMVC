@@ -2,7 +2,7 @@
 // Set constants
 use LiteMVC\App;
 define('PATH', realpath('../'));
-define('ENVIRONMENT', getenv('ENVIRONMENT'));
+define('ENVIRONMENT', getenv('ENVIRONMENT') ? getenv('ENVIRONMENT') : 'development');
 
 // Get app class
 require_once('../framework/App.php');

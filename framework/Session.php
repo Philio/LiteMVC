@@ -14,5 +14,102 @@ use LiteMVC\Session as Session;
 
 class Session
 {
-	
+
+	/**
+	 * Main application object
+	 * 
+	 * @var App
+	 */
+	private $_app;
+
+	/**
+	 * Constructor
+	 * 
+	 * @param App $app 
+	 * @return void
+	 */
+	public function  __construct(App $app) {
+		$this->_app = $app;
+	}
+
+	/**
+	 * Register session handler
+	 *
+	 * @return void
+	 */
+	public function register()
+	{
+		session_set_save_handler(
+			array($this, 'open'),
+			array($this, 'close'),
+			array($this, 'read'),
+			array($this, 'write'),
+			array($this, 'destroy'),
+			array($this, 'gc')
+		);
+	}
+
+	/**
+	 * Open session
+	 *
+	 * @param string $path
+	 * @param string $name
+	 * @return void
+	 */
+	public function open($path, $name)
+	{
+
+	}
+
+	/**
+	 * Close session (unused)
+	 *
+	 * @return void
+	 */
+	public function close() {}
+
+	/**
+	 * Read session data
+	 *
+	 * @param string $id
+	 * @return string
+	 */
+	public function read($id)
+	{
+
+	}
+
+	/**
+	 * Write session data
+	 *
+	 * @param string $id
+	 * @param string $data
+	 * @return void
+	 */
+	public function write($id, $data)
+	{
+
+	}
+
+	/**
+	 * Destroy session data
+	 *
+	 * @param string $id
+	 * @return void
+	 */
+	public function destroy($id)
+	{
+
+	}
+
+	/**
+	 * Garbage collection
+	 *
+	 * @return void
+	 */
+	public function gc()
+	{
+
+	}
+
 }

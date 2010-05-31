@@ -145,6 +145,9 @@ class App {
 		// If no memcache use a file cache
 		if (is_null($cache)) {
 			$cache = new Cache\File(\PATH . self::Path_Cache);
+			$this->setResource('Cache', $cache);
+		} else {
+			$this->setResource('Memcache', $cache);
 		}
 		// Check modification time of config file
 		$fmt = filemtime(\PATH . self::Path_Config . $configFile);
@@ -159,7 +162,6 @@ class App {
 			$cache->set(self::Cache_Prefix . '_' . self::Cache_Config, $config, 0, self::CacheLifetime_Config);
 		}
 		// Save application resources
-		$this->setResource('Cache', $cache);
 		$this->setResource('Config', $config['obj']);
 		// Load resources from config
 		$load = $config['obj']->init->load->toArray();
@@ -168,6 +170,8 @@ class App {
 				$this->loadResource($resource, $config['obj']->$resource);
 			}
 		}
+		// Start session
+		session_start();
 	}
 	
 }
