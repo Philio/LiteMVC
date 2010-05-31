@@ -28,7 +28,7 @@ class Config implements \Countable
 	 * @param array $array
 	 * @return void
 	 */
-	public function __construct(array $array)
+	public function __construct($array)
 	{
 		$this->_data = array();
 		foreach ($array as $key => $value) {
@@ -46,7 +46,7 @@ class Config implements \Countable
 	 * @param string $name
 	 * @return mixed
 	 */
-	public function __get(string $name)
+	public function __get($name)
 	{
 		if (array_key_exists($name, $this->_data)) {
 			return $this->_data[$name];
@@ -61,7 +61,7 @@ class Config implements \Countable
 	 * @param mixed $value
 	 * @return void
 	 */
-	public function __set(string $name, $value)
+	public function __set($name, $value)
 	{
 		if (is_array($value)) {
 			$this->_data[$name] = new self($value, true);
@@ -76,7 +76,7 @@ class Config implements \Countable
 	 * @param string $name
 	 * @return bool
 	 */
-	public function __isset(string $name)
+	public function __isset($name)
 	{
 		return isset($this->_data[$name]);
 	}
@@ -116,7 +116,7 @@ class Config implements \Countable
 	 * @param Config $merge
 	 * @return Config
 	 */
-	public function merge(Config $merge)
+	public function merge(App\Config $merge)
 	{
 		foreach($merge as $key => $item) {
 			if(array_key_exists($key, $this->_data)) {

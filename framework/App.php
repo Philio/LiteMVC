@@ -23,6 +23,13 @@ class App {
 	 * @var array
 	 */
 	private $_resources = array();
+
+	/**
+	 * File paths
+	 *
+	 * @var string
+	 */
+	const Path_Config = '/configs/';
 	
 	/**
 	 * Get an application resource
@@ -73,7 +80,7 @@ class App {
 	 */
 	public function init($configFile, LiteMVC\Memcache $cache = null)
 	{
-		
+		$config = new App\Config\Ini(\PATH . self::Path_Config . $configFile, \ENVIRONMENT);
 	}
 	
 }

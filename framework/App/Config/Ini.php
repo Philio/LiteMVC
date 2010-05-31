@@ -36,7 +36,7 @@ class Ini extends Config
 	 * @param string $section
 	 * @return void
 	 */
-	public function __construct(string $filename, string $section = null)
+	public function __construct($filename, $section = null)
 	{
 		if (empty($filename)) {
 			throw new Config\Exception('Please specifiy the name of the configuration file.');
@@ -77,8 +77,11 @@ class Ini extends Config
 	 * @param string $filename
 	 * @return array
 	 */
-	protected function _loadIniFile(string $filename)
+	protected function _loadIniFile($filename)
 	{
+		if (!file_exists($filename)) {
+			throw new Config\Exception('File \'' . $filename . '\' doesn\'t exist.');
+		}
 		$data = parse_ini_file($filename, true);
 		$iniArray = array();
 		foreach ($data as $key => $data) {
@@ -107,7 +110,7 @@ class Ini extends Config
 	 * @param array $config
 	 * @return array
 	 */
-	protected function _processSection(array $iniArray, string $section, array $config = array())
+	protected function _processSection($iniArray, $section, $config = array())
 	{
 		$thisSection = $iniArray[$section];
 		foreach ($thisSection as $key => $value) {
@@ -132,7 +135,7 @@ class Ini extends Config
 	 * @param string $value
 	 * @return array
 	 */
-	protected function _processKey(array $config, string $key, string $value)
+	protected function _processKey($config, $key, $value)
 	{
 		if (strpos($key, $this->_nestSeparator) !== false) {
 			$pieces = explode($this->_nestSeparator, $key, 2);

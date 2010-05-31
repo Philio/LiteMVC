@@ -8,3 +8,4 @@ require_once('../framework/App.php');
 
 // Run application
 $app = new LiteMVC\App();
+$app->init('config.ini');
