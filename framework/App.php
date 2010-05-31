@@ -30,7 +30,23 @@ class App {
 	 * @var string
 	 */
 	const Path_Config = '/configs/';
+	const Path_Cache  = '/cache/';
 	
+	/**
+	 * Constructor
+	 * 
+	 * @return void
+	 */
+	public function __construct()
+	{
+		// Setup the autoloader
+		$loader = new App\Autoload();
+		$loader->register();
+		$loader->setPath(__NAMESPACE__, \PATH . '/framework');
+		// Save autoloader as an application resource
+		$this->setResource('Autoloader', $loader);
+	}
+
 	/**
 	 * Get an application resource
 	 * 
@@ -58,28 +74,14 @@ class App {
 	}
 	
 	/**
-	 * Constructor
-	 * 
-	 * @return void
-	 */
-	public function __construct()
-	{
-		// Setup the autoloader
-		$loader = new App\Autoload();
-		$loader->register();
-		$loader->setPath(__NAMESPACE__, \PATH . '/framework');
-		// Save autoloader as an application resource
-		$this->setResource('Autoloader', $loader);
-	}
-
-	/**
 	 * Initialise the applicatoin
 	 *
 	 * @param string $configFile
 	 * @param Memcache $cache
 	 */
-	public function init($configFile, LiteMVC\Memcache $cache = null)
+	public function init($configFile, Cache\Memcache $cache = null)
 	{
+		// Load configuration
 		$config = new App\Config\Ini(\PATH . self::Path_Config . $configFile, \ENVIRONMENT);
 	}
 	

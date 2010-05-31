@@ -5,12 +5,12 @@
  * @author Phil Bayfield
  * @copyright 2010
  * @license Creative Commons Attribution-Share Alike 2.0 UK: England & Wales License
- * @package LiteMVC
+ * @package LiteMVC\Cache
  */
-namespace LiteMVC;
+namespace LiteMVC\Cache;
 
 // Namespace aliases
-use LiteMVC\Memcache as Memcache;
+use LiteMVC\Cache\Memcache as Memcache;
 
 class Memcache extends \Memcache
 {
@@ -44,7 +44,7 @@ class Memcache extends \Memcache
 	private function _addServerFromString($server)
 	{
 		list ($host, $port) = explode(':', $server);
-		$res = parent::addServer($host, $port) === false;
+		$res = parent::addServer($host, $port);
 		if ($res === false) {
 			throw new Memcache\Exception('There was an error adding server ' . $server . '.');
 		}
