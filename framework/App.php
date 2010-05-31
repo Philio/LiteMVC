@@ -9,8 +9,7 @@
  */
 namespace LiteMVC;
 
-// Require default exception and autoloader classes
-require_once 'App/Exception.php';
+// Require autoloader class
 require_once 'App/Autoload.php';
 
 // Namespace aliases
@@ -61,9 +60,9 @@ class App {
 		// Setup the autoloader
 		$loader = new App\Autoload();
 		$loader->register();
+		$loader->setPath(__NAMESPACE__, \PATH . '/framework');
 		// Save autoloader as an application resource
 		$this->setResource('Autoloader', $loader);
-		new App\Test();
 	}
 	
 }

@@ -17,9 +17,7 @@ class Autoload
 	 *
 	 * @var array
 	 */
-	private $_paths = array(
-		'LiteMVC' => \PATH . '/framework'
-	);
+	private static $_paths = array();
 	
 	/**
 	 * Autoload a class
@@ -29,7 +27,22 @@ class Autoload
 	 */
 	public static function loader($class)
 	{
-		echo $class;
+		// Check that a path has been set
+		if (!count(self::$_paths)) {
+			return;
+		}
+		// Check paths against class name
+		foreach (self::$_paths as $ns => $path) {
+			if (strpos($class, $ns) === 0) {
+				$file = str_replace($ns, $path, $class);
+				$file = str_replace('\\', '/', $file) . '.php';
+				// Check exists
+				if (file_exists($file)) {
+					require_once $file;
+				}
+				break;
+			}
+		}
 	}
 	
 	/**
@@ -52,15 +65,15 @@ class Autoload
 		spl_autoload_unregister(__NAMESPACE__ . '\Autoload::loader');
 	}
 
-        /**
-         * Add an autoload path
-         *
-         * @param string $namespace
-         * @param string $path
-         */
-	public function addPath($namespace, $path)
+	/**
+	 * Set an autoload path
+	 *
+	 * @param string $namespace
+	 * @param string $path
+	 */
+	public function setPath($namespace, $path)
 	{
-		$this->_paths[$namespace] = $path;
+		self::$_paths[$namespace] = $path;
 	}
 	
 }
