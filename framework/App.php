@@ -30,7 +30,7 @@ class App {
 	 * @param string $name
 	 * @return object
 	 */
-	public function getResource($name)
+	public function getResource(string $name)
 	{
 		if (isset($this->_resources[$name])) {
 			return $this->_resources[$name];
@@ -45,7 +45,7 @@ class App {
 	 * @param object $object
 	 * @return void
 	 */
-	public function setResource($name, $object)
+	public function setResource(string $name, object $object)
 	{
 		$this->_resources[$name] = $object;
 	}
@@ -63,6 +63,17 @@ class App {
 		$loader->setPath(__NAMESPACE__, \PATH . '/framework');
 		// Save autoloader as an application resource
 		$this->setResource('Autoloader', $loader);
+	}
+
+	/**
+	 * Initialise the applicatoin
+	 *
+	 * @param string $configFile
+	 * @param Memcache $cache
+	 */
+	public function init(string $configFile, LiteMVC\Memcache $cache = null)
+	{
+		
 	}
 	
 }
