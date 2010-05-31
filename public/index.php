@@ -1,6 +1,5 @@
 <?php
 // Set constants
-use LiteMVC\App;
 define('PATH', realpath('../'));
 define('ENVIRONMENT', getenv('ENVIRONMENT'));
 
