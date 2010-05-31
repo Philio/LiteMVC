@@ -25,7 +25,7 @@ class Autoload
 	 * @param string $class
 	 * @return void
 	 */
-	public static function loader(string $class)
+	public static function loader(\string $class)
 	{
 		// Check that a path has been set
 		if (!count(self::$_paths)) {
@@ -71,7 +71,7 @@ class Autoload
 	 * @param string $namespace
 	 * @param string $path
 	 */
-	public function setPath(string $namespace, string $path)
+	public function setPath(\string $namespace, \string $path)
 	{
 		self::$_paths[$namespace] = $path;
 	}
