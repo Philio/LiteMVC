@@ -10,6 +10,8 @@
 namespace LiteMVC;
 
 // Require autoloader class
+use LiteMVC\Cache;
+
 require_once 'App/Autoload.php';
 
 // Namespace aliases
@@ -31,6 +33,21 @@ class App {
 	 */
 	const Path_Config = '/configs/';
 	const Path_Cache  = '/cache/';
+	
+	/**
+	 * Cache settings
+	 * 
+	 * @var string
+	 */
+	const Cache_Prefix = 'LiteMVC';
+	const Cache_Config = 'Config';
+	
+	/**
+	 * Cache lifetime
+	 * 
+	 * @var int
+	 */
+	const CacheLifetime_Config = 86400;
 	
 	/**
 	 * Constructor
@@ -81,9 +98,24 @@ class App {
 	 */
 	public function init($configFile, Cache\Memcache $cache = null)
 	{
+		// If no memcache use a file cache
+		if (is_null($cache)) {
+			$cache = new Cache\File(\PATH . self::Path_Cache);
+		}
+		// Check modification time of config file
+		$fmt = filemtime(\PATH . self::Path_Config . $configFile);
 		// Load configuration
-		$config = new App\Config\Ini(\PATH . self::Path_Config . $configFile, \ENVIRONMENT);
-		var_dump($config);
+		$config = $cache->get(self::Cache_Prefix . '_' . self::Cache_Config);
+		// Check config is valid and recent
+		if ($config === false || $config['fmt'] < $fmt) {
+			// Reload config from ini
+			$config['fmt'] = $fmt;
+			$config['obj'] = new App\Config\Ini(\PATH . self::Path_Config . $configFile, \ENVIRONMENT);
+			// Update cache
+			$cache->set(self::Cache_Prefix . '_' . self::Cache_Config, $config, 0, self::CacheLifetime_Config);
+		}
+		// Save as application resource
+		$this->setResource('Config', $config['obj']);
 	}
 	
 }

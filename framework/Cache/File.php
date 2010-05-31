@@ -40,7 +40,23 @@ class File
 	 */
 	public function get($key)
 	{
-		
+		// Check if file exists
+		if (file_exists($this->_path . $key)) {
+			// Read file data
+			$f = fopen($this->_path . $key, 'r');
+			if ($f === false) {
+				throw new File\Exception('Unable to open the input file.');
+			}
+			$data = fread($f, filesize($this->_path . $key));
+			fclose($f);
+			// Unserialise the data
+			$usd = unserialize($data);
+			if ($usd['expires'] > time()) {
+				unset($usd['expires']);
+				return $usd;
+			}
+		}
+		return false;
 	}
 	
 	/**
@@ -53,7 +69,20 @@ class File
 	 */
 	public function set($key, $var, $flag, $expire)
 	{
-		
+		// Create file
+		$f = fopen($this->_path . $key, 'w');
+		if ($f === false) {
+			throw new File\Exception('Unable to open the output file.');
+		}
+		// Store expiry within file
+		$var['expires'] = $expire > time() ? $expire : $expire + time();
+		// Write to file
+		$res = fwrite($f, serialize($var));
+		if ($res === false) {
+			throw new File\Exception('Unable to write to the output file.');
+		}
+		fclose($f);
+		return true;
 	}
 	
 }
