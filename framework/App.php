@@ -84,7 +84,7 @@ class App {
 	 */
 	public function getResource($name)
 	{
-		if (isset($this->_resources[$name])) {
+		if (isset($this->_resources[$name]) || $this->loadResource($name)) {
 			return $this->_resources[$name];
 		}
 		return false;
@@ -109,7 +109,7 @@ class App {
 	 * @param Config $config
 	 * @return bool
 	 */
-	public function loadResource($name, $config)
+	public function loadResource($name)
 	{
 		// Attempt to load a class from the specified name
 		$class = 'LiteMVC\\' . $name;
@@ -154,7 +154,7 @@ class App {
 		$load = $config['obj']->init->load->toArray();
 		if (is_array($load) && count($load)) {
 			foreach ($load as $resource) {
-				$this->loadResource($resource, $config['obj']->$resource);
+				$this->loadResource($resource);
 			}
 		}
 		// Start session

@@ -22,6 +22,8 @@ class Session
 	 * @return void
 	 */
 	public function  __construct(App $app) {
+		$db = $app->getResource('Database');
+		$db->getConnection('Session');
 		// Register handler
 		$this->register();
 	}
