@@ -13,6 +13,13 @@ class Database implements Session
 {
 	
 	/**
+	 * Database object
+	 *
+	 * @var Db
+	 */
+	protected $_db;
+
+	/**
 	 * Config object
 	 * 
 	 * @var Config
@@ -20,19 +27,13 @@ class Database implements Session
 	protected $_config;
 	
 	/**
-	 * Database object
-	 * 
-	 * @var Db
-	 */
-	protected $_db;
-	
-	/**
 	 * Constructor
 	 * 
 	 * @return void
 	 */
-	public function __construct($config)
+	public function __construct($db, $config)
 	{
+		$this->_db = $db;
 		$this->_config = $config;
 	}
 	
@@ -42,10 +43,7 @@ class Database implements Session
 	 * @param string $path
 	 * @param string $name
 	 */
-	public function open($path, $name)
-	{
-		
-	}
+	public function open($path, $name) {}
 	
 	/**
 	 * Close session

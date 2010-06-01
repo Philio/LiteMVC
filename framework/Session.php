@@ -16,14 +16,41 @@ class Session
 {
 
 	/**
+	 * Session handlers
+	 * 
+	 * @var array
+	 */
+	protected $_handlers = array();
+
+	/**
 	 * Constructor
 	 * 
 	 * @param App $app 
 	 * @return void
 	 */
 	public function  __construct(App $app) {
-		$db = $app->getResource('Database');
-		$db->getConnection('Session');
+		// Check config
+		$config = $app->getResource('Config');
+		if ($config->Session instanceof App\Config) {
+			$sessConfig = $config->Session;
+		} else {
+			throw new Session\Exception('No session configuration has been specified.');
+		}
+		// Load handlers
+		if ($sessConfig->handler) {
+			foreach ($sessConfig->handler->toArray() as $handler) {
+				switch ($handler) {
+					case 'Memcache':
+						$this->_handlers['Memcache'] = new Session\Memcache($app->getResource('Cache\Memcache'));
+						break;
+					case 'Database':
+						$this->_handlers['Database'] = new Session\Database($app->getResource('Database')->getConnection('Session'), $sessConfig->Database);
+						break;
+				}
+			}
+		} else {
+			throw new Session\Exception('No session handlers specified in configuration.');
+		}
 		// Register handler
 		$this->register();
 	}

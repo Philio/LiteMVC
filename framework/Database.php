@@ -54,18 +54,20 @@ class Database
 	public function getConnection($name)
 	{
 		// If connection exists return it
-		if (isset($this->_connections[$name])) {
-			return $this->_connections[$name];
+		if (!isset($this->_connections[$name])) {
+			// Check if configuration exists
+			if ($this->_config->$name instanceof App\Config) {
+				$this->_connections[$name] = new Database\Connection(
+					$this->_config->$name->host,
+					$this->_config->$name->username,
+					$this->_config->$name->password,
+					$this->_config->$name->database
+				);
+			} else {
+				throw new Database\Exception('Database \'' . $name . '\' is not defined in the configuration.');
+			}
 		}
-		// Check if configuration exists
-		if ($this->_config->$name instanceof App\Config) {
-			$this->_connections[$name] = new Database\Connection(
-				$this->_config->$name->host,
-				$this->_config->$name->username,
-				$this->_config->$name->password,
-				$this->_config->$name->database
-			);
-		}
+		return $this->_connections[$name];
 	}
 
 	/**

@@ -25,10 +25,12 @@ class Memcache extends \Memcache
 	public function __construct($servers)
 	{
 		// If App object provided, extract config
-		if ($servers instanceof LiteMVC\App) {
+		if ($servers instanceof App) {
 			// Get memcache config from App object
 			$config = $servers->getResource('Config');
+			echo 1;
 			if ($config->Memcache->servers instanceof App\Config) {
+				echo 2;
 				$servers = $config->Memcache->servers->toArray();
 			}
 		}
