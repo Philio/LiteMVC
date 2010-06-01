@@ -61,7 +61,8 @@ class Database
 					$this->_config->$name->host,
 					$this->_config->$name->username,
 					$this->_config->$name->password,
-					$this->_config->$name->database
+					$this->_config->$name->database,
+					$this->_config->$name->noerrors
 				);
 			} else {
 				throw new Database\Exception('Database \'' . $name . '\' is not defined in the configuration.');

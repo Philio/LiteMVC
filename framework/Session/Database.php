@@ -33,8 +33,14 @@ class Database implements Session
 	 */
 	public function __construct($db, $config)
 	{
+		// Assign database connetion and config settings
 		$this->_db = $db;
-		$this->_config = $config;
+		// Check config
+		if ($config->table && $config->fields->id && $config->fields->data && $config->fields->expires) {
+			$this->_config = $config;
+		} else {
+			throw new Exception('The session database configuration is invalid.');
+		}
 	}
 	
 	/**
@@ -42,6 +48,7 @@ class Database implements Session
 	 * 
 	 * @param string $path
 	 * @param string $name
+	 * @return void
 	 */
 	public function open($path, $name) {}
 	
@@ -60,11 +67,13 @@ class Database implements Session
 	 */
 	public function read($id)
 	{
+		// Look for session
 		$result = $this->_db->query(
-			'SELECT ' . $this->_config->fields->data . ' FROM ' . $this->_config->tablename . 
+			'SELECT ' . $this->_config->fields->data . ' FROM ' . $this->_config->table . 
 			' WHERE ' . $this->_config->fields->id . " = '$id' AND " . $this->_config->fields->expires .
 			' > UNIX_TIMESTAMP()'
 		);
+		// If session found return session data
 		if ($result instanceof mysqli_result && $result->num_rows) {
 			$row = $result->fetch_object();
 			$data = $row->{$this->_config->fields->data};
@@ -78,11 +87,13 @@ class Database implements Session
 	 * 
 	 * @param string $id
 	 * @param string $data
+	 * @return void
 	 */
 	public function write($id, $data, $expiry)
 	{
+		// Overwrite existing session data
 		$this->_db->query(
-			'REPLACE INTO ' . $this->_config->tablename ." VALUES ('$id', '$data', $expiry)"
+			'REPLACE INTO ' . $this->_config->table ." VALUES ('$id', '$data', $expiry)"
 		);
 	}
 	
@@ -90,11 +101,13 @@ class Database implements Session
 	 * Destroy session
 	 * 
 	 * @param string $id
+	 * @return void
 	 */
 	public function destroy($id)
 	{
+		// Delete the session
 		$this->_db->query(
-			'DELETE FROM ' . $this->_config->tablename . ' WHERE ' . $this->_config->fields->id . " = '$id'"
+			'DELETE FROM ' . $this->_config->table . ' WHERE ' . $this->_config->fields->id . " = '$id'"
 		);
 	}
 	
@@ -105,8 +118,9 @@ class Database implements Session
 	 */
 	public function gc()
 	{
+		// Delete old sessions, limited to 100 records to avoid slow load
 		$this->_db->query(
-			'DELETE FROM ' . $this->_config->tablename . ' WHERE ' . $this->_config->fields->expiry . ' < UNIX_TIMESTAMP()'
+			'DELETE FROM ' . $this->_config->table . ' WHERE ' . $this->_config->fields->expiry . ' < UNIX_TIMESTAMP() LIMIT 100'
 		);
 	}
 	

@@ -23,6 +23,20 @@ class Session
 	protected $_handlers = array();
 
 	/**
+	 * Session expire time
+	 *
+	 * @var int
+	 */
+	protected $_expires;
+
+	/**
+	 * Default session length
+	 *
+	 * @var int
+	 */
+	const Session_Expiry = 3600;
+
+	/**
 	 * Constructor
 	 * 
 	 * @param App $app 
@@ -41,7 +55,7 @@ class Session
 			foreach ($sessConfig->handler->toArray() as $handler) {
 				switch ($handler) {
 					case 'Memcache':
-						$this->_handlers['Memcache'] = new Session\Memcache($app->getResource('Cache\Memcache'));
+						$this->_handlers['Memcache'] = new Session\Memcache($app->getResource('Cache\Memcache'), $sessConfig->Memcache);
 						break;
 					case 'Database':
 						$this->_handlers['Database'] = new Session\Database($app->getResource('Database')->getConnection('Session'), $sessConfig->Database);
@@ -51,6 +65,8 @@ class Session
 		} else {
 			throw new Session\Exception('No session handlers specified in configuration.');
 		}
+		// Set expriry
+		$this->_expires = $sessConfig->expires ? $sessConfig->expires : self::Session_Expiry;
 		// Register handler
 		$this->register();
 	}
@@ -79,10 +95,7 @@ class Session
 	 * @param string $name
 	 * @return void
 	 */
-	public function open($path, $name)
-	{
-
-	}
+	public function open($path, $name) {}
 
 	/**
 	 * Close session (unused)
@@ -99,7 +112,14 @@ class Session
 	 */
 	public function read($id)
 	{
-
+		// Read handlers until some data is returned
+		foreach ($this->_handlers as $handler) {
+			$data = $handler->read($id);
+			if ($data !== false) {
+				return $data;
+			}
+		}
+		return '';
 	}
 
 	/**
@@ -111,7 +131,10 @@ class Session
 	 */
 	public function write($id, $data)
 	{
-
+		// Write session to all handlers
+		foreach ($this->_handlers as $handler) {
+			$handler->write($id, $data, time() + $this->_expires);
+		}
 	}
 
 	/**
@@ -122,7 +145,10 @@ class Session
 	 */
 	public function destroy($id)
 	{
-
+		// Destroy session for all handlers
+		foreach ($this->_handlers as $handler) {
+			$handler->destroy($id);
+		}
 	}
 
 	/**
@@ -132,7 +158,21 @@ class Session
 	 */
 	public function gc()
 	{
+		// Garbage collect all handlers
+		foreach ($this->_handlers as $handler) {
+			$handler->gc();
+		}
+	}
 
+	/**
+	 * Destructor
+	 *
+	 * @return void
+	 */
+	public function __destruct()
+	{
+		// Fixes PHP bug
+		session_write_close();
 	}
 
 }

@@ -19,15 +19,27 @@ class Memcache implements Session
 	 */
 	protected $_memcache;
 
+
+	/**
+	 * Key prefix
+	 *
+	 * @var string
+	 */
+	protected $_prefix;
+
 	/**
 	 * Constructor
 	 *
 	 * @param LiteMVC\Cache\Memcache $memcache
+	 * @param LiteMVC\App\Config $config
 	 * @return void
 	 */
-	public function __construct($memcache)
+	public function __construct($memcache, $config)
 	{
 		$this->_memcache = $memcache;
+		if ($config->prefix) {
+			$this->_prefix = $config->prefix;
+		}
 	}
 
 	/**
@@ -35,11 +47,9 @@ class Memcache implements Session
 	 *
 	 * @param string $path
 	 * @param string $name
+	 * @return void
 	 */
-	public function open($path, $name)
-	{
-
-	}
+	public function open($path, $name) {}
 
 	/**
 	 * Close session
@@ -56,7 +66,7 @@ class Memcache implements Session
 	 */
 	public function read($id)
 	{
-
+		return $this->_memcache->get($this->_prefix . $id);
 	}
 
 	/**
@@ -64,20 +74,22 @@ class Memcache implements Session
 	 *
 	 * @param string $id
 	 * @param string $data
+	 * @return void
 	 */
 	public function write($id, $data, $expiry)
 	{
-
+		$this->_memcache->set($this->_prefix . $id, $data, 0, $expiry);
 	}
 
 	/**
 	 * Destroy session
 	 *
 	 * @param string $id
+	 * @return void
 	 */
 	public function destroy($id)
 	{
-
+		$this->_memcache->delete($this->_prefix . $id);
 	}
 
 	/**
@@ -85,9 +97,6 @@ class Memcache implements Session
 	 *
 	 * @return void
 	 */
-	public function gc()
-	{
-
-	}
+	public function gc() {}
 
 }

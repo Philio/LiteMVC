@@ -13,6 +13,13 @@ class Connection extends \mysqli
 {
 
 	/**
+	 * Suppress error messages (mainly for sessions)
+	 * 
+	 * @var bool
+	 */
+	private $_noerrors;
+
+	/**
 	 * Constructor
 	 *
 	 * @param string $host
@@ -21,12 +28,14 @@ class Connection extends \mysqli
 	 * @param string $database
 	 * @return void
 	 */
-	public function __construct($host, $username, $password, $database)
+	public function __construct($host, $username, $password, $database, $noerrors)
 	{
+		// Set error setting
+		$this->_noerrors = $noerrors;
 		// Connect
 		parent::__construct($host, $username, $password, $database);
 		// Check for errors
-		if ($this->connect_errno) {
+		if (!$this->_noerrors && $this->connect_errno) {
 			throw new Exception('An error occcured connecting to the database.');
 		}
 	}
@@ -42,8 +51,8 @@ class Connection extends \mysqli
 		// Run query
 		$res = parent::query($sql);
 		// Check result is valid
-		if ($res === false || $this->errno != 0) {
-			throw new Exception('An error occured with the database query.');
+		if (!$this->_noerrors && ($res === false || $this->errno != 0)) {
+			throw new Exception('An error occured in query: ' . $sql);
 		}
 		return $res;
 	}
