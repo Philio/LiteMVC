@@ -10,17 +10,11 @@
 namespace LiteMVC\Cache;
 
 // Namespace aliases
+use LiteMVC\App as App;
 use LiteMVC\Cache\Memcache as Memcache;
 
 class Memcache extends \Memcache
 {
-
-	/**
-	 * Main application object
-	 *
-	 * @var LiteMVC\App
-	 */
-	private $_app;
 
 	/**
 	 * Constructor
@@ -32,10 +26,9 @@ class Memcache extends \Memcache
 	{
 		// If App object provided, extract config
 		if ($servers instanceof LiteMVC\App) {
-			$this->_app = $servers;
 			// Get memcache config from App object
-			$config = $this->_app->getResource('Config');
-			if ($config->Memcache->servers instanceof LiteMVC\App\Config) {
+			$config = $servers->getResource('Config');
+			if ($config->Memcache->servers instanceof App\Config) {
 				$servers = $config->Memcache->servers->toArray();
 			}
 		}

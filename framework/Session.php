@@ -16,20 +16,14 @@ class Session
 {
 
 	/**
-	 * Main application object
-	 * 
-	 * @var App
-	 */
-	private $_app;
-
-	/**
 	 * Constructor
 	 * 
 	 * @param App $app 
 	 * @return void
 	 */
 	public function  __construct(App $app) {
-		$this->_app = $app;
+		// Register handler
+		$this->register();
 	}
 
 	/**

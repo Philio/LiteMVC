@@ -10,3 +10,7 @@ require_once('../framework/App.php');
 // Run application
 $app = new LiteMVC\App();
 $app->init('config.ini');
+
+echo '<pre>';
+print_r($app);
+echo '</pre>';

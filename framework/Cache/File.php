@@ -10,6 +10,7 @@
 namespace LiteMVC\Cache;
 
 // Namespace aliases
+use LiteMVC\App as App;
 use LiteMVC\Cache\File as File;
 
 class File
@@ -30,6 +31,16 @@ class File
 	 */
 	public function __construct($path)
 	{
+		// If App object provided, extract config
+		if ($path instanceof LiteMVC\App) {
+			// Get file cache config from App object
+			$config = $path->getResource('Config');
+			if ($config->Filecache->path) {
+				$path = $config->Filecache->path;
+			} else {
+				$path = \PATH . $path::Path_Cache;
+			}
+		}
 		$this->_path = $path;
 	}
 	

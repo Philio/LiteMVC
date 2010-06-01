@@ -11,13 +11,6 @@ namespace LiteMVC;
 
 class Error
 {
-	
-	/**
-	 * Main application object
-	 *
-	 * @var App
-	 */
-	private $_app;
 
 	/**
 	 * Error codes (PHP errors)
@@ -105,9 +98,8 @@ class Error
 	 * @return void
 	 */
 	public function  __construct(App $app) {
-		$this->_app = $app;
 		// Read any config options
-		$config = $this->_app->getResource('Config');
+		$config = $app->getResource('Config');
 		// Set display
 		if ($config->Error->display == true) {
 			$this->setDisplay(true);
