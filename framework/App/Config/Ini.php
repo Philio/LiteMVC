@@ -16,18 +16,18 @@ class Ini extends Config
 {
 
 	/**
-	 * String that separates nesting levels of configuration data identifiers
-	 *
+	 * Section separator
+	 * 
 	 * @var string
 	 */
-	protected $_nestSeparator = '.';
-
+	const Section_Separator = ':';
+	
 	/**
-	 * String that separates the parent section name
-	 *
+	 * Item separator
+	 * 
 	 * @var string
 	 */
-	protected $_sectionSeparator = ':';
+	const Item_Separator = '.';
 
 	/**
 	 * Constructor
@@ -36,124 +36,84 @@ class Ini extends Config
 	 * @param string $section
 	 * @return void
 	 */
-	public function __construct($filename, $section = null)
+	public function __construct($file, $section)
 	{
-		if (empty($filename)) {
-			throw new Config\Exception('Please specifiy the name of the configuration file.');
-		}
-		// Read ini file
-		$iniArray = $this->_loadIniFile($filename);
-		// Process ini file
-		if ($section === null) {
-			// Load entire file
-			$dataArray = array();
-			foreach ($iniArray as $sectionName => $sectionData) {
-				if(!is_array($sectionData)) {
-					$dataArray = array_merge_recursive($dataArray, $this->_processKey(array(), $sectionName, $sectionData));
-				} else {
-					$dataArray[$sectionName] = $this->_processSection($iniArray, $sectionName);
-				}
-			}
-			parent::__construct($dataArray);
-		} else {
-			// Load one or more sections
-			if (!is_array($section)) {
-				$section = array($section);
-			}
-			$dataArray = array();
-			foreach ($section as $sectionName) {
-				if (!isset($iniArray[$sectionName])) {
-					throw new Config\Exception('Section \'' . $sectionName . '\' not found in ' . $filename . '.');
-				}
-				$dataArray = array_merge($this->_processSection($iniArray, $sectionName), $dataArray);
-			}
-			parent::__construct($dataArray);
-		}
+		$ini = $this->_read($file);
+		$this->_data = $this->_processIni($ini, $section);
 	}
 
 	/**
-	 * Load the ini file
+	 * Read the ini file
 	 *
 	 * @param string $filename
 	 * @return array
 	 */
-	protected function _loadIniFile($filename)
+	protected function _read($filename)
 	{
-		if (!file_exists($filename)) {
-			throw new Config\Exception('File \'' . $filename . '\' doesn\'t exist.');
+		if (file_exists($filename)) {
+			$ini = parse_ini_file($filename, true);
+			return $ini;
+		} else {
+			throw new Config\Exception('File \'' . $filename . '\' not found.');
 		}
-		$data = parse_ini_file($filename, true);
-		$iniArray = array();
-		foreach ($data as $key => $data) {
-			$pieces = explode($this->_sectionSeparator, $key);
-			$thisSection = trim($pieces[0]);
-			switch (count($pieces)) {
-				case 1:
-					$iniArray[$thisSection] = $data;
-					break;
-				case 2:
-					$extendedSection = trim($pieces[1]);
-					$iniArray[$thisSection] = array_merge(array(';extends'=>$extendedSection), $data);
-					break;
-				default:
-					throw new Config\Exception('Section \'' . $thisSection . '\' can not extend multiple sections.');
-			}
-		}
-		return $iniArray;
 	}
 
 	/**
-	 * Process secotion
-	 *
-	 * @param array $iniArray
+	 * Process the ini data
+	 * 
+	 * @param array $ini
 	 * @param string $section
-	 * @param array $config
-	 * @return array
 	 */
-	protected function _processSection($iniArray, $section, $config = array())
+	protected function _processIni($ini, $section)
 	{
-		$thisSection = $iniArray[$section];
-		foreach ($thisSection as $key => $value) {
-			if (strtolower($key) == ';extends') {
-				if (isset($iniArray[$value])) {
-					$config = $this->_processSection($iniArray, $value, $config);
-				} else {
-					throw new Config\Exception('Parent section \'' . $section . '\' not found.');
+		// Check if section exists
+		if (isset($ini[$section])) {
+			return $this->_processSection($ini[$section]);
+		}
+		// Otherwise look and check for sections with extends
+		foreach ($ini as $key => $value) {
+			// If separator found split and check
+			if (strpos($key, self::Section_Separator) !== false) {
+				$parts = explode(self::Section_Separator, $key, 2);
+				// Check for section with extend
+				if (trim($parts[0]) == $section) {
+					if (strpos($parts[1], self::Section_Separator) !== false) {
+						throw new Config\Exception('A section can not extend multiple sections.');
+					}
+					return array_merge_recursive($this->_processIni($ini, trim($parts[1])), $this->_processSection($value));
 				}
-			} else {
-				$config = $this->_processKey($config, $key, $value);
 			}
+		}
+	}
+	
+	/**
+	 * Process a section of the ini file
+	 * 
+	 * @param array $data
+	 */
+	protected function _processSection($data) {
+		$config = array();
+		foreach ($data as $key => $value) {
+			$this->_processKey($config, $key, $value);
 		}
 		return $config;
 	}
-
+	
 	/**
 	 * Process a key
-	 *
+	 * 
 	 * @param array $config
 	 * @param string $key
-	 * @param string $value
-	 * @return array
+	 * @param mixed $value
 	 */
 	protected function _processKey($config, $key, $value)
 	{
-		if (strpos($key, $this->_nestSeparator) !== false) {
-			$pieces = explode($this->_nestSeparator, $key, 2);
-			if (strlen($pieces[0]) && strlen($pieces[1])) {
-				if (!isset($config[$pieces[0]])) {
-					if ($pieces[0] === '0' && !empty($config)) {
-						// convert the current values in $config into an array
-						$config = array($pieces[0] => $config);
-					} else {
-						$config[$pieces[0]] = array();
-					}
-				} elseif (!is_array($config[$pieces[0]])) {
-					throw new Config\Exception('Cannot create sub-key for \'' . $pieces[0] . '\' as key exists.');
-				}
-				$config[$pieces[0]] = $this->_processKey($config[$pieces[0]], $pieces[1], $value);
-			} else {
-				throw new Config\Exception('Invalid key \'' . $key . '\'.');
+		if (strpos($key, self::Item_Separator) !== false) {
+			$parts = explode(self::Item_Separator, $key, 2);
+			if (!isset($config[$parts[0]])) {
+				$config[$parts[0]] = array();
 			}
+			$config[$parts[0]] = $this->_processKey($config[$parts[0]], $parts[1], $value);
 		} else {
 			$config[$key] = $value;
 		}

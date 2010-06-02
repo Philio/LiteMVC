@@ -20,25 +20,7 @@ class Config implements \Countable
 	 *
 	 * @var array
 	 */
-	protected $_data;
-
-	/**
-	 * Construtor
-	 *
-	 * @param array $array
-	 * @return void
-	 */
-	public function __construct($array)
-	{
-		$this->_data = array();
-		foreach ($array as $key => $value) {
-			if (is_array($value)) {
-				$this->_data[$key] = new self($value);
-			} else {
-				$this->_data[$key] = $value;
-			}
-		}
-	}
+	protected $_data = array();
 
 	/**
 	 * Get magic method
@@ -89,51 +71,6 @@ class Config implements \Countable
 	public function count()
 	{
 		return count($this->_data);
-	}
-
-	/**
-	 * Convert data to array
-	 *
-	 * @return array
-	 */
-	public function toArray()
-	{
-		$array = array();
-		$data = $this->_data;
-		foreach ($data as $key => $value) {
-			if ($value instanceof Config) {
-				$array[$key] = $value->toArray();
-			} else {
-				$array[$key] = $value;
-			}
-		}
-		return $array;
-	}
-
-	/**
-	 * Merge another config
-	 *
-	 * @param Config $merge
-	 * @return Config
-	 */
-	public function merge(App\Config $merge)
-	{
-		foreach($merge as $key => $item) {
-			if(array_key_exists($key, $this->_data)) {
-				if($item instanceof Config && $this->$key instanceof Config) {
-					$this->$key = $this->$key->merge(new Config($item->toArray()));
-				} else {
-					$this->$key = $item;
-				}
-			} else {
-				if($item instanceof Config) {
-					$this->$key = new Config($item->toArray());
-				} else {
-					$this->$key = $item;
-				}
-			}
-		}
-		return $this;
 	}
 
 }
