@@ -80,7 +80,7 @@ class Ini extends Config
 					if (strpos($parts[1], self::Section_Separator) !== false) {
 						throw new Config\Exception('A section can not extend multiple sections.');
 					}
-					return array_merge_recursive($this->_processIni($ini, trim($parts[1])), $this->_processSection($value));
+					return $this->_arrayMerge($this->_processIni($ini, trim($parts[1])), $this->_processSection($value));
 				}
 			}
 		}
@@ -118,6 +118,27 @@ class Ini extends Config
 			$config[$key] = $value;
 		}
 		return $config;
+	}
+
+	/**
+	 * A multi dimensional array merge replacing existing keys
+	 *
+	 * @param array $arrStart
+	 * @param array $arrAdd
+	 */
+	protected function _arrayMerge(array $arrStart, array $arrAdd)
+	{
+		// Loop through array
+		foreach ($arrAdd as $key => $value) {
+			// Call recursively for arrays
+			if (array_key_exists($key, $arrStart) && is_array($value)) {
+				$arrStart[$key] = $this->_arrayMerge($arrStart[$key], $value);
+			} else {
+				$arrStart[$key] = $value;
+			}
+		}
+		// Return merged array
+		return $arrStart;
 	}
 
 }

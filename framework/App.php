@@ -131,8 +131,7 @@ class App {
 	{
 		// If no memcache use a file cache
 		if (is_null($cache)) {
-			$cache = new Cache\File(\PATH . self::Path_Cache);
-			$this->setResource('Cache\File', $cache);
+			$cache = $this->getResource('Cache\File');
 		} else {
 			$this->setResource('Cache\Memcache', $cache);
 		}
