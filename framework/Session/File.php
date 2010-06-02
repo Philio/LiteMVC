@@ -37,13 +37,13 @@ class File implements Session
 	public function __construct($file, $config)
 	{
 		$this->_file = $file;
-		if ($config->prefix) {
-			$this->_prefix = $config->prefix;
+		if (isset($config['prefix'])) {
+			$this->_prefix = $config['prefix'];
 		}
 	}
 
 	/**
-	 * Open session
+	 * Open session LiteMVC\Cache\File
 	 *
 	 * @param string $path
 	 * @param string $name

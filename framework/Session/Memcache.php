@@ -37,8 +37,8 @@ class Memcache implements Session
 	public function __construct($memcache, $config)
 	{
 		$this->_memcache = $memcache;
-		if ($config->prefix) {
-			$this->_prefix = $config->prefix;
+		if (isset($config['prefix'])) {
+			$this->_prefix = $config['prefix'];
 		}
 	}
 

@@ -36,7 +36,7 @@ class Database implements Session
 		// Assign database connetion and config settings
 		$this->_db = $db;
 		// Check config
-		if ($config->table && $config->fields->id && $config->fields->data && $config->fields->expires) {
+		if (isset($config['table'], $config['fields']['id'], $config['fields']['data'], $config['fields']['expires'])) {
 			$this->_config = $config;
 		} else {
 			throw new Exception('The session database configuration is invalid.');
@@ -69,14 +69,14 @@ class Database implements Session
 	{
 		// Look for session
 		$result = $this->_db->query(
-			'SELECT ' . $this->_config->fields->data . ' FROM ' . $this->_config->table . 
-			' WHERE ' . $this->_config->fields->id . " = '$id' AND " . $this->_config->fields->expires .
+			'SELECT ' . $this->_config['fields']['data'] . ' FROM ' . $this->_config['table'] .
+			' WHERE ' . $this->_config['fields']['id'] . " = '$id' AND " . $this->_config['fields']['expires'] .
 			' > UNIX_TIMESTAMP()'
 		);
 		// If session found return session data
 		if ($result instanceof mysqli_result && $result->num_rows) {
 			$row = $result->fetch_object();
-			$data = $row->{$this->_config->fields->data};
+			$data = $row->{$this->_config['fields']['data']};
 			return $data;
 		}
 		return false;
@@ -93,7 +93,7 @@ class Database implements Session
 	{
 		// Overwrite existing session data
 		$this->_db->query(
-			'REPLACE INTO ' . $this->_config->table ." VALUES ('$id', '$data', $expiry)"
+			'REPLACE INTO ' . $this->_config['table'] ." VALUES ('$id', '$data', $expiry)"
 		);
 	}
 	
@@ -107,7 +107,7 @@ class Database implements Session
 	{
 		// Delete the session
 		$this->_db->query(
-			'DELETE FROM ' . $this->_config->table . ' WHERE ' . $this->_config->fields->id . " = '$id'"
+			'DELETE FROM ' . $this->_config['table'] . ' WHERE ' . $this->_config['fields']['id'] . " = '$id'"
 		);
 	}
 	
@@ -120,7 +120,7 @@ class Database implements Session
 	{
 		// Delete old sessions, limited to 100 records to avoid slow load
 		$this->_db->query(
-			'DELETE FROM ' . $this->_config->table . ' WHERE ' . $this->_config->fields->expiry . ' < UNIX_TIMESTAMP() LIMIT 100'
+			'DELETE FROM ' . $this->_config['table'] . ' WHERE ' . $this->_config['fields']['expires'] . ' < UNIX_TIMESTAMP() LIMIT 100'
 		);
 	}
 	
