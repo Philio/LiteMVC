@@ -18,7 +18,7 @@ class Database
 	/**
 	 * Database config
 	 * 
-	 * @var App\Config
+	 * @var array
 	 */
 	protected $_config;
 	
@@ -39,7 +39,7 @@ class Database
 		// Check config
 		$config = $app->getResource('Config');
 		if ($config->Database instanceof App\Config) {
-			$this->_config = $config->Database;
+			$this->_config = $config->Database->toArray();
 		} else {
 			throw new Database\Exception('No database configuration has been specified.');
 		}
@@ -56,13 +56,13 @@ class Database
 		// If connection exists return it
 		if (!isset($this->_connections[$name])) {
 			// Check if configuration exists
-			if ($this->_config->$name instanceof App\Config) {
+			if (array_key_exists($name, $this->_config)) {
 				$this->_connections[$name] = new Database\Connection(
-					$this->_config->$name->host,
-					$this->_config->$name->username,
-					$this->_config->$name->password,
-					$this->_config->$name->database,
-					$this->_config->$name->noerrors
+					$this->_config[$name]['host'],
+					$this->_config[$name]['username'],
+					$this->_config[$name]['password'],
+					$this->_config[$name]['database'],
+					$this->_config[$name]['noerrors']
 				);
 			} else {
 				throw new Database\Exception('Database \'' . $name . '\' is not defined in the configuration.');
