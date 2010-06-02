@@ -10,10 +10,3 @@ require_once('../framework/App.php');
 // Run application
 $app = new LiteMVC\App();
 $app->init('config.ini');
-
-$_SESSION['test1'] = 'Hello';
-$_SESSION['test2'] = 'Bye';
-
-echo '<pre>';
-print_r($app);
-echo '</pre>';
