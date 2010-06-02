@@ -101,13 +101,14 @@ class Error
 		// Read any config options
 		$config = $app->getResource('Config');
 		if ($config->Error) {
+			$errConfig = $config->Error->toArray();
 			// Set display
-			if ($config->Error->display == true) {
+			if (isset($errConfig['display']) && $errConfig['display'] == true) {
 				$this->setDisplay(true);
 			}
 			// Set template
-			if ($config->Error->template) {
-				$this->setTemplate($config->Error->template);
+			if (isset($errConfig['template'])) {
+				$this->setTemplate($errConfig['template']);
 			}
 		}
 		// Register handlers
