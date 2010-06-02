@@ -152,7 +152,7 @@ class App {
 		$this->setResource('Config', $config['obj']);
 		// Load resources from config
 		if ($config['obj']->init) {
-			$init = $config['obj']->init->toArray();
+			$init = $config['obj']->init;
 			if (is_array($init['load']) && count($init['load'])) {
 				foreach ($init['load'] as $resource) {
 					$this->loadResource($resource);
