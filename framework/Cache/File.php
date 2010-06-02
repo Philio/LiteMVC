@@ -63,8 +63,10 @@ class File
 			// Unserialise the data
 			$usd = unserialize($data);
 			if ($usd['expires'] > time()) {
-				unset($usd['expires']);
-				return $usd;
+				if ($usd['encoded']) {
+					return base64_decode($usd['data']);
+				}
+				return $usd['data'];
 			}
 		}
 		return false;
@@ -86,9 +88,13 @@ class File
 			throw new File\Exception('Unable to open the output file.');
 		}
 		// Store expiry within file
-		$var['expires'] = $expire > time() ? $expire : $expire + time();
+		$data = array(
+			'expires' => $expire > time() ? $expire : $expire + time(),
+			'data' => is_string($var) ? base64_encode($var) : $var,
+			'encoded' => is_string($var) ? true : false
+		);
 		// Write to file
-		$res = fwrite($f, serialize($var));
+		$res = fwrite($f, serialize($data));
 		if ($res === false) {
 			throw new File\Exception('Unable to write to the output file.');
 		}

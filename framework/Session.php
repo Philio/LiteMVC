@@ -54,6 +54,9 @@ class Session
 		if ($sessConfig->handler) {
 			foreach ($sessConfig->handler->toArray() as $handler) {
 				switch ($handler) {
+					case 'File':
+						$this->_handlers['File'] = new Session\File($app->getResource('Cache\File'), $sessConfig->File);
+						break;
 					case 'Memcache':
 						$this->_handlers['Memcache'] = new Session\Memcache($app->getResource('Cache\Memcache'), $sessConfig->Memcache);
 						break;
