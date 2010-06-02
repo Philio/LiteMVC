@@ -100,13 +100,15 @@ class Error
 	public function  __construct(App $app) {
 		// Read any config options
 		$config = $app->getResource('Config');
-		// Set display
-		if ($config->Error->display == true) {
-			$this->setDisplay(true);
-		}
-		// Set template
-		if ($config->Error->template) {
-			$this->setTemplate($config->Error->template);
+		if ($config->Error) {
+			// Set display
+			if ($config->Error->display == true) {
+				$this->setDisplay(true);
+			}
+			// Set template
+			if ($config->Error->template) {
+				$this->setTemplate($config->Error->template);
+			}
 		}
 		// Register handlers
 		$this->register();

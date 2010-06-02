@@ -151,10 +151,12 @@ class App {
 		// Save application resources
 		$this->setResource('Config', $config['obj']);
 		// Load resources from config
-		$load = $config['obj']->init->load->toArray();
-		if (is_array($load) && count($load)) {
-			foreach ($load as $resource) {
-				$this->loadResource($resource);
+		if ($config['obj']->init) {
+			$init = $config['obj']->init->toArray();
+			if (is_array($init['load']) && count($init['load'])) {
+				foreach ($init['load'] as $resource) {
+					$this->loadResource($resource);
+				}
 			}
 		}
 		// Start session

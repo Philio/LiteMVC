@@ -38,7 +38,7 @@ class Database
 	public function  __construct(App $app) {
 		// Check config
 		$config = $app->getResource('Config');
-		if ($config->Database instanceof App\Config) {
+		if ($config->Database) {
 			$this->_config = $config->Database->toArray();
 		} else {
 			throw new Database\Exception('No database configuration has been specified.');
