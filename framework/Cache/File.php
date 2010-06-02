@@ -32,11 +32,11 @@ class File
 	public function __construct($path)
 	{
 		// If App object provided, extract config
-		if ($path instanceof LiteMVC\App) {
+		if ($path instanceof App) {
 			// Get file cache config from App object
 			$config = $path->getResource('Config');
-			if ($config->Filecache->path) {
-				$path = $config->Filecache->path;
+			if (!is_null($config->Filecache) && isset($config->Filecache['path'])) {
+				$path = $config->Filecache['path'];
 			} else {
 				$path = \PATH . $path::Path_Cache;
 			}

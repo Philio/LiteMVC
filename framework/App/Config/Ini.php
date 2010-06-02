@@ -94,7 +94,7 @@ class Ini extends Config
 	protected function _processSection($data) {
 		$config = array();
 		foreach ($data as $key => $value) {
-			$this->_processKey($config, $key, $value);
+			$config = $this->_processKey($config, $key, $value);
 		}
 		return $config;
 	}

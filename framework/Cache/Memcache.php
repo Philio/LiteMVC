@@ -28,8 +28,8 @@ class Memcache extends \Memcache
 		if ($servers instanceof App) {
 			// Get memcache config from App object
 			$config = $servers->getResource('Config');
-			if ($config->Memcache->servers instanceof App\Config) {
-				$servers = $config->Memcache->servers->toArray();
+			if (!is_null($config->Memcache) && isset($config->Memcache['servers'])) {
+				$servers = $config->Memcache['servers'];
 			}
 		}
 		// Add specified servers to pool

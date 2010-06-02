@@ -45,8 +45,8 @@ class Session
 	public function  __construct(App $app) {
 		// Check config
 		$config = $app->getResource('Config');
-		if ($config->Session instanceof App\Config) {
-			$sessConfig = $config->Session->toArray();
+		if (!is_null($config->Session)) {
+			$sessConfig = $config->Session;
 		} else {
 			throw new Session\Exception('No session configuration has been specified.');
 		}
