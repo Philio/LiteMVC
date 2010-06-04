@@ -164,5 +164,14 @@ class App {
 		// Get request
 		$req = $this->getResource('Request')->process();
 	}
+
+	/**
+	 * Run application
+	 *
+	 * @return void
+	 */
+	public function run() {
+		
+	}
 	
 }
