@@ -236,4 +236,34 @@ class Request
 		return null;
 	}
 
+	/**
+	 * Redirect request
+	 *
+	 * @param string $module
+	 * @param string $controller
+	 * @param string $action
+	 * @return void
+	 */
+	public function redirect($module = null, $controller = null, $action = null)
+	{
+		// Replace null values with current values
+		if (is_null($module)) {
+			$module = $this->_module;
+		}
+		if (is_null($controller)) {
+			$controller = $this->_controller;
+		}
+		if (is_null($action)) {
+			$action  = $this->_action;
+		}
+		// Redirect to new uri
+		$uri = $this->_relativePath . '/';
+		if (isset($this->_config['default']['module']) && $module != $this->_config['default']['module']) {
+			$uri .= $module . '/';
+		}
+		$uri .= $controller . '/' . $action . '/';
+		header('Location: ' . $uri);
+		exit;
+	}
+
 }
