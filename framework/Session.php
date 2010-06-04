@@ -78,7 +78,7 @@ class Session
 			throw new Session\Exception('No session handlers specified in configuration.');
 		}
 		// Set expriry
-		$this->_expires = $sessConfig['expires'] ? $sessConfig['expires'] : self::Session_Expiry;
+		$this->_expires = isset($sessConfig['expires']) ? $sessConfig['expires'] : self::Session_Expiry;
 		// Register handler
 		$this->register();
 	}

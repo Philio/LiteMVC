@@ -60,8 +60,8 @@ class Error
 	 * @var string
 	 */
 	const Header_Prefix = 'HTTP/1.1 ';
-	const Header_OK    = '200 OK';
-	const Header_Fatal = '500 Internal Server Error';
+	const Header_OK     = '200 OK';
+	const Header_Fatal  = '500 Internal Server Error';
 	
 	/**
 	 * Display errors
@@ -272,10 +272,11 @@ class Error
 			$output = '<h2>Error Log</h2>';
 			$log = array_reverse($this->_log);
 			foreach($log as $entry) {
-				$output .= '<b>' . $entry['level'] .'</b>: ' . ucfirst($entry['message']) . ' in <b>' .
-				           $entry['file'] . '</b> at line <b>' . $entry['line'] . '</b>.<br />';
+				$output .= '<b>' . $entry['level'] .'</b>: ' . ucfirst($entry['message']) .
+					'<br /><b>Occured in</b>: ' . $entry['file'] . ' at line ' . $entry['line'] .
+					'.<br />';
 				if (!is_null($entry['trace'])) {
-					$output .= nl2br($entry['trace'], true) . '<br />';
+					$output .= '<b>Stack trace</b>:<br />' . nl2br($entry['trace'], true) . '<br />';
 				}
 				$output .= '<br />';
 			}

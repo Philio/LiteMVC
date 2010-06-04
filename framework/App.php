@@ -29,8 +29,9 @@ class App {
 	 *
 	 * @var string
 	 */
-	const Path_Config = '/configs/';
+	const Path_App    = '/apps/';
 	const Path_Cache  = '/cache/';
+	const Path_Config = '/configs/';
 	
 	/**
 	 * Cache settings
@@ -160,6 +161,8 @@ class App {
 		}
 		// Start session
 		session_start();
+		// Get request
+		$req = $this->getResource('Request')->process();
 	}
 	
 }
