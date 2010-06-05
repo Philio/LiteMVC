@@ -189,6 +189,12 @@ class App {
 	public function run() {
 		// Dispatch request
 		$this->getResource('Dispatcher')->dispatch();
+		// Page output
+		if ($this->isResource('View\HTML')) {
+			$output = $this->getResource('View\HTML');
+			$output->render();
+			echo $output;
+		}
 	}
 	
 }

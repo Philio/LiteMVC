@@ -71,7 +71,7 @@ class Dispatcher {
 				$method = $this->fmtAction($action);
 				// Try and load the class
 				if (class_exists($class)) {
-					$c = new $class();
+					$c = new $class($this->_app, $controller, $action);
 				} else {
 					throw new App\Exception('Unable to load controller class for ' . $controller . '.');
 				}
