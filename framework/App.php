@@ -178,6 +178,7 @@ class App {
 			ucfirst($req->getModule()),
 			\PATH . self::Path_App . $req->getModule()
 		);
+		return $this;
 	}
 
 	/**
@@ -186,7 +187,8 @@ class App {
 	 * @return void
 	 */
 	public function run() {
-		
+		// Dispatch request
+		$this->getResource('Dispatcher')->dispatch();
 	}
 	
 }
