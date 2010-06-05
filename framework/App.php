@@ -38,7 +38,6 @@ class App {
 	 * 
 	 * @var string
 	 */
-	const Cache_Prefix = 'LiteMVC';
 	const Cache_Config = 'Config';
 	
 	/**
@@ -121,38 +120,48 @@ class App {
 		}
 		return false;
 	}
+
+	public function loadConfig($configFile)
+	{
+		// Load file cache module
+		$cache = $this->getResource('Cache\File');
+		// Check modification time of config file
+		$fmt = filemtime(\PATH . self::Path_Config . $configFile);
+		// Load configuration
+		$config = $cache->get(self::Cache_Config . '_' . md5($configFile));
+		// Check config is valid and recent
+		if ($config === false || $config['fmt'] < $fmt) {
+			// Reload config from ini
+			$config['fmt'] = $fmt;
+			$config['obj'] = new App\Config\Ini(
+				\PATH . self::Path_Config . $configFile,
+				\ENVIRONMENT
+			);
+			// Update cache
+			$cache->set(
+				self::Cache_Config . '_' . md5($configFile),
+				$config,
+				0,
+				self::CacheLifetime_Config
+			);
+		}
+		// Save application resource
+		$this->setResource('Config', $config['obj']);
+		return $config['obj'];
+	}
 	
 	/**
 	 * Initialise the applicatoin
 	 *
 	 * @param string $configFile
-	 * @param Memcache $cache
 	 */
-	public function init($configFile, Cache\Memcache $cache = null)
+	public function init($configFile)
 	{
-		// If no memcache use a file cache
-		if (is_null($cache)) {
-			$cache = $this->getResource('Cache\File');
-		} else {
-			$this->setResource('Cache\Memcache', $cache);
-		}
-		// Check modification time of config file
-		$fmt = filemtime(\PATH . self::Path_Config . $configFile);
 		// Load configuration
-		$config = $cache->get(self::Cache_Prefix . '_' . self::Cache_Config);
-		// Check config is valid and recent
-		if ($config === false || $config['fmt'] < $fmt) {
-			// Reload config from ini
-			$config['fmt'] = $fmt;
-			$config['obj'] = new App\Config\Ini(\PATH . self::Path_Config . $configFile, \ENVIRONMENT);
-			// Update cache
-			$cache->set(self::Cache_Prefix . '_' . self::Cache_Config, $config, 0, self::CacheLifetime_Config);
-		}
-		// Save application resources
-		$this->setResource('Config', $config['obj']);
+		$config = $this->loadConfig($configFile);
 		// Load resources from config
-		if (!is_null($config['obj']->init)) {
-			$init = $config['obj']->init;
+		if (!is_null($config->init)) {
+			$init = $config->init;
 			if (is_array($init['load']) && count($init['load'])) {
 				foreach ($init['load'] as $resource) {
 					$this->loadResource($resource);
@@ -162,7 +171,13 @@ class App {
 		// Start session
 		session_start();
 		// Get request
-		$req = $this->getResource('Request')->process();
+		$req = $this->getResource('Request');
+		$req->process();
+		// Add autoloader for module
+		$this->getResource('Autoloader')->setPath(
+			ucfirst($req->getModule()),
+			\PATH . self::Path_App . $req->getModule()
+		);
 	}
 
 	/**
