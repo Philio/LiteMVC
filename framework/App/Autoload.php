@@ -25,7 +25,7 @@ class Autoload
 	 * @param string $class
 	 * @return void
 	 */
-	public static function loader($class)
+	public function loader($class)
 	{
 		// Check that a path has been set
 		if (!count(self::$_paths)) {
@@ -52,7 +52,7 @@ class Autoload
 	 */
 	public function register()
 	{
-		spl_autoload_register(__NAMESPACE__ . '\Autoload::loader');
+		spl_autoload_register(array($this, 'loader'));
 	}
 	
 	/**
@@ -62,7 +62,7 @@ class Autoload
 	 */
 	public function unregister()
 	{
-		spl_autoload_unregister(__NAMESPACE__ . '\Autoload::loader');
+		spl_autoload_unregister(array($this, 'loader'));
 	}
 
 	/**
