@@ -106,6 +106,17 @@ abstract class View
 		return null;
 	}
 
+	/**
+	 * Call magic method
+	 *
+	 * @param string $name
+	 * @param array $args
+	 * @return void
+	 * @todo add this!
+	 */
+	public function  __call($name, $args) {
+
+	}
 
 	/**
 	 * Set the module
