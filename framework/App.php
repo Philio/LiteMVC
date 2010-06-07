@@ -35,20 +35,6 @@ class App {
 	const Path_Config = '/configs/';
 	
 	/**
-	 * Cache settings
-	 * 
-	 * @var string
-	 */
-	const Cache_Config = 'Config';
-	
-	/**
-	 * Cache lifetime
-	 * 
-	 * @var int
-	 */
-	const CacheLifetime_Config = 86400;
-	
-	/**
 	 * Constructor
 	 * 
 	 * @return void
@@ -81,11 +67,12 @@ class App {
 	 * Get an application resource
 	 * 
 	 * @param string $name
+	 * @param mixed $params
 	 * @return object
 	 */
-	public function getResource($name)
+	public function getResource($name, $params = null)
 	{
-		if (isset($this->_resources[$name]) || $this->loadResource($name)) {
+		if (isset($this->_resources[$name]) || $this->loadResource($name, $params)) {
 			return $this->_resources[$name];
 		}
 		return null;
@@ -107,59 +94,42 @@ class App {
 	 * Load an application resource
 	 * 
 	 * @param string $name
-	 * @param Config $config
-	 * @return bool
+	 * @param mixed $params
+=	 * @return bool
 	 */
-	public function loadResource($name)
+	public function loadResource($name, $params = null)
 	{
 		// Attempt to load a class from the specified name
 		$class = 'LiteMVC\\' . $name;
 		if (class_exists($class)) {
-			$obj = new $class($this);
+			if (is_null($params)) {
+				$obj = new $class($this);
+			} else {
+				$obj = new $class($params);
+			}
 			$this->setResource($name, $obj);
 			return true;
 		}
 		return false;
-	}
-
-	public function loadConfig($configFile)
-	{
-		// Load file cache module
-		$cache = $this->getResource('Cache\File');
-		// Check modification time of config file
-		$fmt = filemtime(\PATH . self::Path_Config . $configFile);
-		// Load configuration
-		$config = $cache->get(self::Cache_Config . '_' . md5($configFile));
-		// Check config is valid and recent
-		if ($config === false || $config['fmt'] < $fmt) {
-			// Reload config from ini
-			$config['fmt'] = $fmt;
-			$config['obj'] = new App\Config\Ini(
-				\PATH . self::Path_Config . $configFile,
-				\ENVIRONMENT
-			);
-			// Update cache
-			$cache->set(
-				self::Cache_Config . '_' . md5($configFile),
-				$config,
-				0,
-				self::CacheLifetime_Config
-			);
-		}
-		// Save application resource
-		$this->setResource('Config', $config['obj']);
-		return $config['obj'];
 	}
 	
 	/**
 	 * Initialise the applicatoin
 	 *
 	 * @param string $configFile
+	 * @param string $cacheModule
+	 * @param mixed $cacheParams
+	 * @return App
 	 */
-	public function init($configFile)
+	public function init($configFile, $cacheModule = 'Cache\File', $cacheParams = null)
 	{
+		// Load cache module
+		$cache = $this->getResource($cacheModule, $cacheParams);
 		// Load configuration
-		$config = $this->loadConfig($configFile);
+		$config = new App\Config\Ini();
+		$config->setCache($cache);
+		$config->load(\PATH . self::Path_Config . $configFile, \ENVIRONMENT);
+		$this->setResource('Config', $config);
 		// Load resources from config
 		if (!is_null($config->init)) {
 			$init = $config->init;

@@ -31,16 +31,20 @@ class Ini extends Config
 	const Item_Separator = '.';
 
 	/**
-	 * Constructor
+	 * Load configuration from file
 	 *
 	 * @param string $filename
 	 * @param string $section
 	 * @return void
 	 */
-	public function __construct($file, $section)
+	public function load($file, $section)
 	{
-		$ini = $this->_read($file);
-		$this->_data = $this->_processIni($ini, $section);
+		if (!$this->_readCache($file)) {
+			$ini = $this->_read($file);
+			$this->_data = $this->_processIni($ini, $section);
+			// Save config in cache
+			$this->_writeCache($file);
+		}
 	}
 
 	/**
