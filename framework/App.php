@@ -88,7 +88,7 @@ class App {
 		if (isset($this->_resources[$name]) || $this->loadResource($name)) {
 			return $this->_resources[$name];
 		}
-		return false;
+		return null;
 	}
 
 	/**

@@ -14,6 +14,13 @@ abstract class Controller
 {
 
 	/**
+	 * App object
+	 *
+	 * @var App
+	 */
+	private $_app;
+
+	/**
 	 * Request object
 	 *
 	 * @var Request
@@ -29,7 +36,9 @@ abstract class Controller
 
 	public function __construct(App $app, $controller, $action)
 	{
-		// Assign request/view to class vars
+		// Reference App object for resource loading
+		$this->_app = $app;
+		// Setup request/view
 		$this->_request = $app->getResource('Request');
 		if ($app->isResource('View\HTML')) {
 			$this->_view = $app->getResource('View\HTML');
@@ -48,6 +57,20 @@ abstract class Controller
 		} elseif ($app->isResource('View\JSON')) {
 			$this->_view = $app->getResource('View\JSON');
 		}
+	}
+
+	/**
+	 * Get an application resource
+	 *
+	 * @param string $name
+	 * @return object
+	 */
+	protected function _getResource($name)
+	{
+		if ($this->_app instanceof App) {
+			return $this->_app->getResource($name);
+		}
+		return null;
 	}
 
 }
