@@ -5,7 +5,8 @@
  * @author Phil Bayfield
  * @copyright 2010
  * @license Creative Commons Attribution-Share Alike 2.0 UK: England & Wales License
- * @package Main
+ * @package LiteMVC
+ * @version 0.1.0
  */
 namespace LiteMVC;
 
@@ -39,6 +40,13 @@ abstract class View
 	 * @var string
 	 */
 	protected $_page;
+
+	/**
+	 * Page data
+	 *
+	 * @var array
+	 */
+	protected $_data = array();
 
 	/**
 	 * Page mode
@@ -88,9 +96,7 @@ abstract class View
 	 */
 	public function __set($key, $value)
 	{
-		if (substr($key, 0, 1) != '_') {
-			$this->$key = $value;
-		}
+		$this->_data[$key] = $value;
 	}
 
 	/**
@@ -100,8 +106,8 @@ abstract class View
 	 */
 	public function __get($key)
 	{
-		if (substr($key, 0, 1) != '_' && isset($this->$key)) {
-			return $this->$key;
+		if (isset($this->_data[$key])) {
+			return $this->_data[$key];
 		}
 		return null;
 	}
@@ -114,8 +120,8 @@ abstract class View
 	 * @return void
 	 * @todo add this!
 	 */
-	public function  __call($name, $args) {
-
+	public function __call($name, $args) {
+		
 	}
 
 	/**
