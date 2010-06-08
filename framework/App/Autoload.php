@@ -40,6 +40,8 @@ class Autoload
 				// Check exists
 				if (file_exists($file)) {
 					require_once $file;
+				} else {
+					throw new Exception('Unable to load ' . $class . '.');
 				}
 				break;
 			}

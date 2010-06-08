@@ -101,16 +101,13 @@ class App {
 	{
 		// Attempt to load a class from the specified name
 		$class = 'LiteMVC\\' . $name;
-		if (class_exists($class)) {
-			if (is_null($params)) {
-				$obj = new $class($this);
-			} else {
-				$obj = new $class($params);
-			}
-			$this->setResource($name, $obj);
-			return true;
+		if (is_null($params)) {
+			$obj = new $class($this);
+		} else {
+			$obj = new $class($params);
 		}
-		return false;
+		$this->setResource($name, $obj);
+		return true;
 	}
 	
 	/**
@@ -124,11 +121,12 @@ class App {
 	public function init($configFile, $cacheModule = 'Cache\File', $cacheParams = null)
 	{
 		// Load cache module
-		$cache = $this->getResource($cacheModule, $cacheParams);
+		$cache = $this->getResource($cacheModule, is_null($cacheParams) ? \PATH . self::Path_Cache : $cacheParams);
 		// Load configuration
-		$config = new App\Config\Ini();
+		$config = $this->getResource('App\Config\Ini');
 		$config->setCache($cache);
 		$config->load(\PATH . self::Path_Config . $configFile, \ENVIRONMENT);
+		// Config is special case and is saved as 'Config' resource for convenience
 		$this->setResource('Config', $config);
 		// Load resources from config
 		if (!is_null($config->init)) {
