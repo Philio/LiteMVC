@@ -101,13 +101,16 @@ class App {
 	{
 		// Attempt to load a class from the specified name
 		$class = 'LiteMVC\\' . $name;
-		if (is_null($params)) {
-			$obj = new $class($this);
-		} else {
-			$obj = new $class($params);
+		if (class_exists(($class))) {
+			if (is_null($params)) {
+				$obj = new $class($this);
+			} else {
+				$obj = new $class($params);
+			}
+			$this->setResource($name, $obj);
+			return true;
 		}
-		$this->setResource($name, $obj);
-		return true;
+		return false;
 	}
 	
 	/**
