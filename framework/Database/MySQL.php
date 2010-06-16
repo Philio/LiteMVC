@@ -10,7 +10,7 @@
  */
 namespace LiteMVC\Database;
 
-class Connection extends \mysqli
+class MySQL extends \mysqli
 {
 
 	/**

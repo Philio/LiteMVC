@@ -58,7 +58,8 @@ class Database
 		if (!isset($this->_connections[$name])) {
 			// Check if configuration exists
 			if (array_key_exists($name, $this->_config)) {
-				$this->_connections[$name] = new Database\Connection(
+				$class = 'LiteMVC\\Database\\' . $this->_config[$name]['driver'];
+				$this->_connections[$name] = new $class(
 					$this->_config[$name]['host'],
 					$this->_config[$name]['username'],
 					$this->_config[$name]['password'],

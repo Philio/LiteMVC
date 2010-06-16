@@ -132,7 +132,6 @@ abstract class View
 	 * @param string $name
 	 * @param array $args
 	 * @return void
-	 * @todo add this!
 	 */
 	public function __call($name, $args) {
 		// Check if helper is instanciated
