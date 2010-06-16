@@ -77,6 +77,20 @@ abstract class View
 	protected $_helpers = array();
 
 	/**
+	 * Default namespace prefix
+	 *
+	 * @var stirng
+	 */
+	const Namespace_Prefix = 'LiteMVC';
+
+	/**
+	 * Namespace body for helpers
+	 *
+	 * @var string
+	 */
+	const Namespace_Body = '\View\Helper\\';
+
+	/**
 	 * Constructor
 	 *
 	 * @param App $app
@@ -121,7 +135,21 @@ abstract class View
 	 * @todo add this!
 	 */
 	public function __call($name, $args) {
-		
+		// Check if helper is instanciated
+		if (isset($this->_helpers[$name])) {
+			return $this->_helpers[$name];
+		}
+		// Check if class exists within framework namespace or app namespace
+		$class = self::Namespace_Prefix . self::Namespace_Body . $name;
+		if (!class_exists($class)) {
+			$class = $this->_module . self::Namespace_Body . $name;
+			if (!class_exists($class)) {
+				return false;
+			}
+		}
+		// Call class
+		$this->_helpers[$name] = new $class();
+		return $this->_helpers[$name];
 	}
 
 	/**
