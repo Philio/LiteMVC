@@ -67,11 +67,7 @@ class Config implements \Countable
 	 */
 	public function __set($name, $value)
 	{
-		if (is_array($value)) {
-			$this->_data[$name] = new self($value, true);
-		} else {
-			$this->_data[$name] = $value;
-		}
+		$this->_data[$name] = $value;
 	}
 
 	/**
