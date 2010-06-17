@@ -25,6 +25,16 @@ class File
 	private $_path;
 	
 	/**
+	 * Encoding flags
+	 * 
+	 * @var int
+	 */
+	const Enc_None        = 0;
+	const Enc_Serialize   = 1;
+	const Enc_JSON_Array  = 2;
+	const Enc_JSON_Object = 3;
+	
+	/**
 	 * Constructor
 	 * 
 	 * @param string $path
@@ -59,15 +69,28 @@ class File
 			if ($f === false) {
 				throw new File\Exception('Unable to open the input file.');
 			}
-			$data = fread($f, filesize($this->_path . $key));
-			fclose($f);
-			// Unserialise the data
-			$usd = unserialize($data);
-			if ($usd['expires'] > time()) {
-				if ($usd['encoded']) {
-					return base64_decode($usd['data']);
-				}
-				return $usd['data'];
+			// Read header
+			$header = fgets($f);
+			if (strpos($header, '::') === false) {
+				throw new File\Exception('Unable to read from the input file, bad header.');
+			}
+			list ($expire, $flag) = explode('::', $header);
+			// Read data
+			$body = fread($f, filesize($this->_path . $key) - strlen($header) - 1);
+			switch ($flag) {
+				default:
+				case self::Enc_None:
+					return $body;
+					break;
+				case self::Enc_Serialize:
+					return unserialize($body);
+					break;
+				case self::Enc_JSON_Array:
+					return json_decode($body, true);
+					break;
+				case self::Enc_JSON_Object:
+					return json_decode($body);
+					break;
 			}
 		}
 		return false;
@@ -78,8 +101,9 @@ class File
 	 * 
 	 * @param string $key
 	 * @param mixed $var
-	 * @param int $flag (unused, this is to enable drop in replacement with memcache)
+	 * @param int $flag (this emulates memcache but we will use it for the encoding method)
 	 * @param int $expire
+	 * @return bool
 	 */
 	public function set($key, $var, $flag, $expire)
 	{
@@ -88,14 +112,27 @@ class File
 		if ($f === false) {
 			throw new File\Exception('Unable to open the output file.');
 		}
-		// Store expiry within file
-		$data = array(
-			'expires' => $expire > time() ? $expire : $expire + time(),
-			'data' => is_string($var) ? base64_encode($var) : $var,
-			'encoded' => is_string($var) ? true : false
-		);
-		// Write to file
-		$res = fwrite($f, serialize($data));
+		// Write header
+		$header = ($expire > time() ? $expire : $expire + time()) . '::' . $flag . \PHP_EOL;
+		$res = fwrite($f, $header);
+		if ($res === false) {
+			throw new File\Exception('Unable to write to the output file.');
+		}
+		// Write data
+		switch ($flag) {
+			default:
+			case self::Enc_None:
+				$data = $var;
+				break;
+			case self::Enc_Serialize:
+				$data = serialize($var);
+				break;
+			case self::Enc_JSON_Array:
+			case self::Enc_JSON_Object:
+				$data = json_encode($var);
+				break;
+		}
+		$res = fwrite($f, $data);
 		if ($res === false) {
 			throw new File\Exception('Unable to write to the output file.');
 		}

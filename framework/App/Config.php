@@ -146,7 +146,7 @@ class Config implements \Countable
 				'fmt' => filemtime($file),
 				'contents' => $this->_data
 			),
-			0,
+			2,
 			self::Cache_Lifetime
 		);
 	}
