@@ -39,20 +39,25 @@ abstract class Controller
 		// Reference App object for resource loading
 		$this->_app = $app;
 		// Setup request/view
-		$this->_request = $app->getResource('Request');
-		if ($app->isResource('View\HTML')) {
-			$this->_view = $app->getResource('View\HTML');
+		$this->_request = $this->getResource('Request');
+		if ($this->isResource('View\HTML')) {
+			$this->_view = $this->getResource('View\HTML');
 			// Set module
 			$module = $this->_request->getModule();
 			$this->_view->setModule($module);
 			// Set layout
-			$config = $app->getResource('Config')->Request;
+			$config = $this->getResource('Config')->Request;
 			if (isset($config[$module][$controller]['layout'])) {
 				$this->_view->setLayout(ucfirst($config[$module][$controller]['layout']));
 			} elseif (isset($config[$this->_request->getModule()]['default']['layout'])) {
 				$this->_view->setLayout(ucfirst($config[$module]['default']['layout']));
 			}
 			// Set page
+			$parts = explode('-', $action);
+			$action = '';
+			foreach ($parts as $part) {
+				$action .= ucfirst($part);
+			}
 			$this->_view->setPage(ucfirst($controller) . '/' . ucfirst($action));
 		} elseif ($app->isResource('View\JSON')) {
 			$this->_view = $app->getResource('View\JSON');
@@ -60,15 +65,45 @@ abstract class Controller
 	}
 
 	/**
+	 * Check if an application resource exists
+	 *
+	 * @param string $name
+	 * @return bool
+	 */
+	public function isResource($name)
+	{
+		if ($this->_app instanceof App) {
+			return $this->_app->isResource($name);
+		}
+		return false;
+	}
+
+	/**
 	 * Get an application resource
 	 *
 	 * @param string $name
+	 * @param mixed $params
 	 * @return object
 	 */
-	protected function _getResource($name)
+	public function getResource($name, $params = null)
 	{
 		if ($this->_app instanceof App) {
-			return $this->_app->getResource($name);
+			return $this->_app->getResource($name, $params);
+		}
+		return null;
+	}
+
+	/**
+	 * Get a new instance of a model
+	 *
+	 * @param string $name
+	 * @return mixed
+	 */
+	public function getModel($name)
+	{
+		$db = $this->getResource('Database');
+		if ($db instanceof Database) {
+			return new $name($db);
 		}
 		return null;
 	}
