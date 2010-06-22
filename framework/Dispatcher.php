@@ -103,6 +103,12 @@ class Dispatcher {
 				if (isset($this->_config[$module]['error']['controller']) && isset($this->_config[$module]['error']['exception'])) {
 					$controller = $this->_config[$module]['error']['controller'];
 					$action = $this->_config[$module]['error']['exception'];
+					// Push error message into view for display
+					if ($this->_app->isResource('View\HTML')) {
+						$this->_app->getResource('View\HTML')->exception = $e;
+					} elseif ($this->_app->isResource('View\JSON')) {
+						$this->_app->getResource('View\JSON')->exception = $e;
+					}
 				}
 			}
 		}
