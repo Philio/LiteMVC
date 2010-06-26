@@ -94,7 +94,7 @@ abstract class Model
 	 */
 	public function __set($key, $value)
 	{
-		if (isset($this->_data[$key])) {
+		if (array_key_exists($key, $this->_data)) {
 			$this->_data[$key] = $value;
 		}
 	}
@@ -273,7 +273,22 @@ abstract class Model
 	 * @return array
 	 */
 	public function find($where = null, $order = null, $limit = null) {
-
+		// Query database
+		$res = $this->_conn->query(
+			'select * from ' . $this->_table . $this->_fmtWhere($where) . $this->_fmtOrder($order) .
+			$this->_fmtLimit($limit)
+		);
+		// Process result
+		$resArray = array();
+		if ($res !== false && $res->num_rows) {
+			while (($row = $res->fetch_assoc()) !== null) {
+				$class = get_class($this);
+				$resObj = new $class($this->_conn);
+				$resObj->set($row);
+				$resArray[] = $resObj;
+			}
+		}
+		return $resArray;
 	}
 
 	/**
@@ -309,14 +324,27 @@ abstract class Model
 	{
 		if (is_numeric($value)) {
 			return (string) $value;
+		} elseif (is_null($value)) {
+			return 'null';
 		} else {
 			return '\'' . $this->_conn->real_escape_string($value) . '\'';
 		}
 	}
 
+	/**
+	 * Format where for SQL query
+	 *
+	 * @param mixed $where
+	 * @return string
+	 */
 	protected function _fmtWhere($where)
 	{
-
+		if (is_string($where)) {
+			return ' where ' . $where;
+		} elseif (is_array($where)) {
+			return ' where ' . implode(' and ', $where);
+		}
+		return null;
 	}
 
 	/**
@@ -328,9 +356,9 @@ abstract class Model
 	protected function _fmtOrder($order)
 	{
 		if (is_string($order)) {
-			return 'order by ' . $order;
+			return ' order by ' . $order;
 		} elseif (is_array($order)) {
-			return 'order by ' . implode(', ', $order);
+			return ' order by ' . implode(', ', $order);
 		}
 		return null;
 	}
@@ -344,9 +372,9 @@ abstract class Model
 	protected function _fmtLimit($limit)
 	{
 		if (is_numeric($limit) || is_string($limit)) {
-			return 'limit ' . $limit;
+			return ' limit ' . $limit;
 		} elseif (is_array($limit)) {
-			return 'limit ' . current($limit) . ', ' . next($limit);
+			return ' limit ' . current($limit) . ', ' . next($limit);
 		}
 		return null;
 	}
