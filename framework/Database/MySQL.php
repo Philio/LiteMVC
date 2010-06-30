@@ -14,6 +14,16 @@ class MySQL extends \mysqli
 {
 
 	/**
+	 * Connection settings
+	 * 
+	 * @var string
+	 */
+	private $_host;
+	private $_username;
+	private $_password;
+	private $_database;
+
+	/**
 	 * Suppress error messages (mainly for sessions)
 	 * 
 	 * @var bool
@@ -38,6 +48,41 @@ class MySQL extends \mysqli
 		// Check for errors
 		if (!$this->_noerrors && $this->connect_errno) {
 			throw new Exception('An error occcured connecting to the database.');
+		}
+		// Save settings
+		$this->_host = $host;
+		$this->_username = $username;
+		$this->_password = $password;
+		$this->_database = $database;
+	}
+
+	/**
+	 * Sleep
+	 * 
+	 * @return array
+	 */
+	public function __sleep()
+	{
+		// Encrypt the password, not great but better than plain text
+		$this->_password = base64_encode($this->_password);
+		// Return array of params to save
+		return array('_host', '_username', '_password', '_database', '_noerrors');
+	}
+
+	/**
+	 * Wakeup
+	 *
+	 * @return void
+	 */
+	public function __wakeup()
+	{
+		// Decrypt the password
+		$this->_password = base64_decode($this->_password);
+		// Reconnect
+		parent::__construct($this->_host, $this->_username, $this->_password, $this->_database);
+		// Check for errors
+		if (!$this->_noerrors && $this->connect_errno) {
+			throw new Exception('An error occcured reconnecting to the database.');
 		}
 	}
 
