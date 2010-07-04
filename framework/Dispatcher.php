@@ -67,6 +67,30 @@ class Dispatcher {
 		$error = false;
 		while (!$dispatched) {
 			try {
+				// Authenticate module checks
+				if ($this->_app->isResource('Authenticate')) {
+					$auth = $this->_app->getResource('Authenticate');
+					// Check if user is allowed to view this page
+					if (!$auth->isAllowed($module, $controller, $action)) {
+						// Redirect to login
+						if ($auth->hasUserModel() && !$auth->isLoggedIn()) {
+							$login = $this->_request->getConfig('login');
+							if (is_null($login)) {
+								throw new App\Exception('Unable to redirect to login page, configuration is invalid.');
+							}
+							$this->_request->redirect($login['action'], $login['controller']);
+						} else {
+							// Display access denied page
+							$error = $this->_request->getConfig('error');
+							if (!is_null($error) && isset($error['controller']) && isset($error['notallowed'])) {
+								$controller = $error['controller'];
+								$action = $error['notallowed'];
+							} else {
+								throw new App\Exception('Unable to load error page, configuration is invalid.');
+							}
+						}
+					}
+				}
 				// Get class and action names
 				$class = $this->fmtClass($module, $controller);
 				$method = $this->fmtAction($action);

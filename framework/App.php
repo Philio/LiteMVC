@@ -46,7 +46,7 @@ class App {
 		$loader->register();
 		$loader->setPath(__NAMESPACE__, \PATH . '/framework');
 		// Save autoloader as an application resource
-		$this->setResource('Autoloader', $loader);
+		$this->setResource('Autoload', $loader);
 	}
 
 	/**
@@ -131,11 +131,18 @@ class App {
 		$config->load(\PATH . self::Path_Config . $configFile, \ENVIRONMENT);
 		// Config is special case and is saved as 'Config' resource for convenience
 		$this->setResource('Config', $config);
-		// Load resources from config
-		if (!is_null($config->init)) {
-			$init = $config->init;
-			if (is_array($init['load']) && count($init['load'])) {
-				foreach ($init['load'] as $resource) {
+		// Configure autoloader
+		if (!is_null($config->Autoload)) {
+			$autoload = $this->getResource('Autoload');
+			foreach ($config->Autoload as $ns => $path) {
+				$autoload->setPath($ns, \PATH . $path);
+			}
+		}
+		// Preload modules
+		if (!is_null($config->Init)) {
+			$init = $config->Init;
+			if (is_array($init['preload']) && count($init['preload'])) {
+				foreach ($init['preload'] as $resource) {
 					$this->loadResource($resource);
 				}
 			}
@@ -145,11 +152,15 @@ class App {
 		// Get request
 		$req = $this->getResource('Request');
 		$req->process();
-		// Add autoloader for module
-		$this->getResource('Autoloader')->setPath(
-			ucfirst($req->getModule()),
-			\PATH . self::Path_App . $req->getModule()
-		);
+		// Load other modules
+		if (!is_null($config->Init)) {
+			$init = $config->Init;
+			if (is_array($init['load']) && count($init['load'])) {
+				foreach ($init['load'] as $resource) {
+					$this->loadResource($resource);
+				}
+			}
+		}
 		return $this;
 	}
 

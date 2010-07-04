@@ -46,12 +46,7 @@ abstract class Controller
 			$module = $this->_request->getModule();
 			$this->_view->setModule($module);
 			// Set layout
-			$config = $this->getResource('Config')->Request;
-			if (isset($config[$module][$controller]['layout'])) {
-				$this->_view->setLayout(ucfirst($config[$module][$controller]['layout']));
-			} elseif (isset($config[$this->_request->getModule()]['default']['layout'])) {
-				$this->_view->setLayout(ucfirst($config[$module]['default']['layout']));
-			}
+			$this->_view->setLayout($this->_request->getLayout($controller));
 			// Set page
 			$parts = explode('-', $action);
 			$action = '';

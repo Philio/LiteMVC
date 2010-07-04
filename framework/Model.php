@@ -100,6 +100,16 @@ abstract class Model
 	}
 
 	/**
+	 * Get model data
+	 *
+	 * @return array
+	 */
+	public function get()
+	{
+		return $this->_data;
+	}
+
+	/**
 	 * Set model data
 	 *
 	 * @param array $data

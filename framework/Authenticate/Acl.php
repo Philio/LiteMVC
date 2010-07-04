@@ -19,6 +19,6 @@ interface Acl
 	 * @param int $userId
 	 * @return array
 	 */
-	public function getPermissions($userId);
+	public function isAllowed($userId);
 
 }

@@ -191,6 +191,36 @@ class Request
 	}
 
 	/**
+	 * Get layout
+	 *
+	 * @param string $controller
+	 * @return string
+	 */
+	public function getLayout($controller)
+	{
+		if (isset($this->_config[$this->_module][$controller]['layout'])) {
+			return ucfirst($this->_config[$this->_module][$controller]['layout']);
+		} elseif (isset($this->_config[$this->_module]['default']['layout'])) {
+			return ucfirst($this->_config[$this->_module]['default']['layout']);
+		}
+		return null;
+	}
+
+	/**
+	 * Return a section of the config if it exists
+	 *
+	 * @param string $section
+	 * @return array
+	 */
+	public function getConfig($section)
+	{
+		if (isset($this->_config[$this->_module][$section])) {
+			return $this->_config[$this->_module][$section];
+		}
+		return null;
+	}
+
+	/**
 	 * Check if request was a POST
 	 *
 	 * @return bool
@@ -249,12 +279,12 @@ class Request
 	/**
 	 * Redirect request
 	 *
-	 * @param string $module
-	 * @param string $controller
 	 * @param string $action
+	 * @param string $controller
+	 * @param string $module
 	 * @return void
 	 */
-	public function redirect($module = null, $controller = null, $action = null)
+	public function redirect($action = null, $controller = null, $module = null)
 	{
 		// Replace null values with current values
 		if (is_null($module)) {
