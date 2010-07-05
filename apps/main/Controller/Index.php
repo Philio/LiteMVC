@@ -17,6 +17,9 @@ class Index extends \LiteMVC\Controller
 	 *
 	 * @return void
 	 */
-	public function IndexAction() {}
+	public function IndexAction()
+	{
+		throw new \Exception('Test');
+	}
 
 }

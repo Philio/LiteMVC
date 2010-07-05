@@ -284,7 +284,7 @@ class Request
 	 * @param string $module
 	 * @return void
 	 */
-	public function redirect($action = null, $controller = null, $module = null)
+	public function redirect($action = null, $controller = null, $module = null, $params = null)
 	{
 		// Replace null values with current values
 		if (is_null($module)) {
@@ -301,7 +301,15 @@ class Request
 		if (isset($this->_config['default']['module']) && $module != $this->_config['default']['module']) {
 			$uri .= $module . '/';
 		}
-		$uri .= $controller . '/' . $action . '/';
+		$uri .= $controller;
+		if (!is_null($params) || (isset($this->_config['default']['action']) && $action != $this->_config['default']['module'])) {
+			$uri .= '/' . $action;
+		}
+		if (!is_null($params)) {
+			foreach ($params as $key => $value) {
+				$uri .= '/' . $key . '/' . $value;
+			}
+		}
 		header('Location: ' . $uri);
 		exit;
 	}
