@@ -75,7 +75,7 @@ class Database implements Session
 			' > UNIX_TIMESTAMP()'
 		);
 		// If session found return session data
-		if ($result instanceof mysqli_result && $result->num_rows) {
+		if ($result !== false && $result->num_rows) {
 			$row = $result->fetch_object();
 			$data = $row->{$this->_config['fields']['data']};
 			return $data;
@@ -94,7 +94,7 @@ class Database implements Session
 	{
 		// Overwrite existing session data
 		$this->_db->query(
-			'REPLACE INTO ' . $this->_config['table'] ." VALUES ('$id', '$data', $expiry)"
+			'REPLACE INTO ' . $this->_config['table'] . " VALUES ('$id', '$data', $expiry)"
 		);
 	}
 	
