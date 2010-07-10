@@ -77,18 +77,22 @@ class Authenticate
 			// If an ACL model has been specified instanciate it
 			if (isset($config['model']['acl'])) {
 				$this->_aclModel = new $config['model']['acl']($app->getResource('Database'));
+				if (isset($config['acl']['cache']['module']) && isset($config['acl']['cache']['lifetime'])) {
+					$this->_aclModel->setCache($app->getResource($config['acl']['cache']['module']));
+					$this->_aclModel->setCacheLifetime($config['acl']['cache']['lifetime']);
+				}
 			}
 			// Set allow policy
-			if (isset($config['policy'])) {
-				$this->_policy = $config['policy'];
+			if (isset($config['acl']['policy'])) {
+				$this->_policy = $config['acl']['policy'];
 			}
 			// Add allowed pages
-			if (isset($config['allow']) && is_array($config['allow'])) {
-				$this->_allow = $config['allow'];
+			if (isset($config['acl']['allow']) && is_array($config['acl']['allow'])) {
+				$this->_allow = $config['acl']['allow'];
 			}
 			// Add denied pages
-			if (isset($config['deny']) && is_array($config['deny'])) {
-				$this->_deny = $config['deny'];
+			if (isset($config['acl']['deny']) && is_array($config['acl']['deny'])) {
+				$this->_deny = $config['acl']['deny'];
 			}
 		} else {
 			throw new Authenticate\Exception('No database configuration has been specified.');
@@ -160,7 +164,7 @@ class Authenticate
 	{
 		if ($this->isLoggedIn() && $this->hasAclModel()) {
 			return $this->_aclModel->isAllowed(
-				$$this->_userModel->getUserId(),
+				$this->_userModel->getUserId(),
 				$module,
 				$controller,
 				$action

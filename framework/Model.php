@@ -24,6 +24,20 @@ abstract class Model
 	protected $_conn;
 
 	/**
+	 * Cache module
+	 *
+	 * @var Cache
+	 */
+	protected $_cache;
+
+	/**
+	 * Cache lifetime
+	 *
+	 * @var int
+	 */
+	protected $_cacheLifetime;
+
+	/**
 	 * Database name (namespace in config, should be overloaded by child)
 	 *
 	 * @var string
@@ -57,6 +71,13 @@ abstract class Model
 	 * @var array
 	 */
 	protected $_data = array();
+
+	/**
+	 * Cache prefix
+	 *
+	 * @var string
+	 */
+	const Cache_Prefix = 'Model';
 
 	/**
 	 * Constructor
@@ -123,6 +144,28 @@ abstract class Model
 	}
 
 	/**
+	 * Set cache module
+	 *
+	 * @param Cache $cache
+	 */
+	public function setCache($cache)
+	{
+		$this->_cache = $cache;
+	}
+
+	/**
+	 * Set cache lifetime
+	 *
+	 * @param int $lifetime
+	 */
+	public function setCacheLifetime($lifetime)
+	{
+		if (is_numeric($lifetime)) {
+			$this->_cacheLifetime = $lifetime;
+		}
+	}
+
+	/**
 	 * Load a row from the database
 	 *
 	 * @param mixed $id
@@ -133,16 +176,14 @@ abstract class Model
 		if (is_null($this->_primary)) {
 			throw new Model\Exception('Unable to load a row from the table without a primary key.');
 		}
-		// Format primary key for where statement
-		$where = $this->_fmtPrimary($id);
-		// Query database
-		$res = $this->_conn->query('select * from ' . $this->_table . ' where ' . $where);
+		// Get data
+		$data = $this->_getData('select * from ' . $this->_table . ' where ' . $this->_fmtPrimary($id), $id);
 		// Process result
-		if ($res !== false) {
-			if ($res->num_rows == 1) {
-				$this->_data = $res->fetch_assoc();
+		if ($data !== false) {
+			if (count($data) == 1) {
+				$this->_data = current($data);
 				return true;
-			} elseif ($res->num_rows > 1) {
+			} elseif (count($data) > 1) {
 				throw new Model\Exception('Invalid table definition, more than 1 rows were returned.');
 			}
 		}
@@ -218,6 +259,20 @@ abstract class Model
 		}
 		// Process result
 		if ($res !== false && $this->_conn->affected_rows) {
+			// Delete related cache keys
+			if (is_array($this->_primary) && count($missing) == 0) {
+				$id = array();
+				foreach ($this->_primary as $value) {
+					$id[] = $this->_data[$value];
+				}
+				$this->clearCache($id);
+			} elseif (isset($this->_data[$this->_primary])) {
+				$this->clearCache($this->_data[$this->_primary]);
+			}
+			// Check for insert id and update autoincremented field
+			if ($this->_conn->insert_id != 0 && !is_null($this->_autoIncrement)) {
+				$this->_data[$this->_autoIncrement] = $this->_conn->insert_id;
+			}
 			return true;
 		}
 		return false;
@@ -236,39 +291,32 @@ abstract class Model
 			throw new Model\Exception('Unable to delete a row from a table without a primary key.');
 		}
 		// If id is set delete row specified by id
-		if (!is_null($id)) {
-			// Format primary key for where statement
-			$where = $this->_fmtPrimary($id);
-			// Delete row
-			$res = $this->_conn->query('delete from ' . $this->_table . ' where ' . $where);
-			// Process result
-			if ($res !== false && $this->_conn->affected_rows) {
-				return true;
-			}
-			return false;
-		}
-		// If id isn't set check row data
-		if (is_array($this->_primary)) {
-			// Determine id from row data
-			$id = array();
-			foreach ($this->_primary as $value) {
-				if (isset($this->_data[$value])) {
-					$id[] = $this->_data[$value];
-				} else {
+		if (is_null($id)) {
+			// If id isn't set check row data
+			if (is_array($this->_primary)) {
+				// Determine id from row data
+				$id = array();
+				foreach ($this->_primary as $value) {
+					if (isset($this->_data[$value])) {
+						$id[] = $this->_data[$value];
+					} else {
+						throw new Model\Exception('Unable to delete a row without a value for the primary key.');
+					}
+				}
+			} else {
+				if (!isset($this->_data[$this->_primary])) {
 					throw new Model\Exception('Unable to delete a row without a value for the primary key.');
 				}
+				$id = $this->_data[$this->_primary];
 			}
-			$where = $this->_fmtPrimary($id);
-		} else {
-			if (!isset($this->_data[$this->_primary])) {
-				throw new Model\Exception('Unable to delete a row without a value for the primary key.');
-			}
-			$where = $this->_fmtPrimary($this->_data[$this->_primary]);
 		}
+		$where = $this->_fmtPrimary($id);
 		// Delete row
 		$res = $this->_conn->query('delete from ' . $this->_table . ' where ' . $where);
 		// Process result
 		if ($res !== false && $this->_conn->affected_rows) {
+			// Delete related cache keys
+			$this->clearCache($id);
 			return true;
 		}
 		return false;
@@ -280,18 +328,20 @@ abstract class Model
 	 * @param mixed $where
 	 * @param mixed $order
 	 * @param mixed $limit
+	 * @param string $cacheKey
 	 * @return array
 	 */
-	public function find($where = null, $order = null, $limit = null) {
-		// Query database
-		$res = $this->_conn->query(
-			'select * from ' . $this->_table . $this->_fmtWhere($where) . $this->_fmtOrder($order) .
-			$this->_fmtLimit($limit)
+	public function find($where = null, $order = null, $limit = null, $cacheKey = null) {
+		// Get data
+		$data = $this->_getData(
+			'select * from ' . $this->_table . $this->_fmtWhere($where) .
+			$this->_fmtOrder($order) . $this->_fmtLimit($limit),
+			$cacheKey
 		);
 		// Process result
 		$resArray = array();
-		if ($res !== false && $res->num_rows) {
-			while (($row = $res->fetch_assoc()) !== null) {
+		if ($data !== false) {
+			foreach ($data as $row) {
 				$class = get_class($this);
 				$resObj = new $class($this->_conn);
 				$resObj->set($row);
@@ -299,6 +349,26 @@ abstract class Model
 			}
 		}
 		return $resArray;
+	}
+
+	/**
+	 * Clear an entry in the cache matching the id
+	 *
+	 * @param mixed $id
+	 * @return bool
+	 */
+	public function clearCache($id)
+	{
+		if (is_object($this->_cache)) {
+			// Cache key
+			if (is_array($id)) {
+				$id = implode(':', $id);
+			}
+			$key = self::Cache_Prefix . ':' . get_class($this) . ':' . $id;
+			// Delete key
+			return $this->_cache->delete($key);
+		}
+		return false;
 	}
 
 	/**
@@ -387,6 +457,49 @@ abstract class Model
 			return ' limit ' . current($limit) . ', ' . next($limit);
 		}
 		return null;
+	}
+
+	/**
+	 * Get data for a query from cache or database
+	 *
+	 * @param string $sql
+	 * @param mixed $id
+	 * @return array
+	 */
+	protected function _getData($sql, $id = null)
+	{
+		$data = false;
+		// Check if cache is enabled
+		if (is_object($this->_cache) && !is_null($id)) {
+			// Cache key
+			if (is_array($id)) {
+				$id = implode(':', $id);
+			}
+			$key = self::Cache_Prefix . ':' . get_class($this) . ':' . $id;
+			// Read from cache
+			$data = $this->_cache->get($key);
+		}
+		// Query database is cache lookup unsuccessful
+		if ($data === false) {
+			echo 'db hit';
+			$res = $this->_conn->query($sql);
+			if ($res !== false && $res->num_rows) {
+				$data = array();
+				while (($row = $res->fetch_assoc()) !== null) {
+					$data[] = $row;
+				}
+			} else {
+				return null;
+			}
+		} else {
+			echo 'cache hit';
+		}
+		// Save/update cache
+		if (is_object($this->_cache) && !is_null($id)) {
+			$this->_cache->set($key, $data, 0, $this->_cacheLifetime);
+		}
+		// Return data array
+		return $data;
 	}
 
 }

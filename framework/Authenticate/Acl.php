@@ -14,11 +14,14 @@ interface Acl
 {
 	
 	/**
-	 * Get permissions for a user
+	 * Check if user has permission to view a page
 	 * 
 	 * @param int $userId
+	 * @param string $module
+	 * @param string $controller
+	 * @param string $action
 	 * @return array
 	 */
-	public function isAllowed($userId);
+	public function isAllowed($userId, $module, $controller, $action);
 
 }
