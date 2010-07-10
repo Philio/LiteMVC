@@ -94,7 +94,7 @@ class Database implements Session
 	{
 		// Overwrite existing session data
 		$this->_db->query(
-			'REPLACE INTO ' . $this->_config['table'] . " VALUES ('$id', '$data', $expiry)"
+			'REPLACE INTO ' . $this->_config['table'] . " VALUES ('$id', '" . $this->_db->real_escape_string($data) . "', $expiry)"
 		);
 	}
 	
