@@ -481,7 +481,6 @@ abstract class Model
 		}
 		// Query database is cache lookup unsuccessful
 		if ($data === false) {
-			echo 'db hit';
 			$res = $this->_conn->query($sql);
 			if ($res !== false && $res->num_rows) {
 				$data = array();
@@ -491,8 +490,6 @@ abstract class Model
 			} else {
 				return null;
 			}
-		} else {
-			echo 'cache hit';
 		}
 		// Save/update cache
 		if (is_object($this->_cache) && !is_null($id)) {
