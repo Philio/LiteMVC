@@ -23,13 +23,6 @@ class Dispatcher {
 	protected $_app;
 
 	/**
-	 * Config objet
-	 *
-	 * @var App\Config
-	 */
-	protected $_config;
-
-	/**
 	 * Request object
 	 *
 	 * @var Request
@@ -46,7 +39,6 @@ class Dispatcher {
 	{
 		// Assign app, config and request to class vars
 		$this->_app = $app;
-		$this->_config = $app->getResource('Config')->Request;
 		$this->_request = $app->getResource('Request');
 	}
 
@@ -64,7 +56,7 @@ class Dispatcher {
 		// Try and dispatch the request
 		$dispatched = false;
 		$notfound = false;
-		$error = false;
+		$exception = false;
 		while (!$dispatched) {
 			try {
 				// Authenticate module checks
@@ -102,6 +94,11 @@ class Dispatcher {
 				}
 				// Try and load the action
 				if (method_exists($c, $method)) {
+					// Call controller init function first if it exists
+					if (method_exists($c, 'init')) {
+						$c->init();
+					}
+					// Call action
 					$c->$method();
 				} else {
 					throw new App\Exception('Unable to load action method for  ' . $action . '.');
@@ -114,19 +111,21 @@ class Dispatcher {
 					throw new App\Exception('Unable to load error page, configuration is invalid.');
 				}
 				$notfound = true;
-				if (isset($this->_config[$module]['error']['controller']) && isset($this->_config[$module]['error']['notfound'])) {
-					$controller = $this->_config[$module]['error']['controller'];
-					$action = $this->_config[$module]['error']['notfound'];
+				$error = $this->_request->getConfig('error');
+				if (isset($error['controller']) && isset($error['notfound'])) {
+					$controller = $error['controller'];
+					$action = $error['notfound'];
 				}
 			} catch (\Exception $e) {
 				// Catch any other exceptions within the application
-				if ($error) {
+				if ($exception) {
 					throw new App\Exception('Unable to load error page, configuration is invalid.');
 				}
-				$error = true;
-				if (isset($this->_config[$module]['error']['controller']) && isset($this->_config[$module]['error']['exception'])) {
-					$controller = $this->_config[$module]['error']['controller'];
-					$action = $this->_config[$module]['error']['exception'];
+				$exception = true;
+				$error = $this->_request->getConfig('error');
+				if (isset($error['controller']) && isset($error['exception'])) {
+					$controller = $error['controller'];
+					$action = $error['exception'];
 					// Push error message into view for display
 					if ($this->_app->isResource('View\HTML')) {
 						$this->_app->getResource('View\HTML')->exception = $e;

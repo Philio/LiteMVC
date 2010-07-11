@@ -38,9 +38,9 @@ class Database
 	 */
 	public function  __construct(App $app) {
 		// Check config
-		$config = $app->getResource('Config');
-		if (!is_null($config->Database)) {
-			$this->_config = $config->Database;
+		$config = $app->getResource('Config')->Database;
+		if (!is_null($config)) {
+			$this->_config = $config;
 		} else {
 			throw new Database\Exception('No database configuration has been specified.');
 		}
