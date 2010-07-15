@@ -218,7 +218,7 @@ class Captcha
 		if (!isset($_SESSION[self::Sess_Namespace]['Image']) || !isset($_SESSION[self::Sess_Namespace]['Code'])) {
 			$this->_render();
 		}
-		return '<img src="' . $_SESSION[self::Sess_Namespace]['Image'] . '" />';
+		return '<img src="' . $_SESSION[self::Sess_Namespace]['Image'] . '" alt="Captcha" class="captcha" />';
 	}
 
 	/**
@@ -291,7 +291,7 @@ class Captcha
 		// Calc restraints
 		$charSizeY = $this->_height;
 		$charSizeX = floor($this->_width * 0.9 / $this->_charCount);
-		$ptSize = floor($charSizeY / 2);
+		$ptSize = floor($charSizeY * 0.9 / 2);
 		// Add characters
 		$code = '';
 		for ($i = 0; $i < $this->_charCount; $i ++) {
