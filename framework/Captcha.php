@@ -99,7 +99,7 @@ class Captcha
 	 */
 	public function __construct(App $app)
 	{
-		$config = $app->getResource('Config')->Captcha;
+		$config = $app->getResource('Config')->captcha;
 		if (!is_null($config)) {
 			// Set config options from config file
 			foreach ($config as $key => $value) {

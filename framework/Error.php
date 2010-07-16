@@ -101,8 +101,8 @@ class Error
 	public function  __construct(App $app) {
 		// Read any config options
 		$config = $app->getResource('Config');
-		if (!is_null($config->Error)) {
-			$errConfig = $config->Error;
+		if (!is_null($config->error)) {
+			$errConfig = $config->error;
 			// Set display
 			if (isset($errConfig['display']) && $errConfig['display'] == true) {
 				$this->setDisplay(true);

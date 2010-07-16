@@ -34,8 +34,8 @@ class Autoload
 		}
 		// Check paths against class name
 		foreach (self::$_paths as $ns => $path) {
-			if (strpos($class, $ns) === 0) {
-				$file = preg_replace('/' . $ns . '/', $path, $class, 1);
+			if (stripos($class, $ns) === 0) {
+				$file = preg_replace('/' . $ns . '/i', $path, $class, 1);
 				$file = str_replace('\\', '/', $file) . '.php';
 				// Check exists
 				if (file_exists($file)) {

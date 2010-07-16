@@ -45,32 +45,33 @@ class Session
 	 */
 	public function  __construct(App $app) {
 		// Check config
-		$config = $app->getResource('Config');
-		if (!is_null($config->Session)) {
-			$sessConfig = $config->Session;
-		} else {
+		$config = $app->getResource('Config')->session;
+		if (is_null($config)) {
 			throw new Session\Exception('No session configuration has been specified.');
 		}
 		// Load handlers
-		if (isset($sessConfig['handler'])) {
-			foreach ($sessConfig['handler'] as $handler) {
+		if (isset($config['handler'])) {
+			foreach ($config['handler'] as $handler) {
 				switch ($handler) {
+					// File based sessions
 					case 'File':
 						$this->_handlers['File'] = new Session\File(
 							$app->getResource('Cache\File'),
-							isset($sessConfig['File']) ? $sessConfig['File'] : array()
+							isset($config['file']) ? $config['file'] : array()
 						);
 						break;
+					// Memcache driven sessions
 					case 'Memcache':
 						$this->_handlers['Memcache'] = new Session\Memcache(
 							$app->getResource('Cache\Memcache'),
-							isset($sessConfig['Memcache']) ? $sessConfig['Memcache'] : array()
+							isset($config['memcache']) ? $config['memcache'] : array()
 						);
 						break;
+					// Database driven sessions
 					case 'Database':
 						$this->_handlers['Database'] = new Session\Database(
-							$app->getResource('Database')->getConnection('Session'),
-							isset($sessConfig['Database']) ? $sessConfig['Database'] : array()
+							$app->getResource('Database')->getConnection('session'),
+							isset($config['database']) ? $config['database'] : array()
 						);
 						break;
 				}
@@ -79,7 +80,7 @@ class Session
 			throw new Session\Exception('No session handlers specified in configuration.');
 		}
 		// Set expriry
-		$this->_expires = isset($sessConfig['expires']) ? $sessConfig['expires'] : self::Session_Expiry;
+		$this->_expires = isset($config['expires']) ? $config['expires'] : self::Session_Expiry;
 		// Register handler
 		$this->register();
 	}

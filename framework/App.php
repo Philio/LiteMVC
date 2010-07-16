@@ -132,16 +132,16 @@ class App {
 		// Config is special case and is saved as 'Config' resource for convenience
 		$this->setResource('Config', $config);
 		// Configure autoloader
-		if (!is_null($config->Autoload)) {
+		if (!is_null($config->autoload)) {
 			$autoload = $this->getResource('Autoload');
-			foreach ($config->Autoload as $ns => $path) {
+			foreach ($config->autoload as $ns => $path) {
 				$autoload->setPath($ns, \PATH . $path);
 			}
 		}
 		// Preload modules
-		if (!is_null($config->Init)) {
-			$init = $config->Init;
-			if (is_array($init['preload']) && count($init['preload'])) {
+		if (!is_null($config->init)) {
+			$init = $config->init;
+			if (is_array($init['preload'])) {
 				foreach ($init['preload'] as $resource) {
 					$this->loadResource($resource);
 				}
@@ -152,11 +152,18 @@ class App {
 		// Get request
 		$req = $this->getResource('Request');
 		$req->process();
-		// Load other modules
-		if (!is_null($config->Init)) {
-			$init = $config->Init;
-			if (is_array($init['load']) && count($init['load'])) {
+		// Load other resources
+		if (!is_null($config->init)) {
+			$init = $config->init;
+			// Application specific resources
+			if (is_array($init['load'])) {
 				foreach ($init['load'] as $resource) {
+					$this->loadResource($resource);
+				}
+			}
+			// Module specific resources
+			if (is_array($init[$req->getModule()]['load'])) {
+				foreach ($init[$req->getModule()]['load'] as $resource) {
 					$this->loadResource($resource);
 				}
 			}

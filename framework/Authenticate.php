@@ -64,7 +64,7 @@ class Authenticate
 	public function __construct(App $app)
 	{
 		// Check config
-		$config = $app->getResource('Config')->Authenticate;
+		$config = $app->getResource('Config')->authenticate;
 		if (!is_null($config)) {
 			// Check that a user model has been specified
 			if (isset($config['model']['user'])) {

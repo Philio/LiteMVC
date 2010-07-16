@@ -38,7 +38,7 @@ class Database
 	 */
 	public function  __construct(App $app) {
 		// Check config
-		$config = $app->getResource('Config')->Database;
+		$config = $app->getResource('Config')->database;
 		if (!is_null($config)) {
 			$this->_config = $config;
 		} else {

@@ -82,9 +82,9 @@ class Request
 	public function __construct(App $app)
 	{
 		// Check config
-		$config = $app->getResource('Config');
-		if (!is_null($config->Request)) {
-			$this->_config = $config->Request;
+		$config = $app->getResource('Config')->request;
+		if (!is_null($config)) {
+			$this->_config = $config;
 		}
 		// Set app path
 		$this->_appPath = $app::Path_App;
