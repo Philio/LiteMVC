@@ -215,7 +215,7 @@ class Captcha
 	 */
 	public function __toString()
 	{
-		if (!isset($_SESSION[self::Sess_Namespace]['Image']) || !isset($_SESSION[self::Sess_Namespace]['Code'])) {
+		if (!$this->_isRendered()) {
 			$this->_render();
 		}
 		return '<img src="' . $_SESSION[self::Sess_Namespace]['Image'] . '" alt="Captcha" class="captcha" />';
@@ -232,6 +232,32 @@ class Captcha
 	}
 
 	/**
+	 * Get the image url
+	 *
+	 * @return string
+	 */
+	public function getImage()
+	{
+		if (!$this->_isRendered()) {
+			$this->_render();
+		}
+		return $_SESSION[self::Sess_Namespace]['Image'];
+	}
+
+	/**
+	 * Get the image code
+	 *
+	 * @return string
+	 */
+	public function getCode()
+	{
+		if (!$this->_isRendered()) {
+			$this->_render();
+		}
+		return $_SESSION[self::Sess_Namespace]['Code'];
+	}
+
+	/**
 	 * Validate code
 	 *
 	 * @param strign $code
@@ -243,6 +269,19 @@ class Captcha
 			return true;
 		}
 		return false;
+	}
+
+	/**
+	 * Check if the image has been rendered
+	 *
+	 * @return bool
+	 */
+	protected function _isRendered()
+	{
+		if (!isset($_SESSION[self::Sess_Namespace]['Image']) || !isset($_SESSION[self::Sess_Namespace]['Code'])) {
+			return false;
+		}
+		return true;
 	}
 
 	/**
