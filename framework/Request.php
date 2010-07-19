@@ -284,7 +284,7 @@ class Request
 	 * @param string $module
 	 * @return void
 	 */
-	public function redirect($action = null, $controller = null, $module = null, $params = null)
+	public function redirect($action = null, $controller = null, $module = null, $params = null, $return = false)
 	{
 		// Replace null values with current values
 		if (is_null($module)) {
@@ -309,6 +309,9 @@ class Request
 			foreach ($params as $key => $value) {
 				$uri .= '/' . $key . '/' . $value;
 			}
+		}
+		if ($return) {
+			return $uri;
 		}
 		header('Location: ' . $uri);
 		exit;
