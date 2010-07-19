@@ -180,8 +180,13 @@ class App {
 		// Dispatch request
 		$this->getResource('Dispatcher')->dispatch();
 		// Page output
+		$output = false;
 		if ($this->isResource('View\HTML')) {
 			$output = $this->getResource('View\HTML');
+		} elseif ($this->isResource('View\JSON')) {
+			$output = $this->getResource('View\JSON');
+		}
+		if ($output) {
 			$output->render();
 			echo $output;
 		}
