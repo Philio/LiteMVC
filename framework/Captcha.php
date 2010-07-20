@@ -84,6 +84,13 @@ class Captcha
 	const Sess_Namespace = 'Captcha';
 
 	/**
+	 * How long to keep the image for before it is deleted
+	 *
+	 * @var int
+	 */
+	const Image_Expires = 86400;
+
+	/**
 	 * Character set
 	 *
 	 *
@@ -291,6 +298,10 @@ class Captcha
 	 */
 	protected function _render()
 	{
+		// Garbage collection
+		if (mt_rand(1, 100) == 50) {
+			$this->_cleanup();
+		}
 		// Load fonts
 		$this->_loadFontList();
 		// Load backgrounds
@@ -394,12 +405,29 @@ class Captcha
 	protected function _scanDirectory($dir)
 	{
 		$files = array();
-		foreach(new \DirectoryIterator(\PATH . $dir) as $file) {
+		foreach (new \DirectoryIterator(\PATH . $dir) as $file) {
 			if ($file->isFile()) {
 				$files[] = $file->getPathname();
 			}
 		}
 		return $files;
+	}
+
+	/**
+	 * Cleanup old captcha images
+	 *
+	 * @return void
+	 */
+	protected function _cleanup()
+	{
+		if (is_null($this->_imgPath)) {
+			return;
+		}
+		foreach (new \DirectoryIterator(\PATH . $this->_imgPath) as $file) {
+			if ($file->isFile() && $file->getATime() < time() - self::Image_Expires) {
+				unlink($file->getPathname());
+			}
+		}
 	}
 
 }
