@@ -13,9 +13,15 @@ namespace LiteMVC;
 class Theme
 {
 
+	/**
+	 * Constructor
+	 *
+	 * @param App $app
+	 * @return void
+	 */
 	public function __construct(App $app)
 	{
-		
+		$config = $app->getResource('Config')->theme;
 	}
 
 }
