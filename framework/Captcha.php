@@ -420,9 +420,11 @@ class Captcha
 	 */
 	protected function _cleanup()
 	{
+		// If image path not set cannot complete
 		if (is_null($this->_imgPath)) {
 			return;
 		}
+		// Loop through directory and unlink any file not accessed for 24 hrs
 		foreach (new \DirectoryIterator(\PATH . $this->_imgPath) as $file) {
 			if ($file->isFile() && $file->getATime() < time() - self::Image_Expires) {
 				unlink($file->getPathname());
