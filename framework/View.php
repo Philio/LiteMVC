@@ -10,6 +10,8 @@
  */
 namespace LiteMVC;
 
+use LiteMVC\View as View;
+
 abstract class View
 {
 
@@ -168,9 +170,16 @@ abstract class View
 	 * @param string $layout
 	 * @return void
 	 */
-	public function setLayout($layout)
+	public function setLayout($layout, $addPath = true)
 	{
-		$this->_layout = $layout;
+		if ($addPath) {
+			if (is_null($this->_module)) {
+				throw new View\Exception('Cannot determine path, module unknown');
+			}
+			$this->_layout = $this->_path . $this->_module . '/View/Layouts/' . $layout . '.phtml';
+		} else {
+			$this->_layout = $layout;
+		}
 	}
 
 	/**
@@ -179,9 +188,16 @@ abstract class View
 	 * @param string $page
 	 * @return void
 	 */
-	public function setPage($page)
+	public function setPage($page, $addPath = true)
 	{
-		$this->_page = $page;
+		if ($addPath) {
+			if (is_null($this->_module)) {
+				throw new View\Exception('Cannot determine path, module unknown');
+			}
+			$this->_page = $this->_path . $this->_module . '/View/Pages/' . $page . '.phtml';
+		} else {
+			$this->_page = $page;
+		}
 	}
 
 	/**

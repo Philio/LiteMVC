@@ -26,7 +26,7 @@ class HTML extends View implements View\View
 		if (!is_null($this->_page)) {
 			if ($this->_pageMode == 'include') {
 				ob_start();
-				include $this->_path . $this->_module . '/View/Pages/' . $this->_page . '.phtml';
+				include $this->_page;
 				$this->_pageRendered = ob_get_clean();
 			}
 			if ($this->_pageMode == 'replace') {
@@ -42,7 +42,7 @@ class HTML extends View implements View\View
 		// Render layout
 		if (!is_null($this->_layout)) {
 			ob_start();
-			include $this->_path . $this->_module . '/View/Layouts/' . $this->_layout . '.phtml';
+			include $this->_layout;
 			$this->_rendered = ob_get_clean();
 		}
 	}
