@@ -466,7 +466,7 @@ abstract class Model
 	 * @param mixed $id
 	 * @return array
 	 */
-	protected function _getData($sql, $id = null)
+	protected function _getData($sql, $id = null, $cacheNull = false)
 	{
 		$data = false;
 		// Check if cache is enabled
@@ -487,6 +487,8 @@ abstract class Model
 				while (($row = $res->fetch_assoc()) !== null) {
 					$data[] = $row;
 				}
+			} elseif ($cacheNull) {
+				$data = null;
 			} else {
 				return null;
 			}
