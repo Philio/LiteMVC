@@ -46,8 +46,8 @@ class File
 		if ($path instanceof App) {
 			// Get file cache config from App object
 			$config = $path->getResource('Config');
-			if ($config && !is_null($config->Filecache) && isset($config->Filecache['path'])) {
-				$path = $config->Filecache['path'];
+			if ($config && !is_null($config->filecache) && isset($config->filecache['path'])) {
+				$path = $config->filecache['path'];
 			} else {
 				$path = \PATH . $path::Path_Cache;
 			}
