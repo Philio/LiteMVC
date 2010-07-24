@@ -30,6 +30,13 @@ abstract class View
 	protected $_module;
 
 	/**
+	 * Theme object
+	 *
+	 * @var Theme
+	 */
+	protected $_theme;
+
+	/**
 	 * Layout
 	 *
 	 * @var string
@@ -100,7 +107,12 @@ abstract class View
 	 */
 	public function __construct(App $app)
 	{
+		// Set path
 		$this->_path = \PATH . $app::Path_App;
+		// Set theme module
+		if ($app->isResource('Theme')) {
+			//$this->_theme = $app->getResource('Theme');
+		}
 	}
 
 	/**
@@ -165,42 +177,6 @@ abstract class View
 	}
 
 	/**
-	 * Set the page layout
-	 *
-	 * @param string $layout
-	 * @return void
-	 */
-	public function setLayout($layout, $addPath = true)
-	{
-		if ($addPath) {
-			if (is_null($this->_module)) {
-				throw new View\Exception('Cannot determine path, module unknown');
-			}
-			$this->_layout = $this->_path . $this->_module . '/View/Layouts/' . $layout . '.phtml';
-		} else {
-			$this->_layout = $layout;
-		}
-	}
-
-	/**
-	 * Set the page
-	 * 
-	 * @param string $page
-	 * @return void
-	 */
-	public function setPage($page, $addPath = true)
-	{
-		if ($addPath) {
-			if (is_null($this->_module)) {
-				throw new View\Exception('Cannot determine path, module unknown');
-			}
-			$this->_page = $this->_path . $this->_module . '/View/Pages/' . $page . '.phtml';
-		} else {
-			$this->_page = $page;
-		}
-	}
-
-	/**
 	 * Set the page rendering mode
 	 *
 	 * @param string $mode
@@ -210,6 +186,46 @@ abstract class View
 	{
 		if (in_array($mode, array('include', 'replace'))) {
 			$this->_pageMode = $mode;
+		}
+	}
+
+	/**
+	 * Set the page layout
+	 *
+	 * @param string $layout
+	 * @return void
+	 */
+	public function setLayout($layout)
+	{
+		if (is_null($this->_module)) {
+			throw new View\Exception('Cannot determine path, module unknown');
+		}
+		$layout = $this->_path . $this->_module . '/View/Layouts/' . $layout . '.phtml';
+		// Run theme processing
+		if ($this->_theme instanceof Theme) {
+			$this->_layout = $this->_theme->getLayout($layout);
+		} else {
+			$this->_layout = $layout;
+		}
+	}
+
+	/**
+	 * Set the page
+	 *
+	 * @param string $page
+	 * @return void
+	 */
+	public function setPage($page)
+	{
+		if (is_null($this->_module)) {
+			throw new View\Exception('Cannot determine path, module unknown');
+		}
+		$page =  $this->_path . $this->_module . '/View/Pages/' . $page . '.phtml';
+		// Run theme processing
+		if ($this->_theme instanceof Theme) {
+			$this->_page = $this->_theme->getPage($page);
+		} else {
+			$this->_page = $page;
 		}
 	}
 
