@@ -77,9 +77,9 @@ class Authenticate
 			// If an ACL model has been specified instanciate it
 			if (isset($config['model']['acl'])) {
 				$this->_aclModel = new $config['model']['acl']($app->getResource('Database'));
-				if (isset($config['acl']['cache']['module']) && isset($config['acl']['cache']['lifetime'])) {
-					$this->_aclModel->setCache($app->getResource($config['acl']['cache']['module']));
-					$this->_aclModel->setCacheLifetime($config['acl']['cache']['lifetime']);
+				if (isset($config['model']['cache']['module']) && isset($config['model']['cache']['lifetime'])) {
+					$this->_aclModel->setCache($app->getResource($config['model']['cache']['module']));
+					$this->_aclModel->setCacheLifetime($config['model']['cache']['lifetime']);
 				}
 			}
 			// Set allow policy
