@@ -179,7 +179,7 @@ abstract class Model
 		// Get data
 		$data = $this->_getData('select * from ' . $this->_table . ' where ' . $this->_fmtPrimary($id), $id);
 		// Process result
-		if ($data !== false) {
+		if (is_array($data)) {
 			if (count($data) == 1) {
 				$this->_data = current($data);
 				return true;
@@ -340,7 +340,7 @@ abstract class Model
 		);
 		// Process result
 		$resArray = array();
-		if ($data !== false) {
+		if (is_array($data)) {
 			foreach ($data as $row) {
 				$class = get_class($this);
 				$resObj = new $class($this->_conn);
