@@ -111,7 +111,7 @@ abstract class View
 		$this->_path = \PATH . $app::Path_App;
 		// Set theme module
 		if ($app->isResource('Theme')) {
-			//$this->_theme = $app->getResource('Theme');
+			$this->_theme = $app->getResource('Theme');
 		}
 	}
 
