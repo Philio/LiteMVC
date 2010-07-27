@@ -13,16 +13,16 @@ namespace LiteMVC\Theme;
 interface Item {
 
 	/**
-	 * Lookup filename
+	 * Lookup key
 	 * 
 	 * @param int $siteId
-	 * @param string $filename
+	 * @param string $key
 	 * @return bool
 	 */
-	public function lookup($siteId, $filename);
+	public function lookup($siteId, $key);
 
 	/**
-	 * Get file data
+	 * Get data
 	 *
 	 * @return string
 	 */

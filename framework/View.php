@@ -203,7 +203,7 @@ abstract class View
 		$layout = $this->_path . $this->_module . '/View/Layouts/' . $layout . '.phtml';
 		// Run theme processing
 		if ($this->_theme instanceof Theme) {
-			$this->_layout = $this->_theme->getLayout($layout);
+			$this->_layout = $this->_theme->layout($layout);
 		} else {
 			$this->_layout = $layout;
 		}
@@ -223,7 +223,7 @@ abstract class View
 		$page =  $this->_path . $this->_module . '/View/Pages/' . $page . '.phtml';
 		// Run theme processing
 		if ($this->_theme instanceof Theme) {
-			$this->_page = $this->_theme->getPage($page);
+			$this->_page = $this->_theme->page($page);
 		} else {
 			$this->_page = $page;
 		}

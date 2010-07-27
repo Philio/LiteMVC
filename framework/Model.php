@@ -398,10 +398,20 @@ abstract class Model
 	 * Format a value for SQL query
 	 *
 	 * @param mixed $value
+	 * @param string $type
 	 * @return string
 	 */
-	protected function _fmtValue($value)
+	protected function _fmtValue($value, $type = null)
 	{
+		// If value is a string
+		if ($type == 'string') {
+			return '\'' . $this->_conn->real_escape_string($value) . '\'';
+		}
+		// If value is a number
+		if ($type == 'int' || $type == 'float') {
+			return (string) $value;
+		}
+		// If type isnt set determine type
 		if (is_numeric($value)) {
 			return (string) $value;
 		} elseif (is_null($value)) {

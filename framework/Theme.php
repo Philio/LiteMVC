@@ -28,25 +28,18 @@ class Theme
 	protected $_siteModel;
 
 	/**
-	 * Page layout model
+	 * File handlers
 	 *
-	 * @var Model
+	 * @var array
 	 */
-	protected $_layoutModel;
+	protected $_fileHandlers = array();
 
 	/**
-	 * Page content model
+	 * Data handlers
 	 *
-	 * @var Model
+	 * @var array
 	 */
-	protected $_pageModel;
-
-	/**
-	 * CSS styles model
-	 *
-	 * @var Model
-	 */
-	protected $_styleModel;
+	protected $_dataHandlers = array();
 
 	/**
 	 * File path
@@ -93,66 +86,51 @@ class Theme
 				throw new Theme\Exception('Unable to determine site id.');
 			}
 		}
-		// Layout model
-		if (isset($config['model']['layout'])) {
-			$this->_layoutModel = new $config['model']['layout']($app->getResource('Database'));
-			// Enable caching
-			if (isset($config['model']['cache']['module']) && isset($config['model']['cache']['lifetime'])) {
-				$this->_layoutModel->setCache($app->getResource($config['model']['cache']['module']));
-				$this->_layoutModel->setCacheLifetime($config['model']['cache']['lifetime']);
+		// Register file handlers
+		if (is_array($config['model']['file'])) {
+			foreach ($config['model']['file'] as $name => $model) {
+				// Instanciate model
+				$this->_fileHandlers[$name] = new $model($app->getResource('Database'));
+				// Enable caching
+				if (isset($config['model']['cache']['module']) && isset($config['model']['cache']['lifetime'])) {
+					$this->_fileHandlers[$name]->setCache($app->getResource($config['model']['cache']['module']));
+					$this->_fileHandlers[$name]->setCacheLifetime($config['model']['cache']['lifetime']);
+				}
 			}
 		}
-		// Page model
-		if (isset($config['model']['page'])) {
-			$this->_pageModel = new $config['model']['page']($app->getResource('Database'));
-			// Enable caching
-			if (isset($config['model']['cache']['module']) && isset($config['model']['cache']['lifetime'])) {
-				$this->_pageModel->setCache($app->getResource($config['model']['cache']['module']));
-				$this->_pageModel->setCacheLifetime($config['model']['cache']['lifetime']);
-			}
-		}
-		// Style model
-		if (isset($config['model']['style'])) {
-			$this->_styleModel = new $config['model']['style']($app->getResource('Database'));
-			// Enable caching
-			if (isset($config['model']['cache']['module']) && isset($config['model']['cache']['lifetime'])) {
-				$this->_styleModel->setCache($app->getResource($config['model']['cache']['module']));
-				$this->_styleModel->setCacheLifetime($config['model']['cache']['lifetime']);
+		// Register data handlers
+		if (is_array($config['model']['data'])) {
+			foreach ($config['model']['data'] as $name => $model) {
+				// Instanciate model
+				$this->_dataHandlers[$name] = new $model($app->getResource('Database'));
+				// Enable caching
+				if (isset($config['model']['cache']['module']) && isset($config['model']['cache']['lifetime'])) {
+					$this->_dataHandlers[$name]->setCache($app->getResource($config['model']['cache']['module']));
+					$this->_dataHandlers[$name]->setCacheLifetime($config['model']['cache']['lifetime']);
+				}
 			}
 		}
 	}
 
 	/**
-	 * Get filename of the layout template
+	 * Call function
 	 *
-	 * @param string $layout
-	 * @return string
+	 * @param string $func
+	 * @param array $params
+	 * @return mixed
 	 */
-	public function getLayout($layout)
+	public function __call($func, $params)
 	{
-		return $this->_getFilename($this->_layoutModel, $layout);
-	}
-
-	/**
-	 * Get filename of the page template
-	 *
-	 * @param string $page
-	 * @return string
-	 */
-	public function getPage($page)
-	{
-		return $this->_getFilename($this->_pageModel, $page);
-	}
-
-	/**
-	 * Get filename of the stylesheet
-	 *
-	 * @param string $style
-	 * @return string
-	 */
-	public function getStyle($style)
-	{
-		return $this->_getFilename($this->_styleModel, $style);
+		// Check file handlers
+		if (isset($this->_fileHandlers[$func])) {
+			return $this->_getFilename($this->_fileHandlers[$func], current($params));
+		// Check data handlers
+		} elseif (isset($this->_dataHandlers[$func])) {
+			return $this->_getData($this->_dataHandlers[$func], current($params));
+		// Otherwise just return the param
+		} else {
+			return current($params);
+		}
 	}
 
 	/**
@@ -184,6 +162,21 @@ class Theme
 			return $tmpFile;
 		}
 		return $filename;
+	}
+
+	/**
+	 * Get a data item
+	 *
+	 * @param Theme\Item $model
+	 * @param string $key
+	 * @return array
+	 */
+	protected function _getData($model, $key)
+	{
+		if ($model instanceof Theme\Item && $model->lookup($this->_siteId, $key)) {
+			return $model->getData();
+		}
+		return null;
 	}
 
 }
