@@ -78,7 +78,7 @@ class Dispatcher {
 								$controller = $error['controller'];
 								$action = $error['notallowed'];
 							} else {
-								throw new App\Exception('Unable to load error page, configuration is invalid.');
+								throw new App\Exception('Access denied. Unable to load error page, configuration is invalid.');
 							}
 						}
 					}
@@ -108,7 +108,7 @@ class Dispatcher {
 			} catch (App\Exception $e) {
 				// Page not found, display error page
 				if ($notfound) {
-					throw new App\Exception('Unable to load error page, configuration is invalid.');
+					throw new App\Exception('Page not found. Unable to load error page, configuration is invalid.');
 				}
 				$notfound = true;
 				$error = $this->_request->getConfig('error');
@@ -119,7 +119,7 @@ class Dispatcher {
 			} catch (\Exception $e) {
 				// Catch any other exceptions within the application
 				if ($exception) {
-					throw new App\Exception('Unable to load error page, configuration is invalid.');
+					throw new App\Exception('Uncaught exception. Unable to load error page, configuration is invalid.');
 				}
 				$exception = true;
 				$error = $this->_request->getConfig('error');
