@@ -269,7 +269,7 @@ class Error
 		header(self::Header_Prefix . self::Header_Fatal);
 		// Compile the log
 		$output = '';
-		if ($this->_display || true) {
+		if ($this->_display) {
 			$output = '<h2>Error Log</h2>';
 			$log = array_reverse($this->_log);
 			foreach($log as $entry) {

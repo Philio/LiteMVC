@@ -181,4 +181,18 @@ class Authenticate
 		return false;
 	}
 
+	/**
+	 * Get the model for the current user
+	 *
+	 * @return object
+	 */
+	public function getUser()
+	{
+		// If logged in return the user model
+		if ($this->isLoggedIn()) {
+			return $this->_userModel;
+		}
+		return null;
+	}
+
 }

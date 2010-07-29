@@ -92,13 +92,19 @@ abstract class Controller
 	 * Get a new instance of a model
 	 *
 	 * @param string $name
+	 * @param string $cache
 	 * @return mixed
 	 */
-	public function getModel($name)
+	public function getModel($name, $cache = null, $lifetime = null)
 	{
 		$db = $this->getResource('Database');
 		if ($db instanceof Database) {
-			return new $name($db);
+			$model = new $name($db);
+			if (!is_null($cache) && !is_null($lifetime)) {
+				$model->setCache($this->getResource($cache));
+				$model->setCacheLifetime($lifetime);
+			}
+			return $model;
 		}
 		return null;
 	}
