@@ -274,7 +274,7 @@ class Error
 			$log = array_reverse($this->_log);
 			foreach($log as $entry) {
 				$output .= '<b>' . $entry['level'] .'</b>: ' . ucfirst($entry['message']) .
-					'<br /><b>Occured in</b>: ' . $entry['file'] . ' at line ' . $entry['line'] .
+					'<br /><b>Occurred in</b>: ' . $entry['file'] . ' at line ' . $entry['line'] .
 					'.<br />';
 				if (!is_null($entry['trace'])) {
 					$output .= '<b>Stack trace</b>:<br />' . nl2br($entry['trace'], true) . '<br />';
@@ -287,7 +287,7 @@ class Error
 			$page = file_get_contents(\PATH . $this->_template);
 			$page = str_replace('{LOG}', $output, $page);
 		} else {
-			$page = '<h1>LiteMVC - A fatal error occured</h1>' . $output;
+			$page = '<h1>LiteMVC - A fatal error occurred</h1>' . $output;
 		}
 		// Output error
 		echo $page;
