@@ -18,7 +18,7 @@ abstract class Controller
 	 *
 	 * @var App
 	 */
-	private $_app;
+	protected $_app;
 
 	/**
 	 * Request object
