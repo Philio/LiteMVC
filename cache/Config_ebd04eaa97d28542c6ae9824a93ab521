@@ -1,0 +1,2 @@
+1285917982::2
+{"fmt":1285831580,"contents":{"autoload":{"main":"\/apps\/main\/"},"init":{"preload":["Error","Session"],"load":["View\\HTML"]},"error":{"template":"\/apps\/main\/View\/Layouts\/FatalError.html","display":"1"},"session":{"handler":["File"],"File":{"prefix":"Session_"}},"request":{"default":{"module":"main"},"main":{"default":{"controller":"index","action":"index","layout":"default"},"error":{"controller":"error","layout":"default","notfound":"not-found","exception":"exception"}}}}}
