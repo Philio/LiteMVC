@@ -156,7 +156,7 @@ class App {
 		if (!is_null($config->init)) {
 			$init = $config->init;
 			// Application specific resources
-			if (is_array($init['load'])) {
+			if (isset($init['load']) && is_array($init['load'])) {
 				foreach ($init['load'] as $resource) {
 					$this->loadResource($resource);
 				}
