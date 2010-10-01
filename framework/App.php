@@ -141,7 +141,7 @@ class App {
 		// Preload modules
 		if (!is_null($config->init)) {
 			$init = $config->init;
-			if (is_array($init['preload'])) {
+			if (isset($init['preload']) && is_array($init['preload'])) {
 				foreach ($init['preload'] as $resource) {
 					$this->loadResource($resource);
 				}
@@ -156,13 +156,13 @@ class App {
 		if (!is_null($config->init)) {
 			$init = $config->init;
 			// Application specific resources
-			if (is_array($init['load'])) {
+			if (isset($init['load']) && is_array($init['load'])) {
 				foreach ($init['load'] as $resource) {
 					$this->loadResource($resource);
 				}
 			}
 			// Module specific resources
-			if (is_array($init[$req->getModule()]['load'])) {
+			if (isset($init[$req->getModule()]['load']) && is_array($init[$req->getModule()]['load'])) {
 				foreach ($init[$req->getModule()]['load'] as $resource) {
 					$this->loadResource($resource);
 				}
