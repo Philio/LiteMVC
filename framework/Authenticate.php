@@ -70,8 +70,10 @@ class Authenticate
 			if (isset($config['model']['user'])) {
 				if (isset($_SESSION[self::Sess_Namespace]['User'])) {
 					$this->_userModel = $_SESSION[self::Sess_Namespace]['User'];
-				} else {
+				} elseif (class_exists($config['model']['user'])) {
 					$this->_userModel = new $config['model']['user']($app->getResource('Database'));
+				} else {
+					throw new Authenticate\Exception('Unable to load user model, class ' . $config['model']['user'] . ' not found.');
 				}
 			}
 			// If an ACL model has been specified instanciate it
