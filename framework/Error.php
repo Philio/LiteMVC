@@ -70,6 +70,13 @@ class Error
 	 * @var bool
 	 */
 	protected $_display = false;
+
+	/**
+	 * Error mode
+	 *
+	 * @var string
+	 */
+	protected $_mode = 'HTML';
 	
 	/**
 	 * Error template
@@ -106,6 +113,10 @@ class Error
 			// Set display
 			if (isset($errConfig['display']) && $errConfig['display'] == true) {
 				$this->setDisplay(true);
+			}
+			// Set mode
+			if (isset($errConfig['mode'])) {
+				$this->setMode($errConfig['mode']);
 			}
 			// Set template
 			if (isset($errConfig['template'])) {
@@ -147,6 +158,17 @@ class Error
 	public function setDisplay($display)
 	{
 		$this->_display = $display;
+	}
+
+	/**
+	 * Set display mode
+	 *
+	 * @param bool $mode
+	 * @return void
+	 */
+	public function setMode($mode)
+	{
+		$this->_mode = $mode;
 	}
 	
 	/**
@@ -268,9 +290,30 @@ class Error
 		// Send header for fatal error
 		header(self::Header_Prefix . self::Header_Fatal);
 		// Compile the log
+		switch ($this->_mode) {
+			case 'HTML':
+				$page = $this->HTML();
+				break;
+			case 'JSON':
+				$page = $this->JSON();
+				break;
+		}
+		// Output error
+		echo $page;
+		exit;
+	}
+
+	/**
+	 * Produce friendly HTML error with/without template file
+	 *
+	 * @return string
+	 */
+	protected function HTML()
+	{
 		$output = '';
 		if ($this->_display) {
-			$output = '<h2>Error Log</h2>';
+			$output = '<h2>Error Log</h2>' . PHP_EOL;
+			$output .= '<p>' . PHP_EOL;
 			$log = array_reverse($this->_log);
 			foreach($log as $entry) {
 				$output .= '<b>' . $entry['level'] .'</b>: ' . ucfirst($entry['message']) .
@@ -279,7 +322,7 @@ class Error
 				if (!is_null($entry['trace'])) {
 					$output .= '<b>Stack trace</b>:<br />' . nl2br($entry['trace'], true) . '<br />';
 				}
-				$output .= '<br />';
+				$output .= '<br />' . PHP_EOL;
 			}
 		}
 		// Use template if one exists
@@ -289,9 +332,31 @@ class Error
 		} else {
 			$page = '<h1>LiteMVC - A fatal error occurred</h1>' . $output;
 		}
-		// Output error
-		echo $page;
-		exit;
+		return $page;
+	}
+
+	/**
+	 * Produce error in JSON
+	 *
+	 * @return string
+	 */
+	protected function JSON()
+	{
+		$log = array_reverse($this->_log);
+		if ($this->_display) {
+			return json_encode(
+				array(
+					'error' => $log[0]['code'],
+					'message' => $log[0]['message']
+				)
+			);
+		} else {
+			return json_encode(
+				array(
+					'error' => $log[0]['code']
+				)
+			);
+		}
 	}
 	
 }
