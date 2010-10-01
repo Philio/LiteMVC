@@ -76,7 +76,11 @@ class File
 			}
 			list ($expire, $flag) = explode('::', $header);
 			// Read data
-			$body = fread($f, filesize($this->_path . $key) - strlen($header));
+                        if (filesize($this->_path . $key) - strlen($header) > 0) {
+                            $body = fread($f, filesize($this->_path . $key) - strlen($header));
+                        } else {
+                            $body = null;
+                        }
 			switch ($flag) {
 				default:
 				case self::Enc_None:
