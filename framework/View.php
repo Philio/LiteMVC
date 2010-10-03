@@ -79,11 +79,11 @@ abstract class View
 	protected $_rendered;
 
 	/**
-	 * Helper objects
+	 * Plugin objects
 	 *
 	 * @var array
 	 */
-	protected $_helpers = array();
+	protected $_plugins = array();
 
 	/**
 	 * Default namespace prefix
@@ -97,7 +97,7 @@ abstract class View
 	 *
 	 * @var string
 	 */
-	const Namespace_Body = '\View\Helper\\';
+	const Namespace_Body = '\\View\\Plugin\\';
 
 	/**
 	 * Constructor
@@ -145,12 +145,12 @@ abstract class View
 	 *
 	 * @param string $name
 	 * @param array $args
-	 * @return void
+	 * @return mixed
 	 */
 	public function __call($name, $args) {
-		// Check if helper is instanciated
-		if (isset($this->_helpers[$name])) {
-			return $this->_helpers[$name];
+		// Check if plugin is instanciated
+		if (isset($this->_plugins[$name])) {
+			return $this->_plugins[$name];
 		}
 		// Check if class exists within framework namespace or app namespace
 		$class = self::Namespace_Prefix . self::Namespace_Body . $name;
@@ -161,8 +161,11 @@ abstract class View
 			}
 		}
 		// Call class
-		$this->_helpers[$name] = new $class();
-		return $this->_helpers[$name];
+		$this->_plugins[$name] = new $class();
+		if (is_callable(array($this->_plugins[$name], 'process'))) {
+			return call_user_func_array(array($this->_plugins[$name], 'process'), $args);
+		}
+		return $this->_plugins[$name];
 	}
 
 	/**

@@ -34,17 +34,45 @@ abstract class Controller
 	 */
 	protected $_view;
 
+	/**
+	 * Plugin objects
+	 *
+	 * @var array
+	 */
+	protected $_plugins = array();
+
+	/**
+	 * Default namespace prefix
+	 *
+	 * @var stirng
+	 */
+	const Namespace_Prefix = 'LiteMVC';
+
+	/**
+	 * Namespace body for helpers
+	 *
+	 * @var string
+	 */
+	const Namespace_Body = '\\Controller\\Plugin\\';
+
+	/**
+	 * Constructor
+	 *
+	 * @param App $app
+	 * @param string $controller
+	 * @param string $action
+	 */
 	public function __construct(App $app, $controller, $action)
 	{
 		// Reference App object for resource loading
 		$this->_app = $app;
-		// Setup request/view
+		// Setup request
 		$this->_request = $this->getResource('Request');
+		// Setup HTML view
 		if ($this->isResource('View\HTML')) {
 			$this->_view = $this->getResource('View\HTML');
 			// Set module
-			$module = $this->_request->getModule();
-			$this->_view->setModule($module);
+			$this->_view->setModule($this->_request->getModule());
 			// Set layout
 			$this->_view->setLayout($this->_request->getLayout($controller));
 			// Set page
@@ -54,9 +82,38 @@ abstract class Controller
 				$action .= ucfirst($part);
 			}
 			$this->_view->setPage(ucfirst($controller) . '/' . ucfirst($action));
+		// Setup JSON view
 		} elseif ($app->isResource('View\JSON')) {
 			$this->_view = $app->getResource('View\JSON');
 		}
+	}
+
+	/**
+	 * Call magic method
+	 *
+	 * @param string $name
+	 * @param array $args
+	 * @return mixed
+	 */
+	public function __call($name, $args) {
+		// Check if plugin is instanciated
+		if (isset($this->_plugins[$name])) {
+			return $this->_plugins[$name];
+		}
+		// Check if class exists within framework namespace or app namespace
+		$class = self::Namespace_Prefix . self::Namespace_Body . ucfirst($name);
+		if (!class_exists($class)) {
+			$class = $this->_request->getModule() . self::Namespace_Body . ucfirst($name);
+			if (!class_exists($class)) {
+				return false;
+			}
+		}
+		// Call class
+		$this->_plugins[$name] = new $class();
+		if (is_callable(array($this->_plugins[$name], 'process'))) {
+			return call_user_func_array(array($this->_plugins[$name], 'process'), $args);
+		}
+		return $this->_plugins[$name];
 	}
 
 	/**
