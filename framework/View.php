@@ -90,14 +90,14 @@ abstract class View
 	 *
 	 * @var stirng
 	 */
-	const Namespace_Prefix = 'LiteMVC';
+	const NAMESPACE_PREFIX = 'LiteMVC';
 
 	/**
 	 * Namespace body for helpers
 	 *
 	 * @var string
 	 */
-	const Namespace_Body = '\\View\\Plugin\\';
+	const NAMESPACE_BODY = '\\View\\Plugin\\';
 
 	/**
 	 * Constructor
@@ -149,19 +149,19 @@ abstract class View
 	 */
 	public function __call($name, $args) {
 		// Check if plugin is instanciated
-		if (isset($this->_plugins[$name])) {
-			return $this->_plugins[$name];
-		}
-		// Check if class exists within framework namespace or app namespace
-		$class = self::Namespace_Prefix . self::Namespace_Body . $name;
-		if (!class_exists($class)) {
-			$class = $this->_module . self::Namespace_Body . $name;
+		if (!isset($this->_plugins[$name])) {
+			// Check if class exists within framework namespace or app namespace
+			$class = self::NAMESPACE_PREFIX . self::NAMESPACE_BODY . ucfirst($name);
 			if (!class_exists($class)) {
-				return false;
+				echo $class = $this->_request->getModule() . self::NAMESPACE_BODY . ucfirst($name);
+				if (!class_exists($class)) {
+					return false;
+				}
 			}
+			// Call class
+			$this->_plugins[$name] = new $class();
 		}
-		// Call class
-		$this->_plugins[$name] = new $class();
+		// Return function result or class if no process function
 		if (is_callable(array($this->_plugins[$name], 'process'))) {
 			return call_user_func_array(array($this->_plugins[$name], 'process'), $args);
 		}
