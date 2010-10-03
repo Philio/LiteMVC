@@ -21,6 +21,7 @@ class Redirect
 	public function process($url)
 	{
 		header('Location: ' . $url);
+		exit;
 	}
 
 }
