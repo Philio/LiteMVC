@@ -46,14 +46,14 @@ abstract class Controller
 	 *
 	 * @var stirng
 	 */
-	const Namespace_Prefix = 'LiteMVC';
+	const NAMESPACE_PREFIX = 'LiteMVC';
 
 	/**
 	 * Namespace body for helpers
 	 *
 	 * @var string
 	 */
-	const Namespace_Body = '\\Controller\\Plugin\\';
+	const NAMESPACE_BODY = '\\Controller\\Plugin\\';
 
 	/**
 	 * Constructor
@@ -99,9 +99,9 @@ abstract class Controller
 		// Check if plugin is instanciated
 		if (!isset($this->_plugins[$name])) {
 			// Check if class exists within framework namespace or app namespace
-			$class = self::Namespace_Prefix . self::Namespace_Body . ucfirst($name);
+			$class = self::NAMESPACE_PREFIX . self::NAMESPACE_BODY . ucfirst($name);
 			if (!class_exists($class)) {
-				echo $class = $this->_request->getModule() . self::Namespace_Body . ucfirst($name);
+				echo $class = $this->_request->getModule() . self::NAMESPACE_BODY . ucfirst($name);
 				if (!class_exists($class)) {
 					return false;
 				}

@@ -108,7 +108,7 @@ abstract class View
 	public function __construct(App $app)
 	{
 		// Set path
-		$this->_path = \PATH . $app::Path_App;
+		$this->_path = \PATH . $app::PATH_APP;
 		// Set theme module
 		if ($app->isResource('Theme')) {
 			$this->_theme = $app->getResource('Theme');

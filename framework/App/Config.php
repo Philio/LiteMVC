@@ -35,14 +35,14 @@ class Config implements \Countable
 	 *
 	 * @var string
 	 */
-	const Cache_Prefix = 'Config';
+	const CACHE_PREFIX = 'Config';
 
 	/**
 	 * Cache lifetime
 	 *
 	 * @var int
 	 */
-	const Cache_Lifetime = 86400;
+	const CACHE_LIFETIME = 86400;
 
 	/**
 	 * Get magic method
@@ -114,7 +114,7 @@ class Config implements \Countable
 			return false;
 		}
 		// Read from cache
-		$data = $this->_cache->get(self::Cache_Prefix . '_' . md5($file));
+		$data = $this->_cache->get(self::CACHE_PREFIX . '_' . md5($file));
 		// Check if cache is valid
 		if ($data === false || $data['fmt'] < filemtime($file)) {
 			return false;
@@ -137,13 +137,13 @@ class Config implements \Countable
 		}
 		// Write data to cache
 		$this->_cache->set(
-			self::Cache_Prefix . '_' . md5($file),
+			self::CACHE_PREFIX . '_' . md5($file),
 			array(
 				'fmt' => filemtime($file),
 				'contents' => $this->_data
 			),
 			2,
-			self::Cache_Lifetime
+			self::CACHE_LIFETIME
 		);
 	}
 

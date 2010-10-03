@@ -53,7 +53,7 @@ class Theme
 	 *
 	 * @var string
 	 */
-	const File_Prefix = 'Theme';
+	const FILE_PREFIX = 'Theme';
 
 	/**
 	 * Constructor
@@ -144,7 +144,7 @@ class Theme
 	{
 		if ($model instanceof Theme\Item && $model->lookup($this->_siteId, $filename)) {
 			// Check if temporary file exists and is current
-			$tmpFile = \PATH . rtrim($this->_filePath, '/') . '/' . self::File_Prefix .
+			$tmpFile = \PATH . rtrim($this->_filePath, '/') . '/' . self::FILE_PREFIX .
 				'_' . $this->_siteId . '_' . md5($layout);
 			if (file_exists($tmpFile) && filemtime($tmpFile) >= $model->getUpdateTime()) {
 				return $tmpFile;

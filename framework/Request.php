@@ -87,7 +87,7 @@ class Request
 			$this->_config = $config;
 		}
 		// Set app path
-		$this->_appPath = $app::Path_App;
+		$this->_appPath = $app::PATH_APP;
 		// Determine script path relative to doc root
 		// Allows for flexible deployment
 		// e.g. framework root could reside at example.com/a/b/c/d/

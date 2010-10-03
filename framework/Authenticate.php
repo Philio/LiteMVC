@@ -53,7 +53,7 @@ class Authenticate
 	 *
 	 * @var string
 	 */
-	const Sess_Namespace = 'Auth';
+	const SESS_NAMESPACE = 'Auth';
 
 	/**
 	 * Constructor
@@ -68,8 +68,8 @@ class Authenticate
 		if (!is_null($config)) {
 			// Check that a user model has been specified
 			if (isset($config['model']['user'])) {
-				if (isset($_SESSION[self::Sess_Namespace]['User'])) {
-					$this->_userModel = $_SESSION[self::Sess_Namespace]['User'];
+				if (isset($_SESSION[self::SESS_NAMESPACE]['User'])) {
+					$this->_userModel = $_SESSION[self::SESS_NAMESPACE]['User'];
 				} elseif (class_exists($config['model']['user'])) {
 					$this->_userModel = new $config['model']['user']($app->getResource('Database'));
 				} else {
@@ -133,7 +133,7 @@ class Authenticate
 			// Call model login function
 			if ($this->_userModel->login($username, $password)) {
 				// Store login in session
-				$_SESSION[self::Sess_Namespace]['User'] = $this->_userModel;
+				$_SESSION[self::SESS_NAMESPACE]['User'] = $this->_userModel;
 				// Login ok return true
 				return true;
 			}

@@ -77,7 +77,7 @@ abstract class Model
 	 *
 	 * @var string
 	 */
-	const Cache_Prefix = 'Model';
+	const CACHE_PREFIX = 'Model';
 
 	/**
 	 * Constructor
@@ -364,7 +364,7 @@ abstract class Model
 			if (is_array($id)) {
 				$id = implode(':', $id);
 			}
-			$key = self::Cache_Prefix . ':' . get_class($this) . ':' . $id;
+			$key = self::CACHE_PREFIX . ':' . get_class($this) . ':' . $id;
 			// Delete key
 			return $this->_cache->delete($key);
 		}
@@ -475,7 +475,7 @@ abstract class Model
 			if (is_array($id)) {
 				$id = implode(':', $id);
 			}
-			$key = self::Cache_Prefix . ':' . get_class($this) . ':' . $id;
+			$key = self::CACHE_PREFIX . ':' . get_class($this) . ':' . $id;
 			// Read from cache
 			$data = $this->_cache->get($key);
 		}

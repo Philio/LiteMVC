@@ -21,14 +21,14 @@ class Ini extends Config
 	 * 
 	 * @var string
 	 */
-	const Section_Separator = ':';
+	const SECTION_SEPARATOR = ':';
 	
 	/**
 	 * Item separator
 	 * 
 	 * @var string
 	 */
-	const Item_Separator = '.';
+	const ITEM_SEPARATOR = '.';
 
 	/**
 	 * Load configuration from file
@@ -78,11 +78,11 @@ class Ini extends Config
 		// Otherwise look and check for sections with extends
 		foreach ($ini as $key => $value) {
 			// If separator found split and check
-			if (strpos($key, self::Section_Separator) !== false) {
-				$parts = explode(self::Section_Separator, $key, 2);
+			if (strpos($key, self::SECTION_SEPARATOR) !== false) {
+				$parts = explode(self::SECTION_SEPARATOR, $key, 2);
 				// Check for section with extend
 				if (trim($parts[0]) == $section) {
-					if (strpos($parts[1], self::Section_Separator) !== false) {
+					if (strpos($parts[1], self::SECTION_SEPARATOR) !== false) {
 						throw new Config\Exception('A section can not extend multiple sections.');
 					}
 					return $this->_arrayMerge($this->_processIni($ini, trim($parts[1])), $this->_processSection($value));
@@ -113,8 +113,8 @@ class Ini extends Config
 	 */
 	protected function _processKey($config, $key, $value)
 	{
-		if (strpos($key, self::Item_Separator) !== false) {
-			$parts = explode(self::Item_Separator, $key, 2);
+		if (strpos($key, self::ITEM_SEPARATOR) !== false) {
+			$parts = explode(self::ITEM_SEPARATOR, $key, 2);
 			if (!isset($config[$parts[0]])) {
 				$config[$parts[0]] = array();
 			}

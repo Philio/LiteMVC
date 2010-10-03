@@ -35,7 +35,7 @@ class Session
 	 *
 	 * @var int
 	 */
-	const Session_Expiry = 3600;
+	const SESSION_EXPIRY = 3600;
 
 	/**
 	 * Constructor
@@ -80,7 +80,7 @@ class Session
 			throw new Session\Exception('No session handlers specified in configuration.');
 		}
 		// Set expriry
-		$this->_expires = isset($config['expires']) ? $config['expires'] : self::Session_Expiry;
+		$this->_expires = isset($config['expires']) ? $config['expires'] : self::SESSION_EXPIRY;
 		// Register handler
 		$this->register();
 	}

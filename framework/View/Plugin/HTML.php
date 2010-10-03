@@ -18,21 +18,21 @@ class HTML
 	 *
 	 * @var string
 	 */
-	const Header_Strict = 'strict';
+	const HEADER_STRICT = 'strict';
 
 	/**
 	 * HTML Transitional
 	 *
 	 * @var string
 	 */
-	const Header_Transitional = 'transitional';
+	const HEADER_TRANSITIONAL = 'transitional';
 
 	/**
 	 * HTML Frameset
 	 *
 	 * @var string
 	 */
-	const Header_Frameset = 'frameset';
+	const HEADER_FRAMESET = 'frameset';
 
 	/**
 	 * Get a HTML header
@@ -44,13 +44,13 @@ class HTML
 	{
 		switch ($type) {
 			default:
-			case self::Header_Strict:
+			case self::HEADER_STRICT:
 				return '<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">' . \PHP_EOL;
 				break;
-			case self::Header_Transitional:
+			case self::HEADER_TRANSITIONAL:
 				return '<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">' . \PHP_EOL;
 				break;
-			case self::Header_Frameset:
+			case self::HEADER_FRAMESET:
 				return '<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Frameset//EN" "http://www.w3.org/TR/html4/frameset.dtd">' . \PHP_EOL;
 				break;
 		}

@@ -29,10 +29,10 @@ class File
 	 * 
 	 * @var int
 	 */
-	const Enc_None        = 0;
-	const Enc_Serialize   = 1;
-	const Enc_JSON_Array  = 2;
-	const Enc_JSON_Object = 3;
+	const ENC_NONE        = 0;
+	const ENC_SERIALIZE   = 1;
+	const ENC_JSON_ARRAY  = 2;
+	const ENC_JSON_OBJECT = 3;
 	
 	/**
 	 * Constructor
@@ -83,16 +83,16 @@ class File
                         }
 			switch ($flag) {
 				default:
-				case self::Enc_None:
+				case self::ENC_NONE:
 					return $body;
 					break;
-				case self::Enc_Serialize:
+				case self::ENC_SERIALIZE:
 					return unserialize($body);
 					break;
-				case self::Enc_JSON_Array:
+				case self::ENC_JSON_ARRAY:
 					return json_decode($body, true);
 					break;
-				case self::Enc_JSON_Object:
+				case self::ENC_JSON_OBJECT:
 					return json_decode($body);
 					break;
 			}
@@ -125,14 +125,14 @@ class File
 		// Write data
 		switch ($flag) {
 			default:
-			case self::Enc_None:
+			case self::ENC_NONE:
 				$data = $var;
 				break;
-			case self::Enc_Serialize:
+			case self::ENC_SERIALIZE:
 				$data = serialize($var);
 				break;
-			case self::Enc_JSON_Array:
-			case self::Enc_JSON_Object:
+			case self::ENC_JSON_ARRAY:
+			case self::ENC_JSON_OBJECT:
 				$data = json_encode($var);
 				break;
 		}

@@ -81,14 +81,14 @@ class Captcha
 	 *
 	 * @var string
 	 */
-	const Sess_Namespace = 'Captcha';
+	const SESS_NAMESPACE = 'Captcha';
 
 	/**
 	 * How long to keep the image for before it is deleted
 	 *
 	 * @var int
 	 */
-	const Image_Expires = 86400;
+	const IMAGE_EXPIRES = 86400;
 
 	/**
 	 * Character set
@@ -96,7 +96,7 @@ class Captcha
 	 *
 	 * @var string
 	 */
-	const Characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz';
+	const CHARACTERS = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz';
 
 	/**
 	 * Constructor
@@ -225,7 +225,7 @@ class Captcha
 		if (!$this->_isRendered()) {
 			$this->_render();
 		}
-		return '<img src="' . $_SESSION[self::Sess_Namespace]['Image'] . '" alt="Captcha" class="captcha" />';
+		return '<img src="' . $_SESSION[self::SESS_NAMESPACE]['Image'] . '" alt="Captcha" class="captcha" />';
 	}
 
 	/**
@@ -248,7 +248,7 @@ class Captcha
 		if (!$this->_isRendered()) {
 			$this->_render();
 		}
-		return $_SESSION[self::Sess_Namespace]['Image'];
+		return $_SESSION[self::SESS_NAMESPACE]['Image'];
 	}
 
 	/**
@@ -261,7 +261,7 @@ class Captcha
 		if (!$this->_isRendered()) {
 			$this->_render();
 		}
-		return $_SESSION[self::Sess_Namespace]['Code'];
+		return $_SESSION[self::SESS_NAMESPACE]['Code'];
 	}
 
 	/**
@@ -272,7 +272,7 @@ class Captcha
 	 */
 	public function checkCode($code)
 	{
-		if (strtolower($_SESSION[self::Sess_Namespace]['Code']) == strtolower($code)) {
+		if (strtolower($_SESSION[self::SESS_NAMESPACE]['Code']) == strtolower($code)) {
 			return true;
 		}
 		return false;
@@ -285,7 +285,7 @@ class Captcha
 	 */
 	protected function _isRendered()
 	{
-		if (!isset($_SESSION[self::Sess_Namespace]['Image']) || !isset($_SESSION[self::Sess_Namespace]['Code'])) {
+		if (!isset($_SESSION[self::SESS_NAMESPACE]['Image']) || !isset($_SESSION[self::SESS_NAMESPACE]['Code'])) {
 			return false;
 		}
 		return true;
@@ -326,7 +326,7 @@ class Captcha
 			// Assign a colour fairly close to white
 			$colour = imagecolorallocate($img, mt_rand(200, 255), mt_rand(200, 255), mt_rand(200, 255));
 			// Draw random letter
-			$letter = substr(self::Characters, mt_rand(0, strlen(self::Characters) - 1), 1);
+			$letter = substr(self::CHARACTERS, mt_rand(0, strlen(self::CHARACTERS) - 1), 1);
 			imagettftext(
 				$img,
 				mt_rand(10, 50),
@@ -348,7 +348,7 @@ class Captcha
 			// Assign a random colour fairly close to black
 			$colour = imagecolorallocatealpha($img, mt_rand(0, 100), mt_rand(0, 100), mt_rand(0, 100), mt_rand(0,50));
 			// Draw random letter
-			$letter = substr(self::Characters, mt_rand(0, strlen(self::Characters) - 1), 1);
+			$letter = substr(self::CHARACTERS, mt_rand(0, strlen(self::CHARACTERS) - 1), 1);
 			$code .= $letter;
 			imagettftext(
 				$img,
@@ -367,8 +367,8 @@ class Captcha
 			$filepath = \PATH . rtrim($this->_imgPath, '/') . '/' . $filename;
 		} while (file_exists($filepath));
 		// Save to session
-		$_SESSION[self::Sess_Namespace]['Image'] = rtrim($this->_imgUrl, '/') . '/' . $filename;
-		$_SESSION[self::Sess_Namespace]['Code'] = $code;
+		$_SESSION[self::SESS_NAMESPACE]['Image'] = rtrim($this->_imgUrl, '/') . '/' . $filename;
+		$_SESSION[self::SESS_NAMESPACE]['Code'] = $code;
 		// Save to disk
 		imagepng($img, $filepath);
 	}
@@ -426,7 +426,7 @@ class Captcha
 		}
 		// Loop through directory and unlink any file not accessed for 24 hrs
 		foreach (new \DirectoryIterator(\PATH . $this->_imgPath) as $file) {
-			if ($file->isFile() && $file->getATime() < time() - self::Image_Expires) {
+			if ($file->isFile() && $file->getATime() < time() - self::IMAGE_EXPIRES) {
 				unlink($file->getPathname());
 			}
 		}

@@ -60,9 +60,9 @@ class Error
 	 * 
 	 * @var string
 	 */
-	const Header_Prefix = 'HTTP/1.1 ';
-	const Header_OK     = '200 OK';
-	const Header_Fatal  = '500 Internal Server Error';
+	const HEADER_PREFIX = 'HTTP/1.1 ';
+	const HEADER_OK     = '200 OK';
+	const HEADER_FATAL  = '500 Internal Server Error';
 	
 	/**
 	 * Display errors
@@ -288,7 +288,7 @@ class Error
 	protected function fatal()
 	{
 		// Send header for fatal error
-		header(self::Header_Prefix . self::Header_Fatal);
+		header(self::HEADER_PREFIX . self::HEADER_FATAL);
 		// Compile the log
 		switch ($this->_mode) {
 			case 'HTML':

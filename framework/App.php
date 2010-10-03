@@ -30,9 +30,9 @@ class App {
 	 *
 	 * @var string
 	 */
-	const Path_App    = '/apps/';
-	const Path_Cache  = '/cache/';
-	const Path_Config = '/configs/';
+	const PATH_APP    = '/apps/';
+	const PATH_CACHE  = '/cache/';
+	const PATH_CONFIG = '/configs/';
 	
 	/**
 	 * Constructor
@@ -124,11 +124,11 @@ class App {
 	public function init($configFile, $cacheModule = 'Cache\File', $cacheParams = null)
 	{
 		// Load cache module
-		$cache = $this->getResource($cacheModule, is_null($cacheParams) ? \PATH . self::Path_Cache : $cacheParams);
+		$cache = $this->getResource($cacheModule, is_null($cacheParams) ? \PATH . self::PATH_CACHE : $cacheParams);
 		// Load configuration
 		$config = $this->getResource('App\Config\Ini');
 		$config->setCache($cache);
-		$config->load(\PATH . self::Path_Config . $configFile, \ENVIRONMENT);
+		$config->load(\PATH . self::PATH_CONFIG . $configFile, \ENVIRONMENT);
 		// Config is special case and is saved as 'Config' resource for convenience
 		$this->setResource('Config', $config);
 		// Configure autoloader
