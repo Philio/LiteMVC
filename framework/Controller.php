@@ -97,19 +97,19 @@ abstract class Controller
 	 */
 	public function __call($name, $args) {
 		// Check if plugin is instanciated
-		if (isset($this->_plugins[$name])) {
-			return $this->_plugins[$name];
-		}
-		// Check if class exists within framework namespace or app namespace
-		$class = self::Namespace_Prefix . self::Namespace_Body . ucfirst($name);
-		if (!class_exists($class)) {
-			$class = $this->_request->getModule() . self::Namespace_Body . ucfirst($name);
+		if (!isset($this->_plugins[$name])) {
+			// Check if class exists within framework namespace or app namespace
+			$class = self::Namespace_Prefix . self::Namespace_Body . ucfirst($name);
 			if (!class_exists($class)) {
-				return false;
+				echo $class = $this->_request->getModule() . self::Namespace_Body . ucfirst($name);
+				if (!class_exists($class)) {
+					return false;
+				}
 			}
+			// Call class
+			$this->_plugins[$name] = new $class();
 		}
-		// Call class
-		$this->_plugins[$name] = new $class();
+		// Return function result or class if no process function
 		if (is_callable(array($this->_plugins[$name], 'process'))) {
 			return call_user_func_array(array($this->_plugins[$name], 'process'), $args);
 		}
