@@ -267,13 +267,36 @@ class Request
 	public function getPostParam($key)
 	{
 		if (isset($_POST[$key])) {
-			// Magic quotes should be off, but just in case
-			if (get_magic_quotes_gpc()) {
-				return stripslashes($_POST[$key]);
-			}
-			return $_POST[$key];
+			return $this->filterValue($_POST[$key]);
 		}
 		return null;
+	}
+
+	/**
+	 * Get all post params
+	 *
+	 * @return array
+	 */
+	public function getAllPostParams()
+	{
+		return $this->filterValue($_POST);
+	}
+
+	/**
+	 * Filter a value or array of values
+	 *
+	 * @param mixed $value
+	 * @return mixed
+	 */
+	public function filterValue($value) {
+		if (is_array($value)) {
+			foreach ($value as $arrKey => $arrValue) {
+				$value[$arrKey] = $this->filterValue($arrValue);
+			}
+		} elseif (get_magic_quotes_gpc()) {
+			return stripslashes($value);
+		}
+		return $value;
 	}
 
 	/**

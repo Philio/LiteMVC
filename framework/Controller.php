@@ -49,7 +49,7 @@ abstract class Controller
 	const NAMESPACE_PREFIX = 'LiteMVC';
 
 	/**
-	 * Namespace body for helpers
+	 * Namespace body for plugins
 	 *
 	 * @var string
 	 */

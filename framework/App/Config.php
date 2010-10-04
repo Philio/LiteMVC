@@ -50,7 +50,7 @@ class Config implements \Countable
 	 * @param string $name
 	 * @return mixed
 	 */
-	public function __get($name)
+	public function &__get($name)
 	{
 		if (array_key_exists($name, $this->_data)) {
 			return $this->_data[$name];

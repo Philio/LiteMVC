@@ -99,7 +99,7 @@ abstract class Model
 	 *
 	 * @param string $key
 	 */
-	public function __get($key)
+	public function &__get($key)
 	{
 		if (isset($this->_data[$key])) {
 			return $this->_data[$key];
@@ -115,9 +115,7 @@ abstract class Model
 	 */
 	public function __set($key, $value)
 	{
-		if (array_key_exists($key, $this->_data)) {
-			$this->_data[$key] = $value;
-		}
+		$this->_data[$key] = $value;
 	}
 
 	/**

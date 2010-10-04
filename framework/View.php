@@ -132,7 +132,7 @@ abstract class View
 	 *
 	 * @return mixed;
 	 */
-	public function __get($key)
+	public function &__get($key)
 	{
 		if (isset($this->_data[$key])) {
 			return $this->_data[$key];

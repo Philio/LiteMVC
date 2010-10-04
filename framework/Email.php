@@ -78,7 +78,7 @@ class Email {
 	 * @param string $name
 	 * @return mixed
 	 */
-	public function __get($name)
+	public function &__get($name)
 	{
 		if (isset($this->_data[$name])) {
 			return $this->_data[$name];
