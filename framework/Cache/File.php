@@ -49,7 +49,7 @@ class File
 			if ($config && !is_null($config->filecache) && isset($config->filecache['path'])) {
 				$path = $config->filecache['path'];
 			} else {
-				$path = \PATH . $path::Path_Cache;
+				$path = \PATH . $path::PATH_CACHE;
 			}
 		}
 		$this->_path = $path;

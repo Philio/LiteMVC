@@ -46,7 +46,7 @@ class Theme
 	 *
 	 * @var string
 	 */
-	protected $_filePath = App::Path_Cache;
+	protected $_filePath = App::PATH_CACHE;
 
 	/**
 	 * File prefix
