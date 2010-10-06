@@ -82,6 +82,8 @@ abstract class Controller
 				$action .= ucfirst($part);
 			}
 			$this->_view->setPage(ucfirst($controller) . '/' . ucfirst($action));
+			// Set path
+			$this->_view->path = $this->_request->getRelativePath();
 		// Setup JSON view
 		} elseif ($app->isResource('View\JSON')) {
 			$this->_view = $app->getResource('View\JSON');

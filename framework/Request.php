@@ -161,6 +161,16 @@ class Request
 	}
 
 	/**
+	 * Get relative path of web root
+	 *
+	 * @return string
+	 */
+	public function getRelativePath()
+	{
+		return $this->_relativePath;
+	}
+
+	/**
 	 * Get module name
 	 *
 	 * @return string
