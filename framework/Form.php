@@ -12,6 +12,20 @@ namespace LiteMVC;
 abstract class Form {
 
 	/**
+	 * Form id
+	 *
+	 * @var string
+	 */
+	protected $_id;
+
+	/**
+	 * CSS class name
+	 *
+	 * @var string
+	 */
+	protected $_class;
+
+	/**
 	 * Form action
 	 *
 	 * @var string
@@ -116,6 +130,12 @@ abstract class Form {
 	{
 		// Form opening tag
 		$html .= '<form';
+		if (!is_null($this->_id) && !empty($this->_id)) {
+			$html .= ' id="' . $this->_id . '"';
+		}
+		if (!is_null($this->_class) && !empty($this->_class)) {
+			$html .= ' class="' . $this->_class . '"';
+		}
 		if (!is_null($this->_action) && !empty($this->_action)) {
 			$html .= ' action="' . $this->_action . '"';
 		}
