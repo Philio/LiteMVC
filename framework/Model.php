@@ -80,6 +80,15 @@ abstract class Model
 	const CACHE_PREFIX = 'Model';
 
 	/**
+	 * Mapping modes
+	 *
+	 * @var int
+	 */
+	const MAPPING_ANY    = 0;
+	const MAPPING_SINGLE = 1;
+	const MAPPING_MULTI  = 2;
+
+	/**
 	 * Constructor
 	 *
 	 * @param Database | object $conn
@@ -178,16 +187,13 @@ abstract class Model
 		}
 		// Get data
 		$data = $this->_getData('select * from ' . $this->_table . ' where ' . $this->_fmtPrimary($id), $id);
-		// Process result
-		if (is_array($data)) {
-			if (count($data) == 1) {
-				$this->_data = current($data);
-				return true;
-			} elseif (count($data) > 1) {
-				throw new Model\Exception('Invalid table definition, more than 1 rows were returned.');
-			}
+		// If null, not found
+		if (is_null($data)) {
+			return false;
 		}
-		return false;
+		// Map data to object
+		$this->_mapData($data, self::MAPPING_SINGLE);
+		return true;
 	}
 
 	/**
@@ -338,17 +344,8 @@ abstract class Model
 			$this->_fmtOrder($order) . $this->_fmtLimit($limit),
 			$cacheKey
 		);
-		// Process result
-		$resArray = array();
-		if (is_array($data)) {
-			foreach ($data as $row) {
-				$class = get_class($this);
-				$resObj = new $class($this->_conn);
-				$resObj->set($row);
-				$resArray[] = $resObj;
-			}
-		}
-		return $resArray;
+		// Map data to object(s)
+		return $this->_mapData($data, self::MAPPING_MULTI);
 	}
 
 	/**
@@ -499,6 +496,37 @@ abstract class Model
 		}
 		// Return data array
 		return $data;
+	}
+
+	/**
+	 * Provides ORM for data, expects data from _getData
+	 *
+	 * @param array $data
+	 */
+	protected function _mapData($data, $mode = self::MAPPING_ANY)
+	{
+		// Only works with an array
+		if (!is_array($data)) {
+			return null;
+		}
+		// If 1 row set to object
+		if (count($data) == 1 && $mode != self::MAPPING_MULTI) {
+			$this->set(current($data));
+			return $this;
+		// If more than one create an array of new objects
+		} elseif ($mode != self::MAPPING_SINGLE) {
+			$resArray = array();
+			$class = get_class($this);
+			foreach ($data as $row) {
+				$resObj = new $class($this->_conn);
+				$resObj->set($row);
+				$resArray[] = $resObj;
+			}
+			return $resArray;
+		// Data does not match the mapping format
+		} else {
+			throw new Model\Exception('Data is not in the correct format.');
+		}
 	}
 
 }
