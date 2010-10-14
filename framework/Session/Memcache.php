@@ -29,6 +29,13 @@ class Memcache implements Session
 	protected $_prefix;
 
 	/**
+	 * Configuration keys
+	 *
+	 * @var string
+	 */
+	const CONFIG_PREFIX = 'prefix';
+
+	/**
 	 * Constructor
 	 *
 	 * @param LiteMVC\Cache\Memcache $memcache
@@ -38,8 +45,8 @@ class Memcache implements Session
 	public function __construct($memcache, $config)
 	{
 		$this->_memcache = $memcache;
-		if (isset($config['prefix'])) {
-			$this->_prefix = $config['prefix'];
+		if (isset($config[self::CONFIG_PREFIX])) {
+			$this->_prefix = $config[self::CONFIG_PREFIX];
 		}
 	}
 

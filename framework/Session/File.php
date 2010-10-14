@@ -29,6 +29,13 @@ class File implements Session
 	protected $_prefix;
 
 	/**
+	 * Configuration keys
+	 *
+	 * @var string
+	 */
+	const CONFIG_PREFIX = 'prefix';
+
+	/**
 	 * Constructor
 	 *
 	 * @param LiteMVC\Cache\File $file
@@ -38,8 +45,8 @@ class File implements Session
 	public function __construct($file, $config)
 	{
 		$this->_file = $file;
-		if (isset($config['prefix'])) {
-			$this->_prefix = $config['prefix'];
+		if (isset($config[self::CONFIG_PREFIX])) {
+			$this->_prefix = $config[self::CONFIG_PREFIX];
 		}
 	}
 
