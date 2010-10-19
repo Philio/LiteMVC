@@ -146,7 +146,8 @@ class App {
 	public function init($configFile, $cacheModule = self::RESOURCE_FILE, $cacheParams = null)
 	{
 		// Load cache module
-		$cache = $this->getResource($cacheModule, is_null($cacheParams) ? \PATH . self::PATH_CACHE : $cacheParams);
+		$cache = $this->getResource($cacheModule, is_null($cacheParams) ?
+				\PATH . self::PATH_CACHE : $cacheParams);
 		// Load configuration
 		$config = $this->getResource(self::RESOURCE_CONFIG_INI);
 		$config->setCache($cache);
@@ -163,7 +164,8 @@ class App {
 		// Preload modules
 		if (!is_null($config->init)) {
 			$init = $config->init;
-			if (isset($init[self::CONFIG_PRELOAD]) && is_array($init[self::CONFIG_PRELOAD])) {
+			if (isset($init[self::CONFIG_PRELOAD]) &&
+					is_array($init[self::CONFIG_PRELOAD])) {
 				foreach ($init[self::CONFIG_PRELOAD] as $resource) {
 					$this->loadResource($resource);
 				}
@@ -178,13 +180,15 @@ class App {
 		if (!is_null($config->init)) {
 			$init = $config->init;
 			// Application specific resources
-			if (isset($init[self::CONFIG_LOAD]) && is_array($init[self::CONFIG_LOAD])) {
+			if (isset($init[self::CONFIG_LOAD]) &&
+					is_array($init[self::CONFIG_LOAD])) {
 				foreach ($init[self::CONFIG_LOAD] as $resource) {
 					$this->loadResource($resource);
 				}
 			}
 			// Module specific resources
-			if (isset($init[$req->getModule()][self::CONFIG_LOAD]) && is_array($init[$req->getModule()][self::CONFIG_LOAD])) {
+			if (isset($init[$req->getModule()][self::CONFIG_LOAD]) &&
+					is_array($init[$req->getModule()][self::CONFIG_LOAD])) {
 				foreach ($init[$req->getModule()][self::CONFIG_LOAD] as $resource) {
 					$this->loadResource($resource);
 				}
