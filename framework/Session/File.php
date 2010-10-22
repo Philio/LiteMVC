@@ -105,6 +105,9 @@ class File implements Session
 	 *
 	 * @return void
 	 */
-	public function gc() {}
+	public function gc()
+	{
+		$this->_file->clean($this->_prefix);
+	}
 
 }

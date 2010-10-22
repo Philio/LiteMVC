@@ -143,5 +143,47 @@ class File
 		fclose($f);
 		return true;
 	}
+
+	/**
+	 * Clean up any expired cache files
+	 *
+	 * @param string $prefix
+	 * @param int $expire
+	 * @param int $limit
+	 */
+	public function clean($prefix = null, $expire = 0, $limit = 0)
+	{
+		// Set counter
+		$counter = 0;
+		// Iterate over directory
+		foreach (new \DirectoryIterator($this->_path) as $file) {
+			// Check file is valid and correct prefix
+			if ($file->isFile() && (is_null($prefix) ||
+					substr($file->getFilename(), 0, strlen($prefix)) == $prefix)) {
+				// Increment counter
+				$counter ++;
+				if ($limit && $counter > $limit) {
+					return;
+				}
+				// Rough check with mtime
+				if ($file->getMTime() < time() - $expire) {
+					// Open and read header
+					$f = fopen($file->getPathname(), 'r');
+					if ($f === false) {
+						continue;
+					}
+					$header = fgets($f);
+					if (strpos($header, '::') === false) {
+						continue;
+					}
+					list ($expiry, $flag) = explode('::', $header);
+					// Unlink if expired
+					if ($expiry < time()) {
+						unlink($file->getPathname());
+					}
+				}
+			}
+		}
+	}
 	
 }
