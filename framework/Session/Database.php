@@ -14,18 +14,18 @@ class Database implements Session
 {
 	
 	/**
-	 * Database object
+	 * Model object
 	 *
-	 * @var Db
+	 * @var Model
 	 */
-	protected $_db;
+	protected $_model;
 
 	/**
-	 * Config object
-	 * 
-	 * @var Config
+	 * Configuration keys
+	 *
+	 * @var string
 	 */
-	protected $_config;
+	const CONFIG_MODEL = 'model';
 	
 	/**
 	 * Constructor
@@ -34,11 +34,10 @@ class Database implements Session
 	 */
 	public function __construct($db, $config)
 	{
-		// Assign database connetion and config settings
-		$this->_db = $db;
 		// Check config
-		if (isset($config['table'], $config['fields']['id'], $config['fields']['data'], $config['fields']['expires'])) {
-			$this->_config = $config;
+		if (isset($config[self::CONFIG_MODEL])) {
+			// Instantiate model
+			$this->_model = new $config[self::CONFIG_MODEL]($db);
 		} else {
 			throw new Exception('The session database configuration is invalid.');
 		}
@@ -68,19 +67,8 @@ class Database implements Session
 	 */
 	public function read($id)
 	{
-		// Look for session
-		$result = $this->_db->query(
-			'SELECT ' . $this->_config['fields']['data'] . ' FROM ' . $this->_config['table'] .
-			' WHERE ' . $this->_config['fields']['id'] . " = '$id' AND " . $this->_config['fields']['expires'] .
-			' > UNIX_TIMESTAMP()'
-		);
-		// If session found return session data
-		if ($result !== false && $result->num_rows) {
-			$row = $result->fetch_object();
-			$data = $row->{$this->_config['fields']['data']};
-			return $data;
-		}
-		return false;
+		// Call model read
+		return $this->_model->read($id);
 	}
 	
 	/**
@@ -92,10 +80,8 @@ class Database implements Session
 	 */
 	public function write($id, $data, $expiry)
 	{
-		// Overwrite existing session data
-		$this->_db->query(
-			'REPLACE INTO ' . $this->_config['table'] . " VALUES ('$id', '" . $this->_db->real_escape_string($data) . "', $expiry)"
-		);
+		// Call model write
+		$this->_model->write($id, $data, $expiry);
 	}
 	
 	/**
@@ -106,10 +92,8 @@ class Database implements Session
 	 */
 	public function destroy($id)
 	{
-		// Delete the session
-		$this->_db->query(
-			'DELETE FROM ' . $this->_config['table'] . ' WHERE ' . $this->_config['fields']['id'] . " = '$id'"
-		);
+		// Call model destroy
+		$this->_model->destroy($id);
 	}
 	
 	/**
@@ -119,10 +103,8 @@ class Database implements Session
 	 */
 	public function gc()
 	{
-		// Delete old sessions, limited to 100 records to avoid slow load
-		$this->_db->query(
-			'DELETE FROM ' . $this->_config['table'] . ' WHERE ' . $this->_config['fields']['expires'] . ' < UNIX_TIMESTAMP() LIMIT 100'
-		);
+		// Call model garbage collection
+		$this->_model->gc();
 	}
 	
 }
