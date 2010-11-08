@@ -85,7 +85,10 @@ class Ini extends Config
 					if (strpos($parts[1], self::SECTION_SEPARATOR) !== false) {
 						throw new Config\Exception('A section can not extend multiple sections.');
 					}
-					return $this->_arrayMerge($this->_processIni($ini, trim($parts[1])), $this->_processSection($value));
+					return $this->_arrayMerge(
+						$this->_processIni($ini, trim($parts[1])),
+						$this->_processSection($value)
+					);
 				}
 			}
 		}
@@ -118,7 +121,9 @@ class Ini extends Config
 			if (!isset($config[$parts[0]])) {
 				$config[$parts[0]] = array();
 			}
-			$config[$parts[0]] = $this->_processKey($config[$parts[0]], $parts[1], $value);
+			$config[$parts[0]] = $this->_processKey(
+				$config[$parts[0]], $parts[1], $value
+			);
 		} else {
 			$config[$key] = $value;
 		}

@@ -76,11 +76,11 @@ class File
 			}
 			list ($expire, $flag) = explode('::', $header);
 			// Read data
-                        if (filesize($this->_path . $key) - strlen($header) > 0) {
-                            $body = fread($f, filesize($this->_path . $key) - strlen($header));
-                        } else {
-                            $body = null;
-                        }
+			if (filesize($this->_path . $key) - strlen($header) > 0) {
+				$body = fread($f, filesize($this->_path . $key) - strlen($header));
+			} else {
+				$body = null;
+			}
 			switch ($flag) {
 				default:
 				case self::ENC_NONE:
