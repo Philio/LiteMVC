@@ -419,7 +419,28 @@ abstract class Model
 		if (is_string($where)) {
 			return ' where ' . $where;
 		} elseif (is_array($where)) {
-			return ' where ' . implode(' and ', $where);
+			$sql = ' where ';
+			$first = true;
+			foreach ($where as $field => $value) {
+				if (!$first) {
+					$sql .= ' and ';
+				}
+				// If key is a string, process as field/value pair
+				if (is_string($field)) {
+					// Array values add as in
+					if (is_array($value)) {
+						$sql .= $field . ' in (' . implode(', ', $value) . ')';
+					// Other values add as =
+					} else {
+						$sql .= $field . ' = ' . $this->_fmtValue($value);
+					}
+				// If not just add to the statement
+				} else {
+					$sql .= $value;
+				}
+				$first = false;
+			}
+			return $sql;
 		}
 		return null;
 	}
