@@ -58,13 +58,22 @@ class Database
 		if (!isset($this->_connections[$name])) {
 			// Check if configuration exists
 			if (array_key_exists($name, $this->_config)) {
+				// Config check
+				if (!isset($this->_config[$name]['driver'],
+						$this->_config[$name]['host'],
+						$this->_config[$name]['username'],
+						$this->_config[$name]['password'])) {
+					throw new Database\Exception('Configuration for database \'' . $name . '\' is invalid.');
+				}
 				$class = 'LiteMVC\\Database\\' . $this->_config[$name]['driver'];
 				$this->_connections[$name] = new $class(
 					$this->_config[$name]['host'],
 					$this->_config[$name]['username'],
 					$this->_config[$name]['password'],
-					$this->_config[$name]['database'],
-					$this->_config[$name]['noerrors']
+					isset($this->_config[$name]['database']) ?
+						$this->_config[$name]['database'] : null,
+					isset($this->_config[$name]['noerrors']) ?
+						$this->_config[$name]['noerrors'] : null
 				);
 			} else {
 				throw new Database\Exception('Database \'' . $name . '\' is not defined in the configuration.');
