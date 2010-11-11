@@ -168,4 +168,16 @@ abstract class Controller
 		return null;
 	}
 
+	/**
+	 * Get a new instance of a form
+	 *
+	 * @param string $name
+	 * @return object
+	 */
+	public function getForm($name)
+	{
+		$frm = new $name($this->_app);
+		return $frm;
+	}
+
 }
