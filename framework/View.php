@@ -134,10 +134,11 @@ abstract class View
 	 */
 	public function &__get($key)
 	{
+		$default = null;
 		if (isset($this->_data[$key])) {
 			return $this->_data[$key];
 		}
-		return null;
+		return $default;
 	}
 
 	/**
