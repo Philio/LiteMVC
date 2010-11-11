@@ -12,6 +12,13 @@ namespace LiteMVC;
 abstract class Form {
 
 	/**
+	 * Instance of App
+	 *
+	 * @var object
+	 */
+	protected $_app;
+
+	/**
 	 * Form id
 	 *
 	 * @var string
@@ -88,6 +95,7 @@ abstract class Form {
 	const TYPE_SELECT	= 'select';
 	const TYPE_TEXTAREA	= 'textarea';
 	const TYPE_SUBMIT	= 'submit';
+	const TYPE_CAPTCHA  = 'captcha';
 
 	/**
 	 * Default namespace prefix
@@ -95,6 +103,16 @@ abstract class Form {
 	 * @var stirng
 	 */
 	const NAMESPACE_PREFIX = 'LiteMVC\\Form\\Validator\\';
+
+	/**
+	 * Constructor
+	 *
+	 * @param App $app 
+	 */
+	public function __construct($app = null)
+	{
+		$this->_app = $app;
+	}
 
 	/**
 	 * Set a value
@@ -129,7 +147,7 @@ abstract class Form {
 	public function __toString()
 	{
 		// Form opening tag
-		$html .= '<form';
+		$html = '<form';
 		if (!is_null($this->_id) && !empty($this->_id)) {
 			$html .= ' id="' . $this->_id . '"';
 		}
@@ -189,6 +207,10 @@ abstract class Form {
 					break;
 				// Select
 				case self::TYPE_SELECT:
+					break;
+				// Captcha
+				case self::TYPE_CAPTCHA:
+					$html .= $this->_app->getResource('Captcha');
 					break;
 			}
 			// Display errors

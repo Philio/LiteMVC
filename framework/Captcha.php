@@ -32,14 +32,14 @@ class Captcha
 	 *
 	 * @var int
 	 */
-	protected $_charCount = 8;
+	protected $_charCount = 6;
 
 	/**
 	 * Relative path to font folder
 	 *
 	 * @var string
 	 */
-	protected $_fontPath;
+	protected $_fontPath = '/framework/Captcha/Fonts';
 
 	/**
 	 * A list of available fonts
@@ -67,7 +67,7 @@ class Captcha
 	 *
 	 * @var string
 	 */
-	protected $_imgPath;
+	protected $_imgPath = '/public/images/captcha';
 
 	/**
 	 * Image url
@@ -88,7 +88,7 @@ class Captcha
 	 *
 	 * @var int
 	 */
-	const IMAGE_EXPIRES = 86400;
+	const IMAGE_EXPIRES = 3600;
 
 	/**
 	 * Character set
@@ -327,7 +327,7 @@ class Captcha
 			$colour = imagecolorallocate($img, mt_rand(200, 255), mt_rand(200, 255), mt_rand(200, 255));
 			// Draw random letter
 			$letter = substr(self::CHARACTERS, mt_rand(0, strlen(self::CHARACTERS) - 1), 1);
-			imagettftext(
+			$res = imagettftext(
 				$img,
 				mt_rand(10, 50),
 				mt_rand(-10, 10),
@@ -348,7 +348,7 @@ class Captcha
 			// Assign a random colour fairly close to black
 			$colour = imagecolorallocatealpha($img, mt_rand(0, 100), mt_rand(0, 100), mt_rand(0, 100), mt_rand(0,50));
 			// Draw random letter
-			$letter = substr(self::CHARACTERS, mt_rand(0, strlen(self::CHARACTERS) - 1), 1);
+			echo $letter = substr(self::CHARACTERS, mt_rand(0, strlen(self::CHARACTERS) - 1), 1);
 			$code .= $letter;
 			imagettftext(
 				$img,
