@@ -104,50 +104,52 @@ class Captcha
 	 * @param App $app
 	 * @return void
 	 */
-	public function __construct(App $app)
+	public function __construct(App $app = null)
 	{
-		$config = $app->getResource('Config')->captcha;
-		if (!is_null($config)) {
-			// Set config options from config file
-			foreach ($config as $key => $value) {
-				switch ($key) {
-					// Image width (optional)
-					case 'width':
-						$this->_width = $value;
-						break;
-					// Imge height (optional)
-					case 'height':
-						$this->_height = $value;
-						break;
-					// Number of character (optional)
-					case 'count':
-						$this->_charCount = $value;
-						break;
-					// Font options
-					case 'font':
-						// Font path
-						if (isset($value['path'])) {
-							$this->_fontPath = $value['path'];
-						}
-						break;
-					// Background options (optional)
-					case 'background':
-						// Background path
-						if (isset($value['path'])) {
-							$this->_bgPath = $value['path'];
-						}
-						break;
-					// Image options
-					case 'image':
-						// Image path
-						if (isset($value['path'])) {
-							$this->_imgPath = $value['path'];
-						}
-						// Image url
-						if (isset($value['url'])) {
-							$this->_imgUrl = $value['url'];
-						}
-						break;
+		if ($app instanceof App) {
+			$config = $app->getResource('Config')->captcha;
+			if (!is_null($config)) {
+				// Set config options from config file
+				foreach ($config as $key => $value) {
+					switch ($key) {
+						// Image width (optional)
+						case 'width':
+							$this->_width = $value;
+							break;
+						// Imge height (optional)
+						case 'height':
+							$this->_height = $value;
+							break;
+						// Number of character (optional)
+						case 'count':
+							$this->_charCount = $value;
+							break;
+						// Font options
+						case 'font':
+							// Font path
+							if (isset($value['path'])) {
+								$this->_fontPath = $value['path'];
+							}
+							break;
+						// Background options (optional)
+						case 'background':
+							// Background path
+							if (isset($value['path'])) {
+								$this->_bgPath = $value['path'];
+							}
+							break;
+						// Image options
+						case 'image':
+							// Image path
+							if (isset($value['path'])) {
+								$this->_imgPath = $value['path'];
+							}
+							// Image url
+							if (isset($value['url'])) {
+								$this->_imgUrl = $value['url'];
+							}
+							break;
+					}
 				}
 			}
 		}
@@ -348,7 +350,7 @@ class Captcha
 			// Assign a random colour fairly close to black
 			$colour = imagecolorallocatealpha($img, mt_rand(0, 100), mt_rand(0, 100), mt_rand(0, 100), mt_rand(0,50));
 			// Draw random letter
-			echo $letter = substr(self::CHARACTERS, mt_rand(0, strlen(self::CHARACTERS) - 1), 1);
+			$letter = substr(self::CHARACTERS, mt_rand(0, strlen(self::CHARACTERS) - 1), 1);
 			$code .= $letter;
 			imagettftext(
 				$img,

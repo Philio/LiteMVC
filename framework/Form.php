@@ -61,11 +61,32 @@ abstract class Form {
 	protected $_errors = array();
 
 	/**
+	 * HTML string at the start of an error message
+	 *
+	 * @var string
+	 */
+	protected $_errorHTMLStart = '<span class="error">';
+
+	/**
+	 * HTML string at the end of an error message
+	 *
+	 * @var string
+	 */
+	protected $_errorHTMLEnd = '</span>';
+
+	/**
 	 * Show form errors
 	 *
 	 * @var bool
 	 */
 	protected $_displayErrors = true;
+
+	/**
+	 * Highlight fields with errors
+	 *
+	 * @var bool
+	 */
+	protected $_highlightErrors = true;
 
 	/**
 	 * Array of validator objects
@@ -96,6 +117,7 @@ abstract class Form {
 	const TYPE_TEXTAREA	= 'textarea';
 	const TYPE_SUBMIT	= 'submit';
 	const TYPE_CAPTCHA  = 'captcha';
+	const TYPE_BREAK    = 'br';
 
 	/**
 	 * Default namespace prefix
@@ -165,7 +187,15 @@ abstract class Form {
 		foreach ($this->_fields as $name => $data) {
 			// Add label
 			if (array_key_exists('label', $data)) {
-				$html .= '<label for="' . $name . '">' . $data['label'] . '</label>' . PHP_EOL;
+				$html .= '<label for="' . $name . '"';
+				if (isset($data['label']['class'])) {
+					$html .= ' class="' . $data['label']['class'] . '"';
+				}
+				$html .= '>';
+				if (isset($data['label']['text'])) {
+					$html .= $data['label']['text'];
+				}
+				$html .=  '</label>' . PHP_EOL;
 			}
 			// Add form element
 			switch ($data['type']) {
@@ -179,6 +209,13 @@ abstract class Form {
 					// Build input element
 					$html .= '<input id="' . $name . '" name="' . $name . '"';
 					// Add properties
+					if ($this->_highlightErrors && isset($this->_errors[$name])) {
+						if (isset($data['class'])) {
+							$data['class'] .= ' error';
+						} else {
+							$data['class'] = 'error';
+						}
+					}
 					foreach ($data as $key => $value) {
 						if ($key == 'label' || $key == 'validate') {
 							continue;
@@ -193,6 +230,13 @@ abstract class Form {
 					// Build text area
 					$html .= '<textarea id="' . $name . '" name="' . $name . '"';
 					// Add properties
+					if ($this->_highlightErrors && isset($this->_errors[$name])) {
+						if (isset($data['class'])) {
+							$data['class'] .= ' error';
+						} else {
+							$data['class'] = 'error';
+						}
+					}
 					foreach ($data as $key => $value) {
 						if ($key == 'label' || $key == 'validate' || $key == 'value') {
 							continue;
@@ -210,18 +254,34 @@ abstract class Form {
 					break;
 				// Captcha
 				case self::TYPE_CAPTCHA:
-					$html .= $this->_app->getResource('Captcha');
+					$captcha = $this->_app->getResource('Captcha');
+					if (isset($data['refresh']) && $data['refresh'] == true) {
+						$captcha->refresh();
+					}
+					$html .= $captcha . PHP_EOL;
+					break;
+				case self::TYPE_BREAK:
+					$html .= '<br';
+					// Add properties
+					foreach ($data as $key => $value) {
+						if ($key == 'label' || $key == 'validate') {
+							continue;
+						}
+						$html .= ' ' . $key . '="' . $value . '"';
+					}
+					$html .= ' />' . PHP_EOL;
 					break;
 			}
 			// Display errors
 			if ($this->_displayErrors) {
 				if (isset($this->_errors[$name])) {
-					$html .= '<span class="error">';
+					$html .= $this->_errorHTMLStart;
 					if (is_array($this->_errors[$name])) {
 						$html .= implode(', ', $this->_errors[$name]);
 					} else {
 						$html .= $this->_errors[$name];
 					}
+					$html .= $this->_errorHTMLEnd . PHP_EOL;
 				}
 			}
 		}
@@ -268,14 +328,18 @@ abstract class Form {
 		// Reset errors
 		$this->_errors = array();
 		// Check form values
-		foreach ($this->_fields as $key => $data) {
-			$value = $data['value'];
+		foreach ($this->_fields as $key => &$data) {
 			// If no validation options continue
 			if (!isset($data['validate'])) {
 				continue;
 			}
 			// Check all validation options
 			foreach ($data['validate'] as $option => $params) {
+				// If clear, just unset the value
+				if ($option == 'clear') {
+					unset($data['value']);
+					continue;
+				}
 				// Load validator
 				$class = self::NAMESPACE_PREFIX . ucfirst($option);
 				if (class_exists($class)) {
@@ -283,7 +347,10 @@ abstract class Form {
 					if (!isset($this->_validators[$option])) {
 						$this->_validators[$option] = new $class();
 					}
-					$error = $this->_validators[$option]->validate($value, $params);
+					$error = $this->_validators[$option]->validate(
+						isset($data['value']) ? $data['value'] : null,
+						$params
+					);
 				} else {
 					throw new Form\Exception('Unknown validator ' . $option . '.');
 				}
