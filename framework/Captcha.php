@@ -227,7 +227,9 @@ class Captcha
 		if (!$this->_isRendered()) {
 			$this->_render();
 		}
-		return '<img src="' . $_SESSION[self::SESS_NAMESPACE]['Image'] . '" alt="Captcha" class="captcha" />';
+		return '<img src="' . $_SESSION[self::SESS_NAMESPACE]['Image'] .
+			'" width="' . $this->_width . '" height="' . $this->_height .
+			'" alt="Captcha" class="captcha" />';
 	}
 
 	/**
