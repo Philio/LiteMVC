@@ -18,7 +18,7 @@ class Autoload
 	 *
 	 * @var array
 	 */
-	private static $_paths = array();
+	private $_paths = array();
 	
 	/**
 	 * Autoload a class
@@ -29,11 +29,11 @@ class Autoload
 	public function loader($class)
 	{
 		// Check that a path has been set
-		if (!count(self::$_paths)) {
+		if (!count($this->_paths)) {
 			return;
 		}
 		// Check paths against class name
-		foreach (self::$_paths as $ns => $path) {
+		foreach ($this->_paths as $ns => $path) {
 			if (stripos($class, $ns) === 0) {
 				$file = preg_replace('/' . $ns . '/i', $path, $class, 1);
 				$file = str_replace('\\', '/', $file) . '.php';
@@ -74,7 +74,7 @@ class Autoload
 	 */
 	public function setPath($namespace, $path)
 	{
-		self::$_paths[$namespace] = $path;
+		$this->_paths[$namespace] = $path;
 	}
 	
 }
