@@ -39,22 +39,22 @@ class App {
 	 *
 	 * @var string
 	 */
-	const CONFIG_PRELOAD = 'preload';
-	const CONFIG_LOAD = 'load';
+	const CONF_PRELOAD = 'preload';
+	const CONF_LOAD = 'load';
 
 	/**
 	 * Resource names
 	 *
 	 * @var string
 	 */
-	const RESOURCE_FILE = 'Cache\File';
-	const RESOURCE_CONFIG = 'Config';
-	const RESOURCE_CONFIG_INI = 'App\Config\Ini';
-	const RESOURCE_LOADER = 'Autoload';
-	const RESOURCE_REQUEST = 'Request';
-	const RESOURCE_DISPATCH = 'Dispatcher';
-	const RESOURCE_HTML = 'View\HTML';
-	const RESOURCE_JSON = 'View\JSON';
+	const RES_FILE = 'Cache\File';
+	const RES_CONFIG = 'Config';
+	const RES_CONF_INI = 'App\Config\Ini';
+	const RES_LOADER = 'Autoload';
+	const RES_REQUEST = 'Request';
+	const RES_DISPATCH = 'Dispatcher';
+	const RES_HTML = 'View\HTML';
+	const RES_JSON = 'View\JSON';
 	
 	/**
 	 * Constructor
@@ -68,7 +68,7 @@ class App {
 		$loader->register();
 		$loader->setPath(__NAMESPACE__, \PATH . '/framework');
 		// Save autoloader as an application resource
-		$this->setResource(self::RESOURCE_LOADER, $loader);
+		$this->setResource(self::RES_LOADER, $loader);
 	}
 
 	/**
@@ -122,7 +122,7 @@ class App {
 	public function loadResource($name, $params = null)
 	{
 		// Attempt to load a class from the specified name
-		$class = 'LiteMVC\\' . $name;
+		$class = __NAMESPACE__ . '\\' . $name;
 		if (class_exists(($class))) {
 			if (is_null($params)) {
 				$obj = new $class($this);
@@ -143,20 +143,20 @@ class App {
 	 * @param mixed $cacheParams
 	 * @return App
 	 */
-	public function init($configFile, $cacheModule = self::RESOURCE_FILE, $cacheParams = null)
+	public function init($configFile, $cacheModule = self::RES_FILE, $cacheParams = null)
 	{
 		// Load cache module
 		$cache = $this->getResource($cacheModule, is_null($cacheParams) ?
 				\PATH . self::PATH_CACHE : $cacheParams);
 		// Load configuration
-		$config = $this->getResource(self::RESOURCE_CONFIG_INI);
+		$config = $this->getResource(self::RES_CONF_INI);
 		$config->setCache($cache);
 		$config->load(\PATH . self::PATH_CONFIG . $configFile, \ENVIRONMENT);
 		// Config is special case and is saved as 'Config' resource for convenience
-		$this->setResource(self::RESOURCE_CONFIG, $config);
+		$this->setResource(self::RES_CONFIG, $config);
 		// Configure autoloader
 		if (!is_null($config->autoload)) {
-			$autoload = $this->getResource(self::RESOURCE_LOADER);
+			$autoload = $this->getResource(self::RES_LOADER);
 			foreach ($config->autoload as $ns => $path) {
 				$autoload->setPath($ns, \PATH . $path);
 			}
@@ -164,9 +164,9 @@ class App {
 		// Preload modules
 		if (!is_null($config->init)) {
 			$init = $config->init;
-			if (isset($init[self::CONFIG_PRELOAD]) &&
-					is_array($init[self::CONFIG_PRELOAD])) {
-				foreach ($init[self::CONFIG_PRELOAD] as $resource) {
+			if (isset($init[self::CONF_PRELOAD]) &&
+					is_array($init[self::CONF_PRELOAD])) {
+				foreach ($init[self::CONF_PRELOAD] as $resource) {
 					$this->loadResource($resource);
 				}
 			}
@@ -174,22 +174,22 @@ class App {
 		// Start session
 		session_start();
 		// Get request
-		$req = $this->getResource(self::RESOURCE_REQUEST);
+		$req = $this->getResource(self::RES_REQUEST);
 		$req->process();
 		// Load other resources
 		if (!is_null($config->init)) {
 			$init = $config->init;
 			// Application specific resources
-			if (isset($init[self::CONFIG_LOAD]) &&
-					is_array($init[self::CONFIG_LOAD])) {
-				foreach ($init[self::CONFIG_LOAD] as $resource) {
+			if (isset($init[self::CONF_LOAD]) &&
+					is_array($init[self::CONF_LOAD])) {
+				foreach ($init[self::CONF_LOAD] as $resource) {
 					$this->loadResource($resource);
 				}
 			}
 			// Module specific resources
-			if (isset($init[$req->getModule()][self::CONFIG_LOAD]) &&
-					is_array($init[$req->getModule()][self::CONFIG_LOAD])) {
-				foreach ($init[$req->getModule()][self::CONFIG_LOAD] as $resource) {
+			if (isset($init[$req->getModule()][self::CONF_LOAD]) &&
+					is_array($init[$req->getModule()][self::CONF_LOAD])) {
+				foreach ($init[$req->getModule()][self::CONF_LOAD] as $resource) {
 					$this->loadResource($resource);
 				}
 			}
@@ -204,13 +204,13 @@ class App {
 	 */
 	public function run() {
 		// Dispatch request
-		$this->getResource(self::RESOURCE_DISPATCH)->dispatch();
+		$this->getResource(self::RES_DISPATCH)->dispatch();
 		// Page output
 		$output = false;
-		if ($this->isResource(self::RESOURCE_HTML)) {
-			$output = $this->getResource(self::RESOURCE_HTML);
-		} elseif ($this->isResource(self::RESOURCE_JSON)) {
-			$output = $this->getResource(self::RESOURCE_JSON);
+		if ($this->isResource(self::RES_HTML)) {
+			$output = $this->getResource(self::RES_HTML);
+		} elseif ($this->isResource(self::RES_JSON)) {
+			$output = $this->getResource(self::RES_JSON);
 		}
 		if ($output) {
 			$output->render();
