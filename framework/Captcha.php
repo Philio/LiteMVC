@@ -81,7 +81,9 @@ class Captcha
 	 *
 	 * @var string
 	 */
-	const SESS_NAMESPACE = 'Captcha';
+	const SESS_NS = 'Captcha';
+	const SESS_NS_IMG = 'Image';
+	const SESS_NS_CODE = 'Code';
 
 	/**
 	 * How long to keep the image for before it is deleted
@@ -89,6 +91,29 @@ class Captcha
 	 * @var int
 	 */
 	const IMAGE_EXPIRES = 3600;
+
+	/**
+	 * Configuration keys
+	 *
+	 * @var string
+	 */
+	const CONF_WIDTH = 'width';
+	const CONF_HEIGHT = 'height';
+	const CONF_COUNT = 'count';
+	const CONF_FONT = 'font';
+	const CONF_FONT_PATH = 'path';
+	const CONF_BG = 'background';
+	const CONF_BG_PATH = 'path';
+	const CONF_IMG = 'image';
+	const CONF_IMG_PATH = 'path';
+	const CONF_IMG_URL = 'url';
+
+	/**
+	 * Resource names
+	 *
+	 * @var string
+	 */
+	const RES_CONFIG = 'Config';
 
 	/**
 	 * Character set
@@ -106,51 +131,54 @@ class Captcha
 	 */
 	public function __construct(App $app = null)
 	{
-		if ($app instanceof App) {
-			$config = $app->getResource('Config')->captcha;
-			if (!is_null($config)) {
-				// Set config options from config file
-				foreach ($config as $key => $value) {
-					switch ($key) {
-						// Image width (optional)
-						case 'width':
-							$this->_width = $value;
-							break;
-						// Imge height (optional)
-						case 'height':
-							$this->_height = $value;
-							break;
-						// Number of character (optional)
-						case 'count':
-							$this->_charCount = $value;
-							break;
-						// Font options
-						case 'font':
-							// Font path
-							if (isset($value['path'])) {
-								$this->_fontPath = $value['path'];
-							}
-							break;
-						// Background options (optional)
-						case 'background':
-							// Background path
-							if (isset($value['path'])) {
-								$this->_bgPath = $value['path'];
-							}
-							break;
-						// Image options
-						case 'image':
-							// Image path
-							if (isset($value['path'])) {
-								$this->_imgPath = $value['path'];
-							}
-							// Image url
-							if (isset($value['url'])) {
-								$this->_imgUrl = $value['url'];
-							}
-							break;
-					}
+		if (!($app instanceof App)) {
+			return;
+		}
+		// Get config
+		$config = $app->getResource(self::RES_CONFIG)->captcha;
+		if (is_null($config)) {
+			return;
+		}
+		// Set config options from config file
+		foreach ($config as $key => $value) {
+			switch ($key) {
+			// Image width (optional)
+			case self::CONF_WIDTH:
+				$this->_width = $value;
+				break;
+			// Imge height (optional)
+			case self::CONF_HEIGHT:
+				$this->_height = $value;
+				break;
+			// Number of character (optional)
+			case self::CONF_COUNT:
+				$this->_charCount = $value;
+				break;
+			// Font options
+			case self::CONF_FONT:
+				// Font path
+				if (isset($value[self::CONF_FONT_PATH])) {
+					$this->_fontPath = $value[self::CONF_FONT_PATH];
 				}
+				break;
+			// Background options (optional)
+			case self::CONF_BG:
+				// Background path
+				if (isset($value[self::CONF_BG_PATH])) {
+					$this->_bgPath = $value[self::CONF_BG_PATH];
+				}
+				break;
+			// Image options
+			case self::CONF_IMG:
+				// Image path
+				if (isset($value[self::CONF_IMG_PATH])) {
+					$this->_imgPath = $value[self::CONF_IMG_PATH];
+				}
+				// Image url
+				if (isset($value[self::CONF_IMG_URL])) {
+					$this->_imgUrl = $value[self::CONF_IMG_URL];
+				}
+				break;
 			}
 		}
 	}
@@ -227,7 +255,7 @@ class Captcha
 		if (!$this->_isRendered()) {
 			$this->_render();
 		}
-		return '<img src="' . $_SESSION[self::SESS_NAMESPACE]['Image'] .
+		return '<img src="' . $_SESSION[self::SESS_NS][self::SESS_NS_IMG] .
 			'" width="' . $this->_width . '" height="' . $this->_height .
 			'" alt="Captcha" class="captcha" />';
 	}
@@ -252,7 +280,7 @@ class Captcha
 		if (!$this->_isRendered()) {
 			$this->_render();
 		}
-		return $_SESSION[self::SESS_NAMESPACE]['Image'];
+		return $_SESSION[self::SESS_NS][self::SESS_NS_IMG];
 	}
 
 	/**
@@ -265,7 +293,7 @@ class Captcha
 		if (!$this->_isRendered()) {
 			$this->_render();
 		}
-		return $_SESSION[self::SESS_NAMESPACE]['Code'];
+		return $_SESSION[self::SESS_NS][self::SESS_NS_CODE];
 	}
 
 	/**
@@ -276,7 +304,7 @@ class Captcha
 	 */
 	public function checkCode($code)
 	{
-		if (strtolower($_SESSION[self::SESS_NAMESPACE]['Code']) == strtolower($code)) {
+		if (strtolower($_SESSION[self::SESS_NS][self::SESS_NS_CODE]) == strtolower($code)) {
 			return true;
 		}
 		return false;
@@ -289,7 +317,8 @@ class Captcha
 	 */
 	protected function _isRendered()
 	{
-		if (!isset($_SESSION[self::SESS_NAMESPACE]['Image']) || !isset($_SESSION[self::SESS_NAMESPACE]['Code'])) {
+		if (!isset($_SESSION[self::SESS_NS][self::SESS_NS_IMG]) ||
+				!isset($_SESSION[self::SESS_NS][self::SESS_NS_CODE])) {
 			return false;
 		}
 		return true;
@@ -318,7 +347,13 @@ class Captcha
 			// Create background image
 			$bg = imagecreatefromstring(file_get_contents($this->_bgList[$rand]));
 			// Copy into image
-			imagecopyresampled($img, $bg, 0, 0, 0, 0, $this->_width, $this->_height, imagesx($bg), imagesy($bg));
+			imagecopyresampled(
+				$img, $bg, 0, 0, 0, 0,
+				$this->_width,
+				$this->_height,
+				imagesx($bg),
+				imagesy($bg)
+			);
 		} else {
 			// Make background transparent
 			imagesavealpha($img, true);
@@ -328,7 +363,12 @@ class Captcha
 		// Add some random characters
 		for ($i = 0; $i < mt_rand(10, 20); $i ++) {
 			// Assign a colour fairly close to white
-			$colour = imagecolorallocate($img, mt_rand(200, 255), mt_rand(200, 255), mt_rand(200, 255));
+			$colour = imagecolorallocate(
+				$img,
+				mt_rand(200, 255),
+				mt_rand(200, 255),
+				mt_rand(200, 255)
+			);
 			// Draw random letter
 			$letter = substr(self::CHARACTERS, mt_rand(0, strlen(self::CHARACTERS) - 1), 1);
 			$res = imagettftext(
@@ -350,7 +390,13 @@ class Captcha
 		$code = '';
 		for ($i = 0; $i < $this->_charCount; $i ++) {
 			// Assign a random colour fairly close to black
-			$colour = imagecolorallocatealpha($img, mt_rand(0, 100), mt_rand(0, 100), mt_rand(0, 100), mt_rand(0,50));
+			$colour = imagecolorallocatealpha(
+				$img,
+				mt_rand(0, 100),
+				mt_rand(0, 100),
+				mt_rand(0, 100),
+				mt_rand(0,50)
+			);
 			// Draw random letter
 			$letter = substr(self::CHARACTERS, mt_rand(0, strlen(self::CHARACTERS) - 1), 1);
 			$code .= $letter;
@@ -371,8 +417,8 @@ class Captcha
 			$filepath = \PATH . rtrim($this->_imgPath, '/') . '/' . $filename;
 		} while (file_exists($filepath));
 		// Save to session
-		$_SESSION[self::SESS_NAMESPACE]['Image'] = rtrim($this->_imgUrl, '/') . '/' . $filename;
-		$_SESSION[self::SESS_NAMESPACE]['Code'] = $code;
+		$_SESSION[self::SESS_NS][self::SESS_NS_IMG] = rtrim($this->_imgUrl, '/') . '/' . $filename;
+		$_SESSION[self::SESS_NS][self::SESS_NS_CODE] = $code;
 		// Save to disk
 		imagepng($img, $filepath);
 	}
