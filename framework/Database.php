@@ -29,16 +29,35 @@ class Database
 	 * @var array
 	 */
 	protected $_connections = array();
+
+	/**
+	 * Resource names
+	 *
+	 * @var string
+	 */
+	const RES_CONFIG = 'Config';
+
+	/**
+	 * Configuration keys
+	 *
+	 * @var string
+	 */
+	const CONF_DRIVER = 'driver';
+	const CONF_HOST = 'host';
+	const CONF_USER = 'username';
+	const CONF_PASS = 'password';
+	const CONF_DB = 'database';
+	const CONF_NOERR = 'noerrors';
 	
 	/**
 	 * Constructor
 	 * 
-	 * @param App $app 
+	 * @param App $app
 	 * @return void
 	 */
 	public function  __construct(App $app) {
 		// Check config
-		$config = $app->getResource('Config')->database;
+		$config = $app->getResource(self::RES_CONFIG)->database;
 		if (!is_null($config)) {
 			$this->_config = $config;
 		} else {
@@ -59,21 +78,19 @@ class Database
 			// Check if configuration exists
 			if (array_key_exists($name, $this->_config)) {
 				// Config check
-				if (!isset($this->_config[$name]['driver'],
-						$this->_config[$name]['host'],
-						$this->_config[$name]['username'],
-						$this->_config[$name]['password'])) {
+				if (!isset($this->_config[$name][self::CONF_DRIVER], $this->_config[$name][self::CONF_HOST],
+						$this->_config[$name][self::CONF_USER], $this->_config[$name][self::CONF_PASS])) {
 					throw new Database\Exception('Configuration for database \'' . $name . '\' is invalid.');
 				}
-				$class = 'LiteMVC\\Database\\' . $this->_config[$name]['driver'];
+
+				// Instantiate new connection
+				$class = 'LiteMVC\\Database\\' . $this->_config[$name][self::CONF_DRIVER];
 				$this->_connections[$name] = new $class(
-					$this->_config[$name]['host'],
-					$this->_config[$name]['username'],
-					$this->_config[$name]['password'],
-					isset($this->_config[$name]['database']) ?
-						$this->_config[$name]['database'] : null,
-					isset($this->_config[$name]['noerrors']) ?
-						$this->_config[$name]['noerrors'] : null
+					$this->_config[$name][self::CONF_HOST],
+					$this->_config[$name][self::CONF_USER],
+					$this->_config[$name][self::CONF_PASS],
+					isset($this->_config[$name][self::CONF_DB]) ? $this->_config[$name][self::CONF_DB] : null,
+					isset($this->_config[$name][self::CONF_NOERR]) ? $this->_config[$name][self::CONF_NOERR] : null
 				);
 			} else {
 				throw new Database\Exception('Database \'' . $name . '\' is not defined in the configuration.');
