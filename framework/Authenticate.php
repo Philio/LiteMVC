@@ -100,6 +100,7 @@ class Authenticate
 		if (is_null($config)) {
 			throw new Authenticate\Exception('No database configuration has been specified.');
 		}
+
 		// Check that a user model has been specified
 		if (isset($config[self::CONF_MODEL][self::CONF_USER])) {
 			// Check session
@@ -107,10 +108,7 @@ class Authenticate
 				$this->_userModel = $_SESSION[self::SESS_NS][self::SESS_NS_USER];
 			// Instantiate new class
 			} elseif (class_exists($config[self::CONF_MODEL][self::CONF_USER])) {
-				$this->_userModel =
-					new $config[self::CONF_MODEL][self::CONF_USER](
-						$app->getResource(self::RES_DATABASE)
-					);
+				$this->_userModel = new $config[self::CONF_MODEL][self::CONF_USER]($app->getResource(self::RES_DATABASE));
 			// Invalid configuration
 			} else {
 				throw new Authenticate\Exception(
@@ -118,35 +116,36 @@ class Authenticate
 				);
 			}
 		}
+
 		// If an ACL model has been specified instanciate it
 		if (isset($config[self::CONF_MODEL][self::CONF_ACL])) {
-			$this->_aclModel =
-				new $config[self::CONF_MODEL][self::CONF_ACL](
-					$app->getResource(self::RES_DATABASE)
-				);
+			$this->_aclModel = new $config[self::CONF_MODEL][self::CONF_ACL]($app->getResource(self::RES_DATABASE));
 			// Setup ACL caching
-			if (isset($config[self::CONF_MODEL][self::CONF_CACHE][self::CONF_MODULE]) &&
-					isset($config[self::CONF_MODEL][self::CONF_CACHE][self::CONF_LIFETIME])) {
+			if (isset($config[self::CONF_MODEL][self::CONF_CACHE][self::CONF_MODULE],
+					$config[self::CONF_MODEL][self::CONF_CACHE][self::CONF_LIFETIME])) {
+				// Cache object
 				$this->_aclModel->setCache(
 					$app->getResource($config[self::CONF_MODEL][self::CONF_CACHE][self::CONF_MODULE])
 				);
+				// Cache lifetime
 				$this->_aclModel->setCacheLifetime(
 					$config[self::CONF_MODEL][self::CONF_CACHE][self::CONF_LIFETIME]
 				);
 			}
 		}
+
 		// Set allow policy
 		if (isset($config[self::CONF_ACL][self::CONF_POLICY])) {
 			$this->_policy = $config[self::CONF_ACL][self::CONF_POLICY];
 		}
+
 		// Add allowed pages
-		if (isset($config[self::CONF_ACL][self::CONF_ALLOW]) &&
-				is_array($config[self::CONF_ACL][self::CONF_ALLOW])) {
+		if (isset($config[self::CONF_ACL][self::CONF_ALLOW]) && is_array($config[self::CONF_ACL][self::CONF_ALLOW])) {
 			$this->_allow = $config[self::CONF_ACL][self::CONF_ALLOW];
 		}
+
 		// Add denied pages
-		if (isset($config[self::CONF_ACL][self::CONF_DENY]) &&
-				is_array($config[self::CONF_ACL][self::CONF_DENY])) {
+		if (isset($config[self::CONF_ACL][self::CONF_DENY]) && is_array($config[self::CONF_ACL][self::CONF_DENY])) {
 			$this->_deny = $config[self::CONF_ACL][self::CONF_DENY];
 		}
 	}
@@ -214,22 +213,27 @@ class Authenticate
 	 */
 	public function isAllowed($module, $controller, $action)
 	{
+		// Check logged in user privs
 		if ($this->isLoggedIn() && $this->hasAclModel()) {
-			return $this->_aclModel->isAllowed(
-				$this->_userModel->getUserId(),
-				$module,
-				$controller,
-				$action
-			);
-		} elseif (in_array($controller . '.' . $action, $this->_allow) ||
-			in_array($controller . '.*', $this->_allow)) {
-			return true;
-		} elseif (in_array($controller . '.' . $action, $this->_deny) ||
-			in_array($controller . '.*', $this->_deny)) {
-			return false;
-		} elseif ($this->_policy == self::POLICY_ALLOW) {
+			return $this->_aclModel->isAllowed($this->_userModel->getUserId(), $module, $controller, $action);
+		}
+
+		// Check allowed pages
+		if (in_array($controller . '.' . $action, $this->_allow) || in_array($controller . '.*', $this->_allow)) {
 			return true;
 		}
+
+		// Check denied pages
+		if (in_array($controller . '.' . $action, $this->_deny) || in_array($controller . '.*', $this->_deny)) {
+			return false;
+		}
+
+		// Check default policy
+		if ($this->_policy == self::POLICY_ALLOW) {
+			return true;
+		}
+
+		// Return false if all previous checks fail
 		return false;
 	}
 

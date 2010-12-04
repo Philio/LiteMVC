@@ -142,43 +142,48 @@ class Captcha
 		// Set config options from config file
 		foreach ($config as $key => $value) {
 			switch ($key) {
-			// Image width (optional)
-			case self::CONF_WIDTH:
-				$this->_width = $value;
-				break;
-			// Imge height (optional)
-			case self::CONF_HEIGHT:
-				$this->_height = $value;
-				break;
-			// Number of character (optional)
-			case self::CONF_COUNT:
-				$this->_charCount = $value;
-				break;
-			// Font options
-			case self::CONF_FONT:
-				// Font path
-				if (isset($value[self::CONF_FONT_PATH])) {
-					$this->_fontPath = $value[self::CONF_FONT_PATH];
-				}
-				break;
-			// Background options (optional)
-			case self::CONF_BG:
-				// Background path
-				if (isset($value[self::CONF_BG_PATH])) {
-					$this->_bgPath = $value[self::CONF_BG_PATH];
-				}
-				break;
-			// Image options
-			case self::CONF_IMG:
-				// Image path
-				if (isset($value[self::CONF_IMG_PATH])) {
-					$this->_imgPath = $value[self::CONF_IMG_PATH];
-				}
-				// Image url
-				if (isset($value[self::CONF_IMG_URL])) {
-					$this->_imgUrl = $value[self::CONF_IMG_URL];
-				}
-				break;
+				// Image width (optional)
+				case self::CONF_WIDTH:
+					$this->_width = $value;
+					break;
+
+				// Imge height (optional)
+				case self::CONF_HEIGHT:
+					$this->_height = $value;
+					break;
+
+				// Number of character (optional)
+				case self::CONF_COUNT:
+					$this->_charCount = $value;
+					break;
+
+				// Font options
+				case self::CONF_FONT:
+					// Font path
+					if (isset($value[self::CONF_FONT_PATH])) {
+						$this->_fontPath = $value[self::CONF_FONT_PATH];
+					}
+					break;
+
+				// Background options (optional)
+				case self::CONF_BG:
+					// Background path
+					if (isset($value[self::CONF_BG_PATH])) {
+						$this->_bgPath = $value[self::CONF_BG_PATH];
+					}
+					break;
+
+				// Image options
+				case self::CONF_IMG:
+					// Image path
+					if (isset($value[self::CONF_IMG_PATH])) {
+						$this->_imgPath = $value[self::CONF_IMG_PATH];
+					}
+					// Image url
+					if (isset($value[self::CONF_IMG_URL])) {
+						$this->_imgUrl = $value[self::CONF_IMG_URL];
+					}
+					break;
 			}
 		}
 	}
@@ -255,9 +260,8 @@ class Captcha
 		if (!$this->_isRendered()) {
 			$this->_render();
 		}
-		return '<img src="' . $_SESSION[self::SESS_NS][self::SESS_NS_IMG] .
-			'" width="' . $this->_width . '" height="' . $this->_height .
-			'" alt="Captcha" class="captcha" />';
+		return '<img src="' . $_SESSION[self::SESS_NS][self::SESS_NS_IMG] . '" width="' .
+			$this->_width . '" height="' . $this->_height . '" alt="Captcha" class="captcha" />';
 	}
 
 	/**
@@ -317,8 +321,7 @@ class Captcha
 	 */
 	protected function _isRendered()
 	{
-		if (!isset($_SESSION[self::SESS_NS][self::SESS_NS_IMG]) ||
-				!isset($_SESSION[self::SESS_NS][self::SESS_NS_CODE])) {
+		if (!isset($_SESSION[self::SESS_NS][self::SESS_NS_IMG]) || !isset($_SESSION[self::SESS_NS][self::SESS_NS_CODE])) {
 			return false;
 		}
 		return true;
@@ -335,12 +338,16 @@ class Captcha
 		if (mt_rand(1, 100) == 50) {
 			$this->_cleanup();
 		}
+
 		// Load fonts
 		$this->_loadFontList();
+
 		// Load backgrounds
 		$this->_loadBackgroundList();
+
 		// Create image
 		$img = imagecreatetruecolor($this->_width, $this->_height);
+
 		// Add background
 		if (count($this->_bgList)) {
 			$rand = mt_rand(1, count($this->_bgList)) - 1;
@@ -360,6 +367,7 @@ class Captcha
 			$transparent = imagecolorallocatealpha($img, 0, 0, 0, 127);
 			imagefill($img, 0, 0, $transparent);
 		}
+
 		// Add some random characters
 		for ($i = 0; $i < mt_rand(10, 20); $i ++) {
 			// Assign a colour fairly close to white
@@ -382,10 +390,12 @@ class Captcha
 				$letter
 			);
 		}
+
 		// Calc restraints
 		$charSizeY = $this->_height;
 		$charSizeX = floor($this->_width * 0.9 / $this->_charCount);
 		$ptSize = floor($charSizeY * 0.9 / 2);
+
 		// Add characters
 		$code = '';
 		for ($i = 0; $i < $this->_charCount; $i ++) {
@@ -411,14 +421,17 @@ class Captcha
 				$letter
 			);
 		}
+
 		// Generate a unique filename
 		do {
 			$filename = md5(microtime()) . '.png';
 			$filepath = \PATH . rtrim($this->_imgPath, '/') . '/' . $filename;
 		} while (file_exists($filepath));
+
 		// Save to session
 		$_SESSION[self::SESS_NS][self::SESS_NS_IMG] = rtrim($this->_imgUrl, '/') . '/' . $filename;
 		$_SESSION[self::SESS_NS][self::SESS_NS_CODE] = $code;
+
 		// Save to disk
 		imagepng($img, $filepath);
 	}
@@ -474,6 +487,7 @@ class Captcha
 		if (is_null($this->_imgPath)) {
 			return;
 		}
+
 		// Loop through directory and unlink any file not accessed for 24 hrs
 		foreach (new \DirectoryIterator(\PATH . $this->_imgPath) as $file) {
 			if ($file->isFile() && $file->getATime() < time() - self::IMAGE_EXPIRES) {

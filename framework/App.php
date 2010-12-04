@@ -154,6 +154,7 @@ class App {
 		$config->load(\PATH . self::PATH_CONFIG . $configFile, \ENVIRONMENT);
 		// Config is special case and is saved as 'Config' resource for convenience
 		$this->setResource(self::RES_CONFIG, $config);
+
 		// Configure autoloader
 		if (!is_null($config->autoload)) {
 			$autoload = $this->getResource(self::RES_LOADER);
@@ -161,34 +162,35 @@ class App {
 				$autoload->setPath($ns, \PATH . $path);
 			}
 		}
+
 		// Preload modules
 		if (!is_null($config->init)) {
 			$init = $config->init;
-			if (isset($init[self::CONF_PRELOAD]) &&
-					is_array($init[self::CONF_PRELOAD])) {
+			if (isset($init[self::CONF_PRELOAD]) && is_array($init[self::CONF_PRELOAD])) {
 				foreach ($init[self::CONF_PRELOAD] as $resource) {
 					$this->loadResource($resource);
 				}
 			}
 		}
+
 		// Start session
 		session_start();
+
 		// Get request
 		$req = $this->getResource(self::RES_REQUEST);
 		$req->process();
+		
 		// Load other resources
 		if (!is_null($config->init)) {
 			$init = $config->init;
 			// Application specific resources
-			if (isset($init[self::CONF_LOAD]) &&
-					is_array($init[self::CONF_LOAD])) {
+			if (isset($init[self::CONF_LOAD]) && is_array($init[self::CONF_LOAD])) {
 				foreach ($init[self::CONF_LOAD] as $resource) {
 					$this->loadResource($resource);
 				}
 			}
 			// Module specific resources
-			if (isset($init[$req->getModule()][self::CONF_LOAD]) &&
-					is_array($init[$req->getModule()][self::CONF_LOAD])) {
+			if (isset($init[$req->getModule()][self::CONF_LOAD]) && is_array($init[$req->getModule()][self::CONF_LOAD])) {
 				foreach ($init[$req->getModule()][self::CONF_LOAD] as $resource) {
 					$this->loadResource($resource);
 				}
@@ -205,6 +207,7 @@ class App {
 	public function run() {
 		// Dispatch request
 		$this->getResource(self::RES_DISPATCH)->dispatch();
+		
 		// Page output
 		$output = false;
 		if ($this->isResource(self::RES_HTML)) {
