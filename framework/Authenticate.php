@@ -93,7 +93,7 @@ class Authenticate
 	 * @param App $app
 	 * @return void
 	 */
-	public function __construct(App $app)
+	public function __construct(App $app = null)
 	{
 		// Check config
 		$config = $app->getResource(self::RES_CONFIG)->authenticate;

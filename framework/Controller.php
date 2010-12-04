@@ -42,18 +42,28 @@ abstract class Controller
 	protected $_plugins = array();
 
 	/**
+	 * Resource names
+	 *
+	 * @var string
+	 */
+	const RES_REQUEST = 'Request';
+	const RES_HTML = 'View\HTML';
+	const RES_JSON = 'View\JSON';
+	const RES_DATABASE = 'Database';
+
+	/**
 	 * Default namespace prefix
 	 *
-	 * @var stirng
+	 * @var string
 	 */
-	const NAMESPACE_PREFIX = 'LiteMVC';
+	const NS_PREFIX = 'LiteMVC';
 
 	/**
 	 * Namespace body for plugins
 	 *
 	 * @var string
 	 */
-	const NAMESPACE_BODY = '\\Controller\\Plugin\\';
+	const NS_BODY = '\\Controller\\Plugin\\';
 
 	/**
 	 * Constructor
@@ -66,11 +76,13 @@ abstract class Controller
 	{
 		// Reference App object for resource loading
 		$this->_app = $app;
+
 		// Setup request
-		$this->_request = $this->getResource('Request');
+		$this->_request = $this->getResource(self::RES_REQUEST);
+
 		// Setup HTML view
-		if ($this->isResource('View\HTML')) {
-			$this->_view = $this->getResource('View\HTML');
+		if ($this->isResource(self::RES_HTML)) {
+			$this->_view = $this->getResource(self::RES_HTML);
 			// Set module
 			$this->_view->setModule($this->_request->getModule());
 			// Set layout
@@ -84,9 +96,10 @@ abstract class Controller
 			$this->_view->setPage(ucfirst($controller) . '/' . ucfirst($action));
 			// Set path
 			$this->_view->path = $this->_request->getRelativePath();
+
 		// Setup JSON view
-		} elseif ($app->isResource('View\JSON')) {
-			$this->_view = $app->getResource('View\JSON');
+		} elseif ($app->isResource(self::RES_JSON)) {
+			$this->_view = $app->getResource(self::RES_JSON);
 		}
 	}
 
@@ -101,9 +114,9 @@ abstract class Controller
 		// Check if plugin is instanciated
 		if (!isset($this->_plugins[$name])) {
 			// Check if class exists within framework namespace or app namespace
-			$class = self::NAMESPACE_PREFIX . self::NAMESPACE_BODY . ucfirst($name);
+			$class = self::NS_PREFIX . self::NS_BODY . ucfirst($name);
 			if (!class_exists($class)) {
-				echo $class = $this->_request->getModule() . self::NAMESPACE_BODY . ucfirst($name);
+				echo $class = $this->_request->getModule() . self::NS_BODY . ucfirst($name);
 				if (!class_exists($class)) {
 					return false;
 				}
@@ -111,10 +124,12 @@ abstract class Controller
 			// Call class
 			$this->_plugins[$name] = new $class();
 		}
+
 		// Return function result or class if no process function
 		if (is_callable(array($this->_plugins[$name], 'process'))) {
 			return call_user_func_array(array($this->_plugins[$name], 'process'), $args);
 		}
+		
 		return $this->_plugins[$name];
 	}
 
@@ -156,7 +171,7 @@ abstract class Controller
 	 */
 	public function getModel($name, $cache = null, $lifetime = null)
 	{
-		$db = $this->getResource('Database');
+		$db = $this->getResource(self::RES_DATABASE);
 		if ($db instanceof Database) {
 			$model = new $name($db);
 			if (!is_null($cache) && !is_null($lifetime)) {
