@@ -41,7 +41,9 @@ class Memcache extends \Memcache
 		} elseif (is_string($servers)) {
 			$this->_addServerFromString($servers);
 		} else {
-			throw new Memcache\Exception('Unknown server type specified, must be an array or a string.');
+			throw new Memcache\Exception(
+				'Unknown server type specified, must be an array or a string.'
+			);
 		}
 	}
 	
@@ -56,7 +58,9 @@ class Memcache extends \Memcache
 		list ($host, $port) = explode(':', $server);
 		$res = parent::addServer($host, $port);
 		if ($res === false) {
-			throw new Memcache\Exception('There was an error adding server ' . $server . '.');
+			throw new Memcache\Exception(
+				'There was an error adding server ' . $server . '.'
+			);
 		}
 		return $res;
 	}

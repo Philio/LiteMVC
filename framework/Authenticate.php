@@ -53,31 +53,31 @@ class Authenticate
 	 *
 	 * @var string
 	 */
-	const SESS_NS = 'Auth';
-	const SESS_NS_USER = 'User';
+	const SESS_NS		= 'Auth';
+	const SESS_NS_USER	= 'User';
 
 	/**
 	 * Security policy types
 	 *
 	 * @var string
 	 */
-	const POLICY_ALLOW = 'allow';
-	const POLICY_DENY = 'deny';
+	const POLICY_ALLOW	= 'allow';
+	const POLICY_DENY	= 'deny';
 
 	/**
 	 * Configuration keys
 	 *
 	 * @var string
 	 */
-	const CONF_MODEL = 'model';
-	const CONF_USER = 'user';
-	const CONF_ACL = 'acl';
-	const CONF_POLICY = 'policy';
-	const CONF_ALLOW = 'allow';
-	const CONF_DENY = 'deny';
-	const CONF_CACHE = 'cache';
-	const CONF_MODULE = 'module';
-	const CONF_LIFETIME = 'lifetime';
+	const CONF_MODEL	= 'model';
+	const CONF_USER		= 'user';
+	const CONF_ACL		= 'acl';
+	const CONF_POLICY	= 'policy';
+	const CONF_ALLOW	= 'allow';
+	const CONF_DENY		= 'deny';
+	const CONF_CACHE	= 'cache';
+	const CONF_MODULE	= 'module';
+	const CONF_LIFETIME	= 'lifetime';
 
 	/**
 	 * Resource names

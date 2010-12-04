@@ -42,12 +42,12 @@ class Database
 	 *
 	 * @var string
 	 */
-	const CONF_DRIVER = 'driver';
-	const CONF_HOST = 'host';
-	const CONF_USER = 'username';
-	const CONF_PASS = 'password';
-	const CONF_DB = 'database';
-	const CONF_NOERR = 'noerrors';
+	const CONF_DRIVER	= 'driver';
+	const CONF_HOST		= 'host';
+	const CONF_USER		= 'username';
+	const CONF_PASS		= 'password';
+	const CONF_DB		= 'database';
+	const CONF_NOERR	= 'noerrors';
 	
 	/**
 	 * Constructor

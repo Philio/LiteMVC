@@ -34,23 +34,23 @@ class Dispatcher {
 	 *
 	 * @var string
 	 */
-	const CONF_LOGIN  = 'login';
-	const CONF_ACTION = 'action';
-	const CONF_CTRLR  = 'controller';
-	const CONF_ERR    = 'error';
-	const CONF_NA     = 'notallowed';
-	const CONF_NF     = 'notfound';
-	const CONF_EXP    = 'exception';
+	const CONF_LOGIN	= 'login';
+	const CONF_ACTION	= 'action';
+	const CONF_CTRLR	= 'controller';
+	const CONF_ERR		= 'error';
+	const CONF_NA		= 'notallowed';
+	const CONF_NF		= 'notfound';
+	const CONF_EXP		= 'exception';
 
 	/**
 	 * Resource names
 	 *
 	 * @var string
 	 */
-	const RES_REQUEST = 'Request';
-	const RES_AUTH    = 'Authenticate';
-	const RES_HTML    = 'View\HTML';
-	const RES_JSON    = 'View\JSON';
+	const RES_REQUEST	= 'Request';
+	const RES_AUTH		= 'Authenticate';
+	const RES_HTML		= 'View\HTML';
+	const RES_JSON		= 'View\JSON';
 
 	/**
 	 * Constructor

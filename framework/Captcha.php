@@ -81,9 +81,9 @@ class Captcha
 	 *
 	 * @var string
 	 */
-	const SESS_NS = 'Captcha';
-	const SESS_NS_IMG = 'Image';
-	const SESS_NS_CODE = 'Code';
+	const SESS_NS		= 'Captcha';
+	const SESS_NS_IMG	= 'Image';
+	const SESS_NS_CODE	= 'Code';
 
 	/**
 	 * How long to keep the image for before it is deleted
@@ -97,16 +97,16 @@ class Captcha
 	 *
 	 * @var string
 	 */
-	const CONF_WIDTH = 'width';
-	const CONF_HEIGHT = 'height';
-	const CONF_COUNT = 'count';
-	const CONF_FONT = 'font';
-	const CONF_FONT_PATH = 'path';
-	const CONF_BG = 'background';
-	const CONF_BG_PATH = 'path';
-	const CONF_IMG = 'image';
-	const CONF_IMG_PATH = 'path';
-	const CONF_IMG_URL = 'url';
+	const CONF_WIDTH		= 'width';
+	const CONF_HEIGHT		= 'height';
+	const CONF_COUNT		= 'count';
+	const CONF_FONT			= 'font';
+	const CONF_FONT_PATH	= 'path';
+	const CONF_BG			= 'background';
+	const CONF_BG_PATH		= 'path';
+	const CONF_IMG			= 'image';
+	const CONF_IMG_PATH		= 'path';
+	const CONF_IMG_URL		= 'url';
 
 	/**
 	 * Resource names

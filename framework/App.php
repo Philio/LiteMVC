@@ -30,31 +30,31 @@ class App {
 	 *
 	 * @var string
 	 */
-	const PATH_APP    = '/apps/';
-	const PATH_CACHE  = '/cache/';
-	const PATH_CONFIG = '/configs/';
+	const PATH_APP		= '/apps/';
+	const PATH_CACHE	= '/cache/';
+	const PATH_CONFIG	= '/configs/';
 
 	/**
 	 * Configuration keys
 	 *
 	 * @var string
 	 */
-	const CONF_PRELOAD = 'preload';
-	const CONF_LOAD = 'load';
+	const CONF_PRELOAD	= 'preload';
+	const CONF_LOAD		= 'load';
 
 	/**
 	 * Resource names
 	 *
 	 * @var string
 	 */
-	const RES_FILE = 'Cache\File';
-	const RES_CONFIG = 'Config';
-	const RES_CONF_INI = 'App\Config\Ini';
-	const RES_LOADER = 'Autoload';
-	const RES_REQUEST = 'Request';
-	const RES_DISPATCH = 'Dispatcher';
-	const RES_HTML = 'View\HTML';
-	const RES_JSON = 'View\JSON';
+	const RES_FILE		= 'Cache\File';
+	const RES_CONFIG	= 'Config';
+	const RES_CONF_INI	= 'App\Config\Ini';
+	const RES_LOADER	= 'Autoload';
+	const RES_REQUEST	= 'Request';
+	const RES_DISPATCH	= 'Dispatcher';
+	const RES_HTML		= 'View\HTML';
+	const RES_JSON		= 'View\JSON';
 	
 	/**
 	 * Constructor
