@@ -62,6 +62,20 @@ class Email {
 	protected $_data = array();
 
 	/**
+	 * Address type constants
+	 *
+	 * @var string
+	 */
+	const ADDR_TO	= 'to';
+	const ADDR_CC	= 'cc';
+	const ADDR_BCC	= 'bcc';
+
+	/**
+	 * Email new line constant
+	 */
+	const NL = "\r\n";
+
+	/**
 	 * Set a value
 	 *
 	 * @param string $name
@@ -118,19 +132,19 @@ class Email {
 	 * @param string $type
 	 * @return void
 	 */
-	public function setAddress($address, $type = 'to')
+	public function setAddress($address, $type = self::ADDR_TO)
 	{
 		if (!is_array($address)) {
 			$address = array($address);
 		}
 		switch ($type) {
-			case 'to':
+			case self::ADDR_TO:
 				$this->_to = array_merge($this->_to, $address);
 				break;
-			case 'cc':
+			case self::ADDR_CC:
 				$this->_cc = array_merge($this->_cc, $address);
 				break;
-			case 'bcc':
+			case self::ADDR_BCC:
 				$this->_bcc = array_merge($this->_bcc, $address);
 				break;
 		}
@@ -197,7 +211,7 @@ class Email {
 			}
 		}
 		// Send message
-		mail(implode(', ', $this->_to), $this->_subject, $body, implode("\r\n", $headers));
+		mail(implode(', ', $this->_to), $this->_subject, $body, implode(self::NL, $headers));
 	}
 
 }
