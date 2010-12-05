@@ -87,6 +87,31 @@ class Email {
 	}
 
 	/**
+	 * Set a value
+	 *
+	 * @param string $name
+	 * @param string $value
+	 * @return void
+	 */
+	public function set($name, $value) {
+		$this->_data[$name] = $value;
+	}
+
+	/**
+	 * Get a value
+	 *
+	 * @param string $name
+	 * @return mixed
+	 */
+	public function &get($name)
+	{
+		if (isset($this->_data[$name])) {
+			return $this->_data[$name];
+		}
+		return null;
+	}
+
+	/**
 	 * Add a recipient address
 	 *
 	 * @param mixed $address
