@@ -45,6 +45,18 @@ class Config implements \Countable
 	const CACHE_LIFETIME = 86400;
 
 	/**
+	 * Set magic method
+	 *
+	 * @param string $name
+	 * @param mixed $value
+	 * @return void
+	 */
+	public function __set($name, $value)
+	{
+		$this->_data[$name] = $value;
+	}
+
+	/**
 	 * Get magic method
 	 *
 	 * @param string $name
@@ -59,15 +71,29 @@ class Config implements \Countable
 	}
 
 	/**
-	 * Set magic method
+	 * Set value method
 	 *
 	 * @param string $name
 	 * @param mixed $value
 	 * @return void
 	 */
-	public function __set($name, $value)
+	public function setVal($name, $value)
 	{
 		$this->_data[$name] = $value;
+	}
+
+	/**
+	 * Get value method
+	 *
+	 * @param string $name
+	 * @return mixed
+	 */
+	public function &getVal($name)
+	{
+		if (array_key_exists($name, $this->_data)) {
+			return $this->_data[$name];
+		}
+		return null;
 	}
 
 	/**

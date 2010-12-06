@@ -183,6 +183,7 @@ abstract class Form {
 			$html .= ' method="' . $this->_method . '"';
 		}
 		$html .= '>' . PHP_EOL;
+
 		// Form fields
 		foreach ($this->_fields as $name => $data) {
 			// Add label
@@ -197,6 +198,7 @@ abstract class Form {
 				}
 				$html .=  '</label>' . PHP_EOL;
 			}
+
 			// Add form element
 			switch ($data['type']) {
 				// All standard input methods
@@ -225,6 +227,7 @@ abstract class Form {
 					// Closing tag
 					$html .= ' />' . PHP_EOL;
 					break;
+
 				// Text area
 				case self::TYPE_TEXTAREA:
 					// Build text area
@@ -249,9 +252,12 @@ abstract class Form {
 					}
 					$html .= '</textarea>' . PHP_EOL;
 					break;
+
 				// Select
 				case self::TYPE_SELECT:
+					// @todo
 					break;
+
 				// Captcha
 				case self::TYPE_CAPTCHA:
 					$captcha = $this->_app->getResource('Captcha');
@@ -260,6 +266,8 @@ abstract class Form {
 					}
 					$html .= $captcha . PHP_EOL;
 					break;
+
+				// Line break
 				case self::TYPE_BREAK:
 					$html .= '<br';
 					// Add properties
@@ -272,6 +280,7 @@ abstract class Form {
 					$html .= ' />' . PHP_EOL;
 					break;
 			}
+
 			// Display errors
 			if ($this->_displayErrors) {
 				if (isset($this->_errors[$name])) {
@@ -285,9 +294,37 @@ abstract class Form {
 				}
 			}
 		}
+
 		// Form closing tag
 		$html .= '</form>' . PHP_EOL;
+
+		// Return form HTML
 		return $html;
+	}
+
+	/**
+	 * Set a value
+	 *
+	 * @param string $key
+	 * @param mixed $value
+	 * @return void
+	 */
+	public function setVal($key, $value)
+	{
+		$this->_fields[$key]['value'] = $value;
+	}
+
+	/**
+	 * Get a value
+	 *
+	 * @return mixed;
+	 */
+	public function &getVal($key)
+	{
+		if (isset($this->_fields[$key]['value'])) {
+			return $this->_fields[$key]['value'];
+		}
+		return null;
 	}
 
 	/**
@@ -327,12 +364,14 @@ abstract class Form {
 	{
 		// Reset errors
 		$this->_errors = array();
+
 		// Check form values
 		foreach ($this->_fields as $key => &$data) {
 			// If no validation options continue
 			if (!isset($data['validate'])) {
 				continue;
 			}
+
 			// Check all validation options
 			foreach ($data['validate'] as $option => $params) {
 				// If clear, just unset the value
@@ -340,6 +379,7 @@ abstract class Form {
 					unset($data['value']);
 					continue;
 				}
+
 				// Load validator
 				$class = self::NAMESPACE_PREFIX . ucfirst($option);
 				if (class_exists($class)) {
@@ -354,6 +394,7 @@ abstract class Form {
 				} else {
 					throw new Form\Exception('Unknown validator ' . $option . '.');
 				}
+
 				// Store error
 				if (!is_null($error)) {
 					if (!isset($this->_errors[$key])) {

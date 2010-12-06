@@ -176,7 +176,7 @@ abstract class View
 	 * @param mixed $value
 	 * @return void
 	 */
-	public function set($key, $value)
+	public function setVal($key, $value)
 	{
 		$this->_data[$key] = $value;
 	}
@@ -186,7 +186,7 @@ abstract class View
 	 *
 	 * @return mixed;
 	 */
-	public function &get($key)
+	public function &getVal($key)
 	{
 		$default = null;
 		if (isset($this->_data[$key])) {

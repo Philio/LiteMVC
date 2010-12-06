@@ -104,6 +104,19 @@ abstract class Model
 	}
 
 	/**
+	 * Set the value of a column
+	 *
+	 * @param string $key
+	 * @param mixed $value
+	 */
+	public function __set($key, $value)
+	{
+		if (isset($this->_data[$key])) {
+			$this->_data[$key] = $value;
+		}
+	}
+
+	/**
 	 * Get the value of a column
 	 *
 	 * @param string $key
@@ -122,7 +135,7 @@ abstract class Model
 	 * @param string $key
 	 * @param mixed $value
 	 */
-	public function __set($key, $value)
+	public function setVal($key, $value)
 	{
 		if (isset($this->_data[$key])) {
 			$this->_data[$key] = $value;
@@ -130,26 +143,39 @@ abstract class Model
 	}
 
 	/**
-	 * Get model data
+	 * Get the value of a column
 	 *
-	 * @return array
+	 * @param string $key
 	 */
-	public function get()
+	public function &getVal($key)
 	{
-		return $this->_data;
+		if (isset($this->_data[$key])) {
+			return $this->_data[$key];
+		}
+		return null;
 	}
 
 	/**
-	 * Set model data
+	 * Set row data
 	 *
 	 * @param array $data
 	 * @return void
 	 */
-	public function set($data = array())
+	public function setData($data = array())
 	{
 		if (is_array($data) && count($data)) {
 			$this->_data = $data;
 		}
+	}
+
+	/**
+	 * Get row data
+	 *
+	 * @return array
+	 */
+	public function getData()
+	{
+		return $this->_data;
 	}
 
 	/**
@@ -172,6 +198,26 @@ abstract class Model
 		if (is_numeric($lifetime)) {
 			$this->_cacheLifetime = $lifetime;
 		}
+	}
+
+	/**
+	 * Clear an entry in the cache matching the id
+	 *
+	 * @param mixed $id
+	 * @return bool
+	 */
+	public function clearCache($id)
+	{
+		if (is_object($this->_cache)) {
+			// Cache key
+			if (is_array($id)) {
+				$id = implode(':', $id);
+			}
+			$key = self::CACHE_PREFIX . ':' . get_class($this) . ':' . $id;
+			// Delete key
+			return $this->_cache->delete($key);
+		}
+		return false;
 	}
 
 	/**
@@ -346,26 +392,6 @@ abstract class Model
 		);
 		// Map data to object(s)
 		return $this->_mapData($data, self::MAPPING_MULTI);
-	}
-
-	/**
-	 * Clear an entry in the cache matching the id
-	 *
-	 * @param mixed $id
-	 * @return bool
-	 */
-	public function clearCache($id)
-	{
-		if (is_object($this->_cache)) {
-			// Cache key
-			if (is_array($id)) {
-				$id = implode(':', $id);
-			}
-			$key = self::CACHE_PREFIX . ':' . get_class($this) . ':' . $id;
-			// Delete key
-			return $this->_cache->delete($key);
-		}
-		return false;
 	}
 
 	/**
