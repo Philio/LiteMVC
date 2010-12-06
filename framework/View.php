@@ -170,6 +170,32 @@ abstract class View
 	}
 
 	/**
+	 * Set a value
+	 *
+	 * @param string $key
+	 * @param mixed $value
+	 * @return void
+	 */
+	public function set($key, $value)
+	{
+		$this->_data[$key] = $value;
+	}
+
+	/**
+	 * Get a value
+	 *
+	 * @return mixed;
+	 */
+	public function &get($key)
+	{
+		$default = null;
+		if (isset($this->_data[$key])) {
+			return $this->_data[$key];
+		}
+		return $default;
+	}
+
+	/**
 	 * Set the module
 	 *
 	 * @param string $module

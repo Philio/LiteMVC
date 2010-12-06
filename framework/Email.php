@@ -107,7 +107,7 @@ class Email {
 	 * @param string $value
 	 * @return void
 	 */
-	public function set($name, $value) {
+	public function setVal($name, $value) {
 		$this->_data[$name] = $value;
 	}
 
@@ -117,7 +117,7 @@ class Email {
 	 * @param string $name
 	 * @return mixed
 	 */
-	public function &get($name)
+	public function &getVal($name)
 	{
 		if (isset($this->_data[$name])) {
 			return $this->_data[$name];

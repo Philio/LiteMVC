@@ -49,22 +49,6 @@ class Error
 	);
 	
 	/**
-	 * Error code for exception
-	 * 
-	 * @var string
-	 */
-	const E_EXCEPTION = 'Exception';
-	
-	/**
-	 * Header constants
-	 * 
-	 * @var string
-	 */
-	const HEADER_PREFIX = 'HTTP/1.1 ';
-	const HEADER_OK     = '200 OK';
-	const HEADER_FATAL  = '500 Internal Server Error';
-	
-	/**
 	 * Display errors
 	 * 
 	 * @var bool
@@ -76,7 +60,7 @@ class Error
 	 *
 	 * @var string
 	 */
-	protected $_mode = 'HTML';
+	protected $_mode = self::MODE_HTML;
 	
 	/**
 	 * Error template
@@ -100,6 +84,70 @@ class Error
 	protected $_log = array();
 
 	/**
+	 * Error code for exception
+	 *
+	 * @var string
+	 */
+	const E_EXCEPTION = 'Exception';
+
+	/**
+	 * Header constants
+	 *
+	 * @var string
+	 */
+	const HEADER_PREFIX	= 'HTTP/1.1 ';
+	const HEADER_OK		= '200 OK';
+	const HEADER_FATAL	= '500 Internal Server Error';
+
+	/**
+	 *
+	 */
+
+	/**
+	 * Error mode constants
+	 *
+	 * @var string
+	 */
+	const MODE_HTML	= 'HTML';
+	const MODE_JSON	= 'JSON';
+
+	/**
+	 * Logging key names
+	 *
+	 * @var string
+	 */
+	const LOG_LEVEL	= 'level';
+	const LOG_CODE	= 'code';
+	const LOG_MSG	= 'message';
+	const LOG_FILE	= 'file';
+	const LOG_LINE	= 'line';
+	const LOG_TRACE	= 'trace';
+
+	/**
+	 * Logging HTML
+	 *
+	 * @var string
+	 */
+	const HTML_LOG		= '<b>{level}</b>: {message}<br /><b>Occurred in</b>: {file} at line {line}.<br />';
+	const HTML_TRACE	= '<b>Stack trace</b>:<br />{trace}<br />';
+
+	/**
+	 * Configuration keys
+	 *
+	 * @var string
+	 */
+	const CONF_DISPLAY	= 'display';
+	const CONF_MODE		= 'mode';
+	const CONF_TEMPLATE	= 'template';
+
+	/**
+	 * Resource names
+	 *
+	 * @var string
+	 */
+	const RES_CONFIG	= 'Config';
+
+	/**
 	 * Constructor
 	 *
 	 * @param App $app
@@ -107,20 +155,20 @@ class Error
 	 */
 	public function  __construct(App $app) {
 		// Read any config options
-		$config = $app->getResource('Config');
+		$config = $app->getResource(self::RES_CONFIG);
 		if (!is_null($config->error)) {
 			$errConfig = $config->error;
 			// Set display
-			if (isset($errConfig['display']) && $errConfig['display'] == true) {
-				$this->setDisplay(true);
+			if (isset($errConfig[self::CONF_DISPLAY])) {
+				$this->setDisplay($errConfig[self::CONF_DISPLAY]);
 			}
 			// Set mode
-			if (isset($errConfig['mode'])) {
-				$this->setMode($errConfig['mode']);
+			if (isset($errConfig[self::CONF_MODE])) {
+				$this->setMode($errConfig[self::CONF_MODE]);
 			}
-			// Set template
-			if (isset($errConfig['template'])) {
-				$this->setTemplate($errConfig['template']);
+			// Set template'mode'
+			if (isset($errConfig[self::CONF_TEMPLATE])) {
+				$this->setTemplate($errConfig[self::CONF_TEMPLATE]);
 			}
 		}
 		// Register handlers
@@ -163,12 +211,14 @@ class Error
 	/**
 	 * Set display mode
 	 *
-	 * @param bool $mode
+	 * @param string $mode
 	 * @return void
 	 */
 	public function setMode($mode)
 	{
-		$this->_mode = $mode;
+		if ($mode == self::MODE_HTML || $mode = self::MODE_JSON) {
+			$this->_mode = $mode;
+		}
 	}
 	
 	/**
@@ -247,12 +297,12 @@ class Error
 	public function logError($level, $code, $message, $file, $line, $trace = null)
 	{
 		$this->_log[] = array(
-			'level'   => $level,
-			'code'    => $code,
-			'message' => $message,
-			'file'    => $file,
-			'line'    => $line,
-			'trace'   => $trace
+			self::LOG_LEVEL	=> $level,
+			self::LOG_CODE	=> $code,
+			self::LOG_MSG	=> $message,
+			self::LOG_FILE	=> $file,
+			self::LOG_LINE	=> $line,
+			self::LOG_TRACE	=> $trace
 		);
 		$this->_errors = true;
 	}
@@ -291,10 +341,10 @@ class Error
 		header(self::HEADER_PREFIX . self::HEADER_FATAL);
 		// Compile the log
 		switch ($this->_mode) {
-			case 'HTML':
+			case self::MODE_HTML:
 				$page = $this->HTML();
 				break;
-			case 'JSON':
+			case self::MODE_JSON:
 				$page = $this->JSON();
 				break;
 		}
@@ -316,21 +366,31 @@ class Error
 			$output .= '<p>' . PHP_EOL;
 			$log = array_reverse($this->_log);
 			foreach($log as $entry) {
-				$output .= '<b>' . $entry['level'] .'</b>: ' . ucfirst($entry['message']) .
-					'<br /><b>Occurred in</b>: ' . $entry['file'] . ' at line ' . $entry['line'] .
-					'.<br />';
-				if (!is_null($entry['trace'])) {
-					$output .= '<b>Stack trace</b>:<br />' . nl2br($entry['trace'], true) . '<br />';
+				// Compile log entry
+				$entryHtml = self::HTML_LOG;
+				$entryHtml = str_replace('{' . self::LOG_LEVEL . '}', $entry[self::LOG_LEVEL], $entryHtml);
+				$entryHtml = str_replace('{' . self::LOG_MSG . '}', $entry[self::LOG_MSG], $entryHtml);
+				$entryHtml = str_replace('{' . self::LOG_FILE . '}', $entry[self::LOG_FILE], $entryHtml);
+				$entryHtml = str_replace('{' . self::LOG_LINE . '}', $entry[self::LOG_LINE], $entryHtml);
+						
+				// Include trace if there is one
+				if (isset($entry[self::LOG_TRACE])) {
+					$entryHtml .= self::HTML_TRACE;
+					$entryHtml = str_replace('{' . self::LOG_TRACE . '}', nl2br($entry[self::LOG_TRACE], true), $entryHtml);
 				}
+
+				// Append to output
+				$output .= $entryHtml;
 				$output .= '<br />' . PHP_EOL;
 			}
 		}
+
 		// Use template if one exists
 		if ($this->_template && file_exists(\PATH . $this->_template)) {
 			$page = file_get_contents(\PATH . $this->_template);
 			$page = str_replace('{LOG}', $output, $page);
 		} else {
-			$page = '<h1>LiteMVC - A fatal error occurred</h1>' . $output;
+			$page = '<h1>A fatal error occurred</h1>' . $output;
 		}
 		return $page;
 	}
@@ -346,14 +406,14 @@ class Error
 		if ($this->_display) {
 			return json_encode(
 				array(
-					'error' => $log[0]['code'],
-					'message' => $log[0]['message']
+					'error'   => $log[0][self::LOG_CODE],
+					'message' => $log[0][self::LOG_MSG]
 				)
 			);
 		} else {
 			return json_encode(
 				array(
-					'error' => $log[0]['code']
+					'error' => $log[0][self::LOG_CODE]
 				)
 			);
 		}
