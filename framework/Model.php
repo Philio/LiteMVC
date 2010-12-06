@@ -558,7 +558,7 @@ abstract class Model
 		}
 		// If 1 row set to object
 		if (count($data) == 1 && $mode != self::MAPPING_MULTI) {
-			$this->set(current($data));
+			$this->setData(current($data));
 			return $this;
 		// If more than one create an array of new objects
 		} elseif ($mode != self::MAPPING_SINGLE) {
@@ -566,7 +566,7 @@ abstract class Model
 			$class = get_class($this);
 			foreach ($data as $row) {
 				$resObj = new $class($this->_conn);
-				$resObj->set($row);
+				$resObj->setData($row);
 				$resArray[] = $resObj;
 			}
 			return $resArray;
