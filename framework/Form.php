@@ -47,6 +47,13 @@ abstract class Form {
 	protected $_method;
 
 	/**
+	 * Form encoding
+	 *
+	 * @var string
+	 */
+	protected $_encoding;
+
+	/**
 	 * Form fields
 	 *
 	 * @var array
@@ -115,6 +122,7 @@ abstract class Form {
 	const TYPE_HIDDEN	= 'hidden';
 	const TYPE_SELECT	= 'select';
 	const TYPE_TEXTAREA	= 'textarea';
+	const TYPE_FILE     = 'file';
 	const TYPE_SUBMIT	= 'submit';
 	const TYPE_CAPTCHA  = 'captcha';
 	const TYPE_BREAK    = 'br';
@@ -182,6 +190,9 @@ abstract class Form {
 		if (!is_null($this->_method) && !empty($this->_method)) {
 			$html .= ' method="' . $this->_method . '"';
 		}
+		if (!is_null($this->_encoding) && !empty($this->_encoding)) {
+			$html .= ' enctype="' . $this->_encoding . '"';
+		}
 		$html .= '>' . PHP_EOL;
 
 		// Form fields
@@ -208,6 +219,7 @@ abstract class Form {
 				case self::TYPE_RADIO:
 				case self::TYPE_HIDDEN:
 				case self::TYPE_SUBMIT:
+				case self::TYPE_FILE:
 					// Build input element
 					$html .= '<input id="' . $name . '" name="' . $name . '"';
 					// Add properties
