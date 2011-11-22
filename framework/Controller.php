@@ -86,6 +86,9 @@ abstract class Controller
 
 		// Setup request
 		$this->_request = $this->getResource(self::RES_REQUEST);
+		
+		// Set exception
+		$this->_exception = $exception;
 
 		// Setup HTML view
 		if ($this->isResource(self::RES_HTML)) {
