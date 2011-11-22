@@ -98,7 +98,7 @@ class MySQL extends \mysqli
 		$res = parent::query($sql);
 		// Check result is valid
 		if (!$this->_noerrors && ($res === false || $this->errno != 0)) {
-			throw new Exception('An error occured in query: ' . $sql);
+			throw new Exception('#' . $this->_errno . ' ' . $this->_error . ' occurred in query ' . $sql);
 		}
 		return $res;
 	}
