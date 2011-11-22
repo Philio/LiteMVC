@@ -80,7 +80,7 @@ class Dispatcher {
 		// Try and dispatch the request
 		$dispatched = false;
 		$notfound = false;
-		$exception = false;
+		$exception = null;
 
 		while (!$dispatched) {
 			try {
@@ -117,7 +117,7 @@ class Dispatcher {
 
 				// Try and load the class
 				if (class_exists($class)) {
-					$c = new $class($this->_app, $controller, $action);
+					$c = new $class($this->_app, $controller, $action, $exception);
 				} else {
 					throw new App\Exception('Unable to load controller class for ' . $controller . '.');
 				}
@@ -154,18 +154,11 @@ class Dispatcher {
 				if ($exception) {
 					throw new App\Exception('Uncaught exception. Unable to load error page, configuration is invalid.');
 				}
-				$exception = true;
+				$exception = $e;
 				$error = $this->_request->getConfig(self::CONF_ERR);
 				if (isset($error[self::CONF_CTRLR]) && isset($error[self::CONF_EXP])) {
 					$controller = $error[self::CONF_CTRLR];
 					$action = $error[self::CONF_EXP];
-					// Push error message into view for display
-					if ($this->_app->isResource(self::RES_HTML)) {
-						$this->_app->getResource(self::RES_HTML)->exception = $e;
-					}
-					if ($this->_app->isResource(self::RES_JSON)) {
-						$this->_app->getResource(self::RES_JSON)->exception = $e;
-					}
 				}
 			}
 		}

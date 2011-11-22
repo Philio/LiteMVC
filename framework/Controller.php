@@ -33,6 +33,13 @@ abstract class Controller
 	 * @var View\HTML | View\JSON
 	 */
 	protected $_view;
+	
+	/**
+	 * Exception object pushed from dispatch
+	 *
+	 * @var Exception 
+	 */
+	protected $_exception;
 
 	/**
 	 * Plugin objects
@@ -72,7 +79,7 @@ abstract class Controller
 	 * @param string $controller
 	 * @param string $action
 	 */
-	public function __construct(App $app, $controller, $action)
+	public function __construct(App $app, $controller, $action, $exception = null)
 	{
 		// Reference App object for resource loading
 		$this->_app = $app;
@@ -96,10 +103,18 @@ abstract class Controller
 			$this->_view->setPage(ucfirst($controller) . '/' . ucfirst($action));
 			// Set path
 			$this->_view->path = $this->_request->getRelativePath();
+			// Set exception
+			if (!is_null($exception)) {
+				$this->_view->exception = $exception;
+			}
 
 		// Setup JSON view
 		} elseif ($app->isResource(self::RES_JSON)) {
 			$this->_view = $app->getResource(self::RES_JSON);
+			// Set exception
+			if (!is_null($exception)) {
+				$this->_view->exception = $exception;
+			}
 		}
 	}
 
