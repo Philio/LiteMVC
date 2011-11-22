@@ -111,10 +111,6 @@ abstract class Controller
 		// Setup JSON view
 		} elseif ($app->isResource(self::RES_JSON)) {
 			$this->_view = $app->getResource(self::RES_JSON);
-			// Set exception
-			if (!is_null($exception)) {
-				$this->_view->exception = $exception;
-			}
 		}
 	}
 
