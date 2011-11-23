@@ -393,6 +393,39 @@ abstract class Model
 		// Map data to object(s)
 		return $this->_mapData($data, self::MAPPING_MULTI);
 	}
+	
+	/**
+	 * Set autocommit state
+	 *
+	 * @param boolean $state 
+	 */
+	public function autocommit($state = true)
+	{
+		$res = $this->_conn->autocommit($state);
+		if ($res === false) {
+			throw new Model\Exception('Failed to set autocommit state.');
+		}
+	}
+	
+	/**
+	 * Commit current transaction
+	 */
+	public function commit() {
+		$res = $this->_conn->commit();
+		if ($res === false) {
+			throw new Model\Exception('Commit transaction failed.');
+		}
+	}
+	
+	/**
+	 * Rollback last transaction
+	 */
+	public function rollback() {
+		$res = $this->_conn->rollback();
+		if ($res === false) {
+			throw new Model\Exception('Rollback transation failed.');
+		}
+	}
 
 	/**
 	 * Format a primary key for SQL query
