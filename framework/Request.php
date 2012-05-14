@@ -103,19 +103,105 @@ class Request
 	 */
 	public function process()
 	{
-		// Split up URI
-		$uri = trim($this->_uri, '/');
+		$uri = $this->_uri;
+		
 		// Ignore query strings
 		if (strpos($uri, '?') !== false) {
 			$uri = substr($uri, 0, strpos($uri, '?'));
 		}
+		
 		// Ignore bookmarks
 		if (strpos($uri, '#') !== false) {
 			$uri = substr($uri, 0, strpos($uri, '#'));
 		}
+		
+		// Routing
+		if (!isset($this->_config['router']) || !$this->_parseRoute($uri, $this->_config['router'])) {
+			$this->_defaultRouting($uri);
+		}
+	}
+	
+	/**
+	 * Handle routing based on supplied regex pattern
+	 * 
+	 * @param string $uri
+	 * @param string $pattern
+	 */
+	protected function _parseRoute($uri, $pattern)
+	{
+		// Match pattern
+		$matches = array();
+		preg_match('/' . $pattern . '/', $uri, $matches);
+		
+		// Determine module
+		if (isset($matches['module'])) {
+			$this->_module = $matches['module'];
+		} elseif (isset($this->_config['default']['module'])) {
+			$this->_module = $this->_config['default']['module'];
+		} else {
+			throw new App\Exception('Unable to determine which module to load, no default module specified in config.');
+		}
+		
+		// Determine controller
+		if (isset($matches['controller'])) {
+			$this->_controller = $matches['controller'];
+		} elseif (isset($this->_config[$this->_module]['default']['controller'])) {
+			$this->_controller = $this->_config[$this->_module]['default']['controller'];
+		} else {
+			throw new App\Exception('Unable to determine controller, no default specified in config for module ' . $this->_module . '.');
+		}
+		
+		// Determine action
+		if (isset($matches['action'])) {
+			$this->_action = $matches['action']; 
+		} elseif (isset($this->_config[$this->_module]['default']['action'])) {
+			$this->_action = $this->_config[$this->_module]['default']['action'];
+		} else {
+			throw new App\Exception('Unable to determine action, no default specified in config for module ' . $this->_module . '.');
+		}
+		
+		// Process any params
+		if (isset($matches['params'])) {
+			$parts = explode('/', $matches['params']);
+			$key = null;
+			foreach ($parts as $value) {
+				if (is_null($key)) {
+					$key = $value;
+				} else {
+					$this->_params[$key] = $value;
+					$key = null;
+				}
+			}
+		}
+		
+		// Check for custom params
+		foreach ($matches as $key => $value) {
+			// Ignore predefined or integer keys
+			if (in_array($key, array('module', 'controller', 'action', 'params')) || is_numeric($key)) {
+				continue;
+			}
+			$this->_params[$key] = $value;
+		}
+		return true;
+	}
+	
+	/**
+	 * Default routing handles typical module/controller/action/params routes
+	 * 
+	 * @param string $uri
+	 * @throws App\Exception
+	 */
+	protected function _defaultRouting($uri)
+	{
+		// Trim leading or trailing /
+		$uri = trim($uri, '/');
+		
+		// Split up URI
 		$parts = explode('/', $uri);
+
 		// Array index to check
 		$index = 0;
+		
 		// Determine module
 		if (isset($parts[$index]) && !empty($parts[$index]) && file_exists(\PATH . $this->_appPath . $parts[0])) {
 			$this->_module = $parts[$index];
@@ -126,6 +212,7 @@ class Request
 		} else {
 			throw new App\Exception('Unable to determine which module to load, no default module specified in config.');
 		}
+		
 		// Determine controller
 		if (isset($parts[$index]) && !empty($parts[$index])) {
 			$this->_controller = $parts[$index];
@@ -136,6 +223,7 @@ class Request
 		} else {
 			throw new App\Exception('Unable to determine controller, no default specified in config for module ' . $this->_module . '.');
 		}
+		
 		// Determine action
 		if (isset($parts[$index]) && !empty($parts[$index])) {
 			$this->_action = $parts[$index];
@@ -146,6 +234,7 @@ class Request
 		} else {
 			throw new App\Exception('Unable to determine action, no default specified in config for module ' . $this->_module . '.');
 		}
+		
 		// Get any params
 		if (count($parts)) {
 			$key = null;
@@ -229,6 +318,16 @@ class Request
 		}
 		return null;
 	}
+	
+	/**
+	 * Check if request was a GET
+	 *
+	 * @return bool
+	 */
+	public function isGet()
+	{
+		return $_SERVER['REQUEST_METHOD'] == 'GET';
+	}
 
 	/**
 	 * Check if request was a POST
@@ -238,6 +337,26 @@ class Request
 	public function isPost()
 	{
 		return $_SERVER['REQUEST_METHOD'] == 'POST';
+	}
+
+	/**
+	 * Check if request was a PUT
+	 *
+	 * @return bool
+	 */
+	public function isPut()
+	{
+		return $_SERVER['REQUEST_METHOD'] == 'PUT';
+	}
+
+	/**
+	 * Check if request was a DELETE
+	 *
+	 * @return bool
+	 */
+	public function isDelete()
+	{
+		return $_SERVER['REQUEST_METHOD'] == 'DELETE';
 	}
 
 	/**

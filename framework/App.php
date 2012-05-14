@@ -66,7 +66,7 @@ class App {
 		// Setup the autoloader
 		$loader = new App\Autoload();
 		$loader->register();
-		$loader->setPath(__NAMESPACE__, \PATH . '/framework');
+		$loader->setPath(__NAMESPACE__, realpath(__DIR__));
 		// Save autoloader as an application resource
 		$this->setResource(self::RES_LOADER, $loader);
 	}
