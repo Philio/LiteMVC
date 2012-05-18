@@ -61,7 +61,7 @@ abstract class Model
 	/**
 	 * Auto increment field
 	 *
-	 * @var bool
+	 * @var string | array
 	 */
 	protected $_autoIncrement = null;
 
@@ -294,7 +294,7 @@ abstract class Model
 			// If primary key isn't set and autoincremented insert
 			} elseif (!isset($this->_data[$this->_primary]) && $this->_primary == $this->_autoIncrement) {
 				$res = $this->_conn->query(
-					'insert into ' . $this->_table . ' ( ' . implode(', ', array_keys($this->_data)) .
+					'insert into ' . $this->_table . ' (' . implode(', ', array_keys($this->_data)) .
 					') values (' . implode(', ', $values) . ')'
 				);
 			// Is set and not autoincremented insert with dupe key update
