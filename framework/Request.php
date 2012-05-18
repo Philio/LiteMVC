@@ -378,11 +378,9 @@ class Request
 	public function getParam($key)
 	{
 		if (isset($this->_params[$key])) {
-			// Magic quotes should be off, but just in case
-			if (get_magic_quotes_gpc()) {
-				return stripslashes($this->_params[$key]);
-			}
-			return $this->_params[$key];
+			return $this->filterValue($this->_params[$key]);
+		} elseif (isset($_REQUEST[$key])) {
+			return $this->filterValue($_REQUEST[$key]);
 		}
 		return null;
 	}
@@ -422,7 +420,7 @@ class Request
 			foreach ($value as $arrKey => $arrValue) {
 				$value[$arrKey] = $this->filterValue($arrValue);
 			}
-		} elseif (get_magic_quotes_gpc()) {
+		} elseif (function_exists('get_magic_quotes_gpc') && get_magic_quotes_gpc()) {
 			return stripslashes($value);
 		}
 		return $value;
