@@ -41,6 +41,7 @@ class App {
 	 */
 	const CONF_PRELOAD	= 'preload';
 	const CONF_LOAD		= 'load';
+	const CONF_SKIP		= 'skip';
 
 	/**
 	 * Resource names
@@ -189,10 +190,28 @@ class App {
 					$this->loadResource($resource);
 				}
 			}
+			
+			// Module/controller specific resources
+			if (isset($init[$req->getModule()][$req->getController()][self::CONF_LOAD]) && is_array($init[$req->getModule()][$req->getController()][self::CONF_LOAD])) {
+				foreach ($init[$req->getModule()][$req->getController()][self::CONF_LOAD] as $resource) {
+					$this->loadResource($resource);
+				}
+			}
+			
+			// Allow a controller specific setting to skip main module loading
+			$skip = array();
+			if (isset($init[$req->getModule()][$req->getController()][self::CONF_SKIP]) && is_array($init[$req->getModule()][$req->getController()][self::CONF_SKIP])) {
+				foreach ($init[$req->getModule()][$req->getController()][self::CONF_SKIP] as $resource) {
+					$skip[] = $resource;
+				}
+			}
+			
 			// Module specific resources
 			if (isset($init[$req->getModule()][self::CONF_LOAD]) && is_array($init[$req->getModule()][self::CONF_LOAD])) {
 				foreach ($init[$req->getModule()][self::CONF_LOAD] as $resource) {
-					$this->loadResource($resource);
+					if (!in_array($resource, $skip)) {
+						$this->loadResource($resource);
+					}
 				}
 			}
 		}
