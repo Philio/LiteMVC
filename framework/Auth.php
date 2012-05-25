@@ -10,20 +10,27 @@
  */
 namespace LiteMVC;
 
-class Authenticate
+class Auth
 {
+	
+	/**
+	 * Store auth data in session
+	 * 
+	 * @var bool 
+	 */
+	protected $_session;
 
 	/**
 	 * User model
 	 * 
-	 * @var Authenticate\User
+	 * @var Auth\User
 	 */
 	protected $_userModel;
 
 	/**
 	 * Acl model
 	 *
-	 * @var Authenticate\Acl
+	 * @var Auth\Acl
 	 */
 	protected $_aclModel;
 
@@ -69,6 +76,7 @@ class Authenticate
 	 *
 	 * @var string
 	 */
+	const CONF_SESSION	= 'session';
 	const CONF_MODEL	= 'model';
 	const CONF_USER		= 'user';
 	const CONF_ACL		= 'acl';
@@ -96,22 +104,28 @@ class Authenticate
 	public function __construct(App $app = null)
 	{
 		// Check config
-		$config = $app->getResource(self::RES_CONFIG)->authenticate;
+		$config = $app->getResource(self::RES_CONFIG)->auth;
 		if (is_null($config)) {
-			throw new Authenticate\Exception('No database configuration has been specified.');
+			throw new Auth\Exception('No database configuration has been specified.');
 		}
+		
+		// Check for session setting
+		if (!isset($config[self::CONF_SESSION])) {
+			$config[self::CONF_SESSION] = true;
+		}
+		$this->_session = $config[self::CONF_SESSION];
 
 		// Check that a user model has been specified
 		if (isset($config[self::CONF_MODEL][self::CONF_USER])) {
 			// Check session
-			if (isset($_SESSION[self::SESS_NS][self::SESS_NS_USER])) {
+			if ($this->_session && isset($_SESSION[self::SESS_NS][self::SESS_NS_USER])) {
 				$this->_userModel = $_SESSION[self::SESS_NS][self::SESS_NS_USER];
 			// Instantiate new class
 			} elseif (class_exists($config[self::CONF_MODEL][self::CONF_USER])) {
 				$this->_userModel = new $config[self::CONF_MODEL][self::CONF_USER]($app->getResource(self::RES_DATABASE));
 			// Invalid configuration
 			} else {
-				throw new Authenticate\Exception(
+				throw new Auth\Exception(
 					'Unable to load user model, class ' . $config[self::CONF_MODEL][self::CONF_USER] . ' not found.'
 				);
 			}
@@ -157,7 +171,7 @@ class Authenticate
 	 */
 	public function hasUserModel()
 	{
-		return $this->_userModel instanceof Authenticate\User;
+		return $this->_userModel instanceof Auth\User;
 	}
 
 	/**
@@ -167,7 +181,7 @@ class Authenticate
 	 */
 	public function hasAclModel()
 	{
-		return $this->_aclModel instanceof Authenticate\Acl;
+		return $this->_aclModel instanceof Auth\Acl;
 	}
 
 	/**
@@ -182,7 +196,9 @@ class Authenticate
 			// Call model login function
 			if ($this->_userModel->login($username, $password)) {
 				// Store login in session
-				$_SESSION[self::SESS_NS][self::SESS_NS_USER] = $this->_userModel;
+				if ($this->_session) {
+					$_SESSION[self::SESS_NS][self::SESS_NS_USER] = $this->_userModel;
+				}
 				// Login ok return true
 				return true;
 			}

@@ -8,6 +8,6 @@
  * @package LiteMVC\Database
  * @version 0.1.0
  */
-namespace LiteMVC\Authenticate;
+namespace LiteMVC\Auth;
 
 class Exception extends \Exception {}

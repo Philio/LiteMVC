@@ -28,6 +28,13 @@ class REST
 	protected $_parser;
 	
 	/**
+	 * Response of last call
+	 * 
+	 * @var string 
+	 */
+	protected $_response;
+	
+	/**
 	 * Default cURL options
 	 * 
 	 * @var array
@@ -62,6 +69,18 @@ class REST
 	{
 		$this->_baseUrl = $baseUrl;
 		$this->_parser = $parser;
+	}
+	
+	/**
+	 * Set options for basic auth
+	 * 
+	 * @param string $username
+	 * @param string $password 
+	 */
+	public function setBasicAuth($username, $password)
+	{
+		$this->_options[CURLOPT_HTTPAUTH] = CURLAUTH_BASIC;
+		$this->_options[CURLOPT_USERPWD] = $username . ':' . $password;
 	}
 	
 	/**
@@ -119,6 +138,29 @@ class REST
 	}
 	
 	/**
+	 * Get the response of the most recent request
+	 * 
+	 * @return string 
+	 */
+	public function getResponse()
+	{
+		return $this->_response;
+	}
+	
+	/**
+	 * Get a parsed version of the response of the most recent request
+	 * 
+	 * @return mixed 
+	 */
+	public function getParsedResponse()
+	{
+		if ($this->_parser) {
+			return $this->_parser->parse($this->_response);
+		}
+		return $this->_response;
+	}
+	
+	/**
 	 * Send request
 	 * 
 	 * @param string $url
@@ -132,7 +174,7 @@ class REST
 		// Send cURL request
 		$curl = curl_init($url);
 		curl_setopt_array($curl, $options);
-		$res = curl_exec($curl);
+		$this->_response = curl_exec($curl);
 		$meta = curl_getinfo($curl);
 		curl_close($curl);
     	
@@ -141,9 +183,9 @@ class REST
 		
 		// Return response
 		if ($this->_parser) {
-			return $this->_parser->parse($res);
+			return $this->_parser->parse($this->_response);
 		}
-		return $res;
+		return $this->_response;
 	}
 	
 	/**

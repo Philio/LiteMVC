@@ -8,7 +8,7 @@
  * @package LiteMVC
  * @version 0.1.0
  */
-namespace LiteMVC\Authenticate;
+namespace LiteMVC\Auth;
 
 interface Acl
 {

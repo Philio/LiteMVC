@@ -22,6 +22,9 @@ class JSON extends View implements View\View
 	 */
 	public function render()
 	{
+		// Set JSON header
+		header("Content-Type: application/json");
+		
 		// Encode page data as JSON
 		$this->_rendered = json_encode($this->_data);
 	}
