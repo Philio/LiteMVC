@@ -112,12 +112,12 @@ class OAuth2
 			case 'server':
 				// Check client is set in config
 				if (!isset($this->_config[$namespace]['client'])) {
-					throw new OAuth2\Exception('OAuth2 server requires a client');
+					throw new OAuth2\Exception('OAuth2 server requires a client implementation');
 				}
 				
 				// Check token is set in config
 				if (!isset($this->_config[$namespace]['token'])) {
-					throw new OAuth2\Exception('OAuth2 server requires a token');
+					throw new OAuth2\Exception('OAuth2 server requires a token implementation');
 				}
 				
 				// Instantiate client object

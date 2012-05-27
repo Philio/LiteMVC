@@ -33,11 +33,11 @@ class Authenticate extends Validator
 			$this->_lastErrorDesc = 'no input parameters were found';
 			return false;
 		}
-		
+
 		// The response_type is required
 		if (is_null($this->_params[OAuth2::AUTH_RESPONSE_TYPE]) || empty($this->_params[OAuth2::AUTH_RESPONSE_TYPE])) {
 			$this->_lastError = OAuth2::ERROR_UNSUPPORTED_RESPONSE_TYPE;
-			$this->_lastErrorDesc = 'the response_type parameter is required';
+			$this->_lastErrorDesc = 'the response_type parameter is required and should be set to code';
 			return false;
 		}
 		
@@ -48,6 +48,47 @@ class Authenticate extends Validator
 			return false;
 		}
 		return true;
+	}
+	
+	/**
+	 * Check the client redirect URI and return the correct one to use
+	 * 
+	 * @param string $redirectUri 
+	 */
+	public function checkRedirectUri($redirectUri)
+	{
+		// Double NULL check
+		if (is_null($redirectUri) && is_null($this->_params[OAuth2::AUTH_REDIRECT_URI])) {
+			$this->_lastError = OAuth2::ERROR_INVALID_REQUEST;
+			$this->_lastErrorDesc = 'the redirect_uri is required when not predefined';
+			return null;
+		}
+		
+		// If client has pre-defined redirect URI check domain name matches
+		if ($redirectUri && $this->_params[OAuth2::AUTH_REDIRECT_URI] && strcasecmp($this->_getHost($redirectUri), $this->_getHost($this->_params[OAuth2::AUTH_REDIRECT_URI])) !== 0) {
+			$this->_lastError = OAuth2::ERROR_INVALID_REQUEST;
+			$this->_lastErrorDesc = 'the redirect_uri provided does not matched the stored redirect_uri';
+			return null;
+		}
+		
+		// Return a valid redirect URI
+		if ($redirectUri) {
+			return $redirectUri;
+		} else {
+			return $this->_params[OAuth2::AUTH_REDIRECT_URI];
+		}
+	}
+	
+	/**
+	 * Get hostname from a URI
+	 * 
+	 * @param string $uri 
+	 * @return string
+	 */
+	private function _getHost($uri)
+	{
+		$parts = parse_url($uri);
+		return $parts['host'];
 	}
 	
 }

@@ -79,6 +79,25 @@ class Server
 				$this->_errorJson(OAuth2::HTTP_BAD_REQUEST, $validator->getLastError(), $validator->getLastErrorDesc(), null, isset($params[OAuth2::AUTH_STATE]) ? $params[OAuth2::AUTH_STATE] : null);
 			}
 		}
+		
+		// Authenticate the client
+		if (!$this->_client->authenticate($params[OAuth2::AUTH_CLIENT_ID], $params[OAuth2::AUTH_CLIENT_SECRET])) {
+			if ($params[OAuth2::AUTH_REDIRECT_URI]) {
+				$this->_errorRedirect($params[OAuth2::AUTH_REDIRECT_URI], OAuth2::ERROR_UNAUTHORIZED_CLIENT, null, null, $params[OAuth2::AUTH_STATE]);
+			} else {
+				$this->_errorJson(OAuth2::HTTP_UNAUTHORIZED, OAuth2::ERROR_UNAUTHORIZED_CLIENT, null, null, $params[OAuth2::AUTH_STATE]);
+			}
+		}
+		
+		// Get the redirect URI
+		$redirectUri = $validator->checkRedirectUri($this->_client->getRedirectUri());
+		if (is_null($redirectUri)) {
+			if ($this->_client->getRedirectUri() || $params[OAuth2::AUTH_REDIRECT_URI]) {
+				$this->_errorRedirect($this->_client->getRedirectUri() ? $this->_client->getRedirectUri() : $params[OAuth2::AUTH_REDIRECT_URI], $validator->getLastError(), $validator->getLastErrorDesc(), null, isset($params[OAuth2::AUTH_STATE]) ? $params[OAuth2::AUTH_STATE] : null);
+			} else {
+				$this->_errorJson(OAuth2::HTTP_BAD_REQUEST, $validator->getLastError(), $validator->getLastErrorDesc(), null, $params[OAuth2::AUTH_STATE]);
+			}
+		}
 	}
 	
 	/**

@@ -22,4 +22,11 @@ interface Client
 	 */
 	public function authenticate($clientId, $clientSecret = null);
 	
+	/**
+	 * Get redirect uri for the client
+	 * 
+	 * @return string 
+	 */
+	public function getRedirectUri();
+	
 }
