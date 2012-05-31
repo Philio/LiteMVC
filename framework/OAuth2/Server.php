@@ -72,7 +72,7 @@ class Server
 		$validator = new Validator\Authenticate($params);
 		
 		// Validity check (all params are set and look valid)
-		if (!$validator->isValid()) {
+		if (!$validator->validate()) {
 			if (isset($params[OAuth2::AUTH_REDIRECT_URI]) && !is_null($params[OAuth2::AUTH_REDIRECT_URI])) {
 				$this->_errorRedirect($params[OAuth2::AUTH_REDIRECT_URI], $validator->getLastError(), $validator->getLastErrorDesc(), null, isset($params[OAuth2::AUTH_STATE]) ? $params[OAuth2::AUTH_STATE] : null);
 			} else {
@@ -98,6 +98,9 @@ class Server
 				$this->_errorJson(OAuth2::HTTP_BAD_REQUEST, $validator->getLastError(), $validator->getLastErrorDesc(), null, $params[OAuth2::AUTH_STATE]);
 			}
 		}
+		$params[OAuth2::AUTH_REDIRECT_URI] = $redirectUri;
+		
+		return $params;
 	}
 	
 	/**

@@ -22,7 +22,7 @@ class Authenticate extends Validator
 	 * 
 	 * @param array $params 
 	 */
-	public function isValid()
+	public function validate()
 	{
 		// Clear any previous error message
 		$this->_lastError = null;
@@ -57,8 +57,8 @@ class Authenticate extends Validator
 	 */
 	public function checkRedirectUri($redirectUri)
 	{
-		// Double NULL check
-		if (is_null($redirectUri) && is_null($this->_params[OAuth2::AUTH_REDIRECT_URI])) {
+		// No URI check
+		if (!$redirectUri && !$this->_params[OAuth2::AUTH_REDIRECT_URI]) {
 			$this->_lastError = OAuth2::ERROR_INVALID_REQUEST;
 			$this->_lastErrorDesc = 'the redirect_uri is required when not predefined';
 			return null;
