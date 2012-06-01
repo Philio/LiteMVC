@@ -112,7 +112,17 @@ class App {
 	{
 		$this->_resources[$name] = $object;
 	}
-	
+
+	/**
+	 * Unset an application resource
+	 * 
+	 * @param string $name
+	 * @return void
+	 */
+	public function unsetResource($name)
+	{
+		unset($this->_resources[$name]);
+	}	
 	/**
 	 * Load an application resource
 	 * 
@@ -131,6 +141,21 @@ class App {
 				$obj = new $class($params);
 			}
 			$this->setResource($name, $obj);
+			return true;
+		}
+		return false;
+	}
+	
+	/**
+	 * Unload an application resource
+	 * 
+	 * @param string $name
+	 * @return bool
+	 */
+	public function unloadResource($name)
+	{
+		if ($this->getResource($name)) {
+			$this->unsetResource($name);
 			return true;
 		}
 		return false;
