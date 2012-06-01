@@ -124,8 +124,10 @@ abstract class Form {
 	const TYPE_TEXTAREA	= 'textarea';
 	const TYPE_FILE     = 'file';
 	const TYPE_SUBMIT	= 'submit';
+	const TYPE_BUTTON	= 'button';
 	const TYPE_CAPTCHA  = 'captcha';
 	const TYPE_BREAK    = 'br';
+	const TYPE_HTML		= 'html';
 
 	/**
 	 * Default namespace prefix
@@ -219,6 +221,7 @@ abstract class Form {
 				case self::TYPE_RADIO:
 				case self::TYPE_HIDDEN:
 				case self::TYPE_SUBMIT:
+				case self::TYPE_BUTTON:
 				case self::TYPE_FILE:
 					// Build input element
 					$html .= '<input id="' . $name . '" name="' . $name . '"';
@@ -291,6 +294,9 @@ abstract class Form {
 					}
 					$html .= ' />' . PHP_EOL;
 					break;
+				case self::TYPE_HTML:
+					$html .= $data['content'];
+					breal;
 			}
 
 			// Display errors
