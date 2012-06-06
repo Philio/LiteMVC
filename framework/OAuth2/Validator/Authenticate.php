@@ -64,8 +64,8 @@ class Authenticate extends Validator
 			return null;
 		}
 		
-		// If client has pre-defined redirect URI check domain name matches
-		if ($redirectUri && $this->_params[OAuth2::AUTH_REDIRECT_URI] && strcasecmp($this->_getHost($redirectUri), $this->_getHost($this->_params[OAuth2::AUTH_REDIRECT_URI])) !== 0) {
+		// If client has pre-defined redirect URI check that it matches
+		if ($redirectUri && $this->_params[OAuth2::AUTH_REDIRECT_URI] && strcasecmp($redirectUri, $this->_params[OAuth2::AUTH_REDIRECT_URI]) !== 0) {
 			$this->_lastError = OAuth2::ERROR_INVALID_REQUEST;
 			$this->_lastErrorDesc = 'the redirect_uri provided does not matched the stored redirect_uri';
 			return null;

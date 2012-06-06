@@ -42,12 +42,12 @@ class Server
 	}
 	
 	/**
-	 * Authenticate client
+	 * Start client Authentication
 	 * 
 	 * @param type $clientId
 	 * @param type $clientSecret 
 	 */
-	public function authenticate()
+	public function startAuthentication()
 	{
 		// Filter GET input
 		$params = filter_input_array(INPUT_GET, array(
@@ -92,8 +92,9 @@ class Server
 		// Get the redirect URI
 		$redirectUri = $validator->checkRedirectUri($this->_client->getRedirectUri());
 		if (is_null($redirectUri)) {
-			if ($this->_client->getRedirectUri() || $params[OAuth2::AUTH_REDIRECT_URI]) {
-				$this->_errorRedirect($this->_client->getRedirectUri() ? $this->_client->getRedirectUri() : $params[OAuth2::AUTH_REDIRECT_URI], $validator->getLastError(), $validator->getLastErrorDesc(), null, isset($params[OAuth2::AUTH_STATE]) ? $params[OAuth2::AUTH_STATE] : null);
+			// Only redirect to pre-defined redirect URI
+			if ($this->_client->getRedirectUri()) {
+				$this->_errorRedirect($this->_client->getRedirectUri(), $validator->getLastError(), $validator->getLastErrorDesc(), null, isset($params[OAuth2::AUTH_STATE]) ? $params[OAuth2::AUTH_STATE] : null);
 			} else {
 				$this->_errorJson(OAuth2::HTTP_BAD_REQUEST, $validator->getLastError(), $validator->getLastErrorDesc(), null, $params[OAuth2::AUTH_STATE]);
 			}
@@ -101,6 +102,11 @@ class Server
 		$params[OAuth2::AUTH_REDIRECT_URI] = $redirectUri;
 		
 		return $params;
+	}
+	
+	public function finishAuthentication($params, $userId)
+	{
+		
 	}
 	
 	/**
