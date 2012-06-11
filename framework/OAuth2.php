@@ -129,6 +129,15 @@ class OAuth2
 					throw new OAuth2\Exception('OAuth2 server requires a client class or model to be defined');
 				}
 				
+				// Instantiate client object
+				if (isset($this->_config[$namespace]['code']['model'])) {
+					$code = new $this->_config[$namespace]['code']['model']($this->_app->getResource('Database'));
+				} elseif (isset($this->_config[$namespace]['code']['class'])) {
+					$code = new $this->_config[$namespace]['code']['class']();
+				} else {
+					throw new OAuth2\Exception('OAuth2 server requires a code class or model to be defined');
+				}
+				
 				// Instantiate token object
 				if (isset($this->_config[$namespace]['token']['model'])) {
 					$token = new $this->_config[$namespace]['token']['model']($this->_app->getResource('Database'));
@@ -139,7 +148,7 @@ class OAuth2
 				}
 				
 				// Return new server isntance
-				return new OAuth2\Server($client, $token);
+				return new OAuth2\Server($client, $code, $token);
 		}
 	}
 	

@@ -16,14 +16,21 @@ class Server
 {
 	
 	/**
-	 * Client model
+	 * Client implementation
 	 * 
 	 * @var Client 
 	 */
 	protected $_client;
 	
 	/**
-	 * Token model
+	 * Code implementation
+	 * 
+	 * @var Code 
+	 */
+	protected $_code;
+	
+	/**
+	 * Token implementation
 	 * 
 	 * @var Token 
 	 */
@@ -33,16 +40,22 @@ class Server
 	 * Set models
 	 * 
 	 * @param Client $client
+	 * @param Code $code
 	 * @param Token $token 
 	 */
-	public function __construct(Client $client, Token $token)
+	public function __construct(Client $client, Code $code, Token $token)
 	{
 		$this->_client = $client;
+		$this->_code = $code;
 		$this->_token = $token;
 	}
 	
 	/**
 	 * Start client Authentication
+	 * 
+	 * Validate the request, authenticate the client, return valid params.
+	 * Resource owner authentication/approval should happen externally to this
+	 * library
 	 * 
 	 * @param type $clientId
 	 * @param type $clientSecret 
@@ -104,7 +117,16 @@ class Server
 		return $params;
 	}
 	
-	public function finishAuthentication($params, $userId)
+	/**
+	 * Finish client authentication
+	 * 
+	 * Redirect back to client depending on authorisation state
+	 * 
+	 * @param type $params
+	 * @param type $userId
+	 * @param type $authorised 
+	 */
+	public function finishAuthentication($params, $authorised = false, $userId = null)
 	{
 		
 	}
