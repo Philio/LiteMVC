@@ -19,14 +19,14 @@ class Request
 
 	/**
 	 * Config data
-	 * 
+	 *
 	 * @var array
 	 */
 	protected $_config = array();
 
 	/**
 	 * Application path
-	 * 
+	 *
 	 * @var string
 	 */
 	protected $_appPath;
@@ -104,35 +104,48 @@ class Request
 	public function process()
 	{
 		$uri = $this->_uri;
-		
+
 		// Ignore query strings
 		if (strpos($uri, '?') !== false) {
 			$uri = substr($uri, 0, strpos($uri, '?'));
 		}
-		
+
 		// Ignore bookmarks
 		if (strpos($uri, '#') !== false) {
 			$uri = substr($uri, 0, strpos($uri, '#'));
 		}
-		
+
 		// Routing
 		if (!isset($this->_config['router']) || !$this->_parseRoute($uri, $this->_config['router'])) {
 			$this->_defaultRouting($uri);
 		}
 	}
-	
+
 	/**
 	 * Handle routing based on supplied regex pattern
-	 * 
+	 *
 	 * @param string $uri
-	 * @param string $pattern
+	 * @param string | array $patterns
 	 */
-	protected function _parseRoute($uri, $pattern)
+	protected function _parseRoute($uri, $patterns)
 	{
-		// Match pattern
-		$matches = array();
-		preg_match('/' . $pattern . '/', $uri, $matches);
-		
+		// Make sure pattern is an array
+		if (!is_array($patterns)) {
+			$patterns = array($patterns);
+		}
+
+		// Try and match pattern
+		foreach ($patterns as $pattern) {
+			$matches = array();
+			preg_match('/' . $pattern . '/', $uri, $matches);
+			if (count($matches)) {
+				break;
+			}
+			if ($pattern == end($patterns)) {
+				return false;
+			}
+		}
+
 		// Determine module
 		if (isset($matches['module'])) {
 			$this->_module = $matches['module'];
@@ -141,7 +154,7 @@ class Request
 		} else {
 			throw new App\Exception('Unable to determine which module to load, no default module specified in config.');
 		}
-		
+
 		// Determine controller
 		if (isset($matches['controller'])) {
 			$this->_controller = $matches['controller'];
@@ -150,16 +163,16 @@ class Request
 		} else {
 			throw new App\Exception('Unable to determine controller, no default specified in config for module ' . $this->_module . '.');
 		}
-		
+
 		// Determine action
 		if (isset($matches['action'])) {
-			$this->_action = $matches['action']; 
+			$this->_action = $matches['action'];
 		} elseif (isset($this->_config[$this->_module]['default']['action'])) {
 			$this->_action = $this->_config[$this->_module]['default']['action'];
 		} else {
 			throw new App\Exception('Unable to determine action, no default specified in config for module ' . $this->_module . '.');
 		}
-		
+
 		// Process any params
 		if (isset($matches['params'])) {
 			$parts = explode('/', $matches['params']);
@@ -173,7 +186,7 @@ class Request
 				}
 			}
 		}
-		
+
 		// Check for custom params
 		foreach ($matches as $key => $value) {
 			// Ignore predefined or integer keys
@@ -184,10 +197,10 @@ class Request
 		}
 		return true;
 	}
-	
+
 	/**
 	 * Default routing handles typical module/controller/action/params routes
-	 * 
+	 *
 	 * @param string $uri
 	 * @throws App\Exception
 	 */
@@ -195,13 +208,13 @@ class Request
 	{
 		// Trim leading or trailing /
 		$uri = trim($uri, '/');
-		
+
 		// Split up URI
 		$parts = explode('/', $uri);
 
 		// Array index to check
 		$index = 0;
-		
+
 		// Determine module
 		if (isset($parts[$index]) && !empty($parts[$index]) && file_exists(\PATH . $this->_appPath . $parts[0])) {
 			$this->_module = $parts[$index];
@@ -212,7 +225,7 @@ class Request
 		} else {
 			throw new App\Exception('Unable to determine which module to load, no default module specified in config.');
 		}
-		
+
 		// Determine controller
 		if (isset($parts[$index]) && !empty($parts[$index])) {
 			$this->_controller = $parts[$index];
@@ -223,7 +236,7 @@ class Request
 		} else {
 			throw new App\Exception('Unable to determine controller, no default specified in config for module ' . $this->_module . '.');
 		}
-		
+
 		// Determine action
 		if (isset($parts[$index]) && !empty($parts[$index])) {
 			$this->_action = $parts[$index];
@@ -234,7 +247,7 @@ class Request
 		} else {
 			throw new App\Exception('Unable to determine action, no default specified in config for module ' . $this->_module . '.');
 		}
-		
+
 		// Get any params
 		if (count($parts)) {
 			$key = null;
@@ -318,7 +331,7 @@ class Request
 		}
 		return null;
 	}
-	
+
 	/**
 	 * Check if request was a GET
 	 *

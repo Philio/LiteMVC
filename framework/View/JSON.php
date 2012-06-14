@@ -10,9 +10,7 @@
  */
 namespace LiteMVC\View;
 
-use LiteMVC\View as View;
-
-class JSON extends View implements View\View
+class JSON extends \LiteMVC\View implements View
 {
 
 	/**
