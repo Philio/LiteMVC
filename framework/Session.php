@@ -18,6 +18,13 @@ class Session implements Resource
 {
 
 	/**
+	 * App instance
+	 *
+	 * @var App
+	 */
+	protected $_app;
+
+	/**
 	 * Config data
 	 *
 	 * @var array
@@ -77,12 +84,15 @@ class Session implements Resource
 	/**
 	 * Constructor
 	 *
-	 * @param App $app
+	 * @param App $this->_app
 	 * @return void
 	 */
 	public function  __construct(App $app) {
+		// Set app
+		$this->_app = $app;
+
 		// Check config
-		$this->_config = $app->getResource('Config')->session;
+		$this->_config = $this->_app->getResource('Config')->session;
 		if (is_null($this->_config)) {
 			throw new Session\Exception('No session configuration has been specified.');
 		}
@@ -96,37 +106,41 @@ class Session implements Resource
 	public function init()
 	{
 		// Load handlers
-		if (isset($this->_config[self::CONF_HANDLER])) {
-			foreach ($this->_config[self::CONF_HANDLER] as $handler) {
-				switch ($handler) {
-					// File based sessions
-					case self::HANDLER_FILE:
-						$this->_handlers[self::HANDLER_FILE] = new Session\File(
-							$app->getResource(self::RES_FILE),
-							isset($this->_config[self::CONF_FILE]) ?
-								$this->_config[self::CONF_FILE] : array()
-						);
-						break;
-					// Memcache driven sessions
-					case self::HANDLER_MEMCACHE:
-						$this->_handlers[self::HANDLER_MEMCACHE] = new Session\Memcache(
-							$app->getResource(self::RES_MEMCACHE),
-							isset($this->_config[self::CONF_MEMCACHE]) ?
-								$this->_config[self::CONF_MEMCACHE] : array()
-						);
-						break;
-					// Database driven sessions
-					case self::HANDLER_DATABASE:
-						$this->_handlers[self::HANDLER_DATABASE] = new Session\Database(
-							$app->getResource(self::RES_DATABASE),
-							isset($this->_config[self::CONF_DATABASE]) ?
-								$this->_config[self::CONF_DATABASE] : array()
-						);
-						break;
-				}
-			}
-		} else {
+		if (!isset($this->_config[self::CONF_HANDLER])) {
 			throw new Session\Exception('No session handlers specified in configuration.');
+		}
+
+		// Make sure handler is an array
+		if (!is_array($this->_config[self::CONF_HANDLER])) {
+			$this->_config[self::CONF_HANDLER] = array($this->_config[self::CONF_HANDLER]);
+		}
+
+		// Initialise handlers
+		foreach ($this->_config[self::CONF_HANDLER] as $handler) {
+			switch ($handler) {
+				// File based sessions
+				case self::HANDLER_FILE:
+					$this->_handlers[self::HANDLER_FILE] = new Session\File(
+						$this->_app->getResource(self::RES_FILE),
+						isset($this->_config[self::CONF_FILE]) ? $this->_config[self::CONF_FILE] : array()
+					);
+					break;
+				// Memcache driven sessions
+				case self::HANDLER_MEMCACHE:
+					$this->_handlers[self::HANDLER_MEMCACHE] = new Session\Memcache(
+						$this->_app->getResource(self::RES_MEMCACHE),
+						isset($this->_config[self::CONF_MEMCACHE]) ? $this->_config[self::CONF_MEMCACHE] : array()
+					);
+					break;
+				// Database driven sessions
+				case self::HANDLER_DATABASE:
+					$this->_handlers[self::HANDLER_DATABASE] = new Session\Database(
+						$this->_app->getResource(self::RES_DATABASE),
+						isset($this->_config[self::CONF_DATABASE]) ?
+							$this->_config[self::CONF_DATABASE] : array()
+					);
+					break;
+			}
 		}
 
 		// Set expriry
