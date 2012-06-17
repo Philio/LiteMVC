@@ -3,22 +3,30 @@
  * LiteMVC Application Framework
  *
  * @author Phil Bayfield
- * @copyright 2010
- * @license Creative Commons Attribution-Share Alike 2.0 UK: England & Wales License
+ * @copyright 2010 - 2012
+ * @license GNU General Public License version 3
  * @package LiteMVC
- * @version 0.1.0
+ * @version 0.2.0
  */
 namespace LiteMVC;
 
 // Namespace aliases
+use LiteMVC\App\Resource;
 use LiteMVC\Session as Session;
 
-class Session
+class Session implements Resource
 {
 
 	/**
+	 * Config data
+	 *
+	 * @var array
+	 */
+	protected $_config = array();
+
+	/**
 	 * Session handlers
-	 * 
+	 *
 	 * @var array
 	 */
 	protected $_handlers = array();
@@ -35,11 +43,11 @@ class Session
 	 *
 	 * @var string
 	 */
-	const CONFIG_HANDLER = 'handler';
-	const CONFIG_EXPIRES = 'expires';
-	const CONFIG_FILE = 'file';
-	const CONFIG_MEMCACHE = 'memcache';
-	const CONFIG_DATABASE = 'database';
+	const CONF_HANDLER = 'handler';
+	const CONF_EXPIRES = 'expires';
+	const CONF_FILE = 'file';
+	const CONF_MEMCACHE = 'memcache';
+	const CONF_DATABASE = 'database';
 
 	/**
 	 * Handler keys
@@ -55,9 +63,9 @@ class Session
 	 *
 	 * @var string
 	 */
-	const RESOURCE_FILE = 'Cache\File';
-	const RESOURCE_MEMCACHE = 'Cache\Memcache';
-	const RESOURCE_DATABASE = 'Database';
+	const RES_FILE = 'Cache\File';
+	const RES_MEMCACHE = 'Cache\Memcache';
+	const RES_DATABASE = 'Database';
 
 	/**
 	 * Default session length
@@ -68,42 +76,51 @@ class Session
 
 	/**
 	 * Constructor
-	 * 
-	 * @param App $app 
+	 *
+	 * @param App $app
 	 * @return void
 	 */
 	public function  __construct(App $app) {
 		// Check config
-		$config = $app->getResource('Config')->session;
-		if (is_null($config)) {
+		$this->_config = $app->getResource('Config')->session;
+		if (is_null($this->_config)) {
 			throw new Session\Exception('No session configuration has been specified.');
 		}
+	}
+
+	/**
+	 * Initialise the resource
+	 *
+	 * @return void
+	 */
+	public function init()
+	{
 		// Load handlers
-		if (isset($config[self::CONFIG_HANDLER])) {
-			foreach ($config[self::CONFIG_HANDLER] as $handler) {
+		if (isset($this->_config[self::CONF_HANDLER])) {
+			foreach ($this->_config[self::CONF_HANDLER] as $handler) {
 				switch ($handler) {
 					// File based sessions
 					case self::HANDLER_FILE:
 						$this->_handlers[self::HANDLER_FILE] = new Session\File(
-							$app->getResource(self::RESOURCE_FILE),
-							isset($config[self::CONFIG_FILE]) ?
-								$config[self::CONFIG_FILE] : array()
+							$app->getResource(self::RES_FILE),
+							isset($this->_config[self::CONF_FILE]) ?
+								$this->_config[self::CONF_FILE] : array()
 						);
 						break;
 					// Memcache driven sessions
 					case self::HANDLER_MEMCACHE:
 						$this->_handlers[self::HANDLER_MEMCACHE] = new Session\Memcache(
-							$app->getResource(self::RESOURCE_MEMCACHE),
-							isset($config[self::CONFIG_MEMCACHE]) ?
-								$config[self::CONFIG_MEMCACHE] : array()
+							$app->getResource(self::RES_MEMCACHE),
+							isset($this->_config[self::CONF_MEMCACHE]) ?
+								$this->_config[self::CONF_MEMCACHE] : array()
 						);
 						break;
 					// Database driven sessions
 					case self::HANDLER_DATABASE:
 						$this->_handlers[self::HANDLER_DATABASE] = new Session\Database(
-							$app->getResource(self::RESOURCE_DATABASE),
-							isset($config[self::CONFIG_DATABASE]) ?
-								$config[self::CONFIG_DATABASE] : array()
+							$app->getResource(self::RES_DATABASE),
+							isset($this->_config[self::CONF_DATABASE]) ?
+								$this->_config[self::CONF_DATABASE] : array()
 						);
 						break;
 				}
@@ -111,11 +128,15 @@ class Session
 		} else {
 			throw new Session\Exception('No session handlers specified in configuration.');
 		}
+
 		// Set expriry
-		$this->_expires = isset($config[self::CONFIG_EXPIRES]) ?
-			$config[self::CONFIG_EXPIRES] : self::SESSION_EXPIRY;
+		$this->_expires = isset($this->_config[self::CONF_EXPIRES]) ? $this->_config[self::CONF_EXPIRES] : self::SESSION_EXPIRY;
+
 		// Register handler
 		$this->register();
+
+		// Start session
+		session_start();
 	}
 
 	/**
@@ -142,14 +163,20 @@ class Session
 	 * @param string $name
 	 * @return void
 	 */
-	public function open($path, $name) {}
+	public function open($path, $name)
+	{
+		// Not needed
+	}
 
 	/**
 	 * Close session (unused)
 	 *
 	 * @return void
 	 */
-	public function close() {}
+	public function close()
+	{
+		// Not needed
+	}
 
 	/**
 	 * Read session data

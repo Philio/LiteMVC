@@ -1,21 +1,31 @@
 <?php
 /**
  * LiteMVC Application Framework
- * 
+ *
  * @author Phil Bayfield
- * @copyright 2010
- * @license Creative Commons Attribution-Share Alike 2.0 UK: England & Wales License
+ * @copyright 2010 - 2012
+ * @license GNU General Public License version 3
  * @package LiteMVC
- * @version 0.1.0
+ * @version 0.2.0
  */
 namespace LiteMVC;
 
-class Error
+// Namespace aliases
+use LiteMVC\App\Resource;
+
+class Error implements Resource
 {
 
 	/**
+	 * Config data
+	 *
+	 * @var array
+	 */
+	protected $_config = array();
+
+	/**
 	 * Error codes (PHP errors)
-	 * 
+	 *
 	 * @var array
 	 */
 	protected $_codes = array(
@@ -35,10 +45,10 @@ class Error
 		\E_DEPRECATED        => 'PHP Deprecated',
 		\E_USER_DEPRECATED   => 'PHP User Deprecated'
 	);
-	
+
 	/**
 	 * Error codes that should be treated as fatal errors
-	 * 
+	 *
 	 * @var array
 	 */
 	protected $_fatal = array(
@@ -47,10 +57,10 @@ class Error
 		\E_COMPILE_ERROR,
 		\E_USER_ERROR
 	);
-	
+
 	/**
 	 * Display errors
-	 * 
+	 *
 	 * @var bool
 	 */
 	protected $_display = false;
@@ -61,24 +71,24 @@ class Error
 	 * @var string
 	 */
 	protected $_mode = self::MODE_HTML;
-	
+
 	/**
 	 * Error template
-	 * 
+	 *
 	 * @var string
 	 */
 	protected $_template;
-	
+
 	/**
 	 * Have any errors occured
-	 * 
+	 *
 	 * @var bool
 	 */
 	protected $_errors = false;
-	
+
 	/**
 	 * The error log
-	 * 
+	 *
 	 * @var array
 	 */
 	protected $_log = array();
@@ -98,10 +108,6 @@ class Error
 	const HEADER_PREFIX	= 'HTTP/1.1 ';
 	const HEADER_OK		= '200 OK';
 	const HEADER_FATAL	= '500 Internal Server Error';
-
-	/**
-	 *
-	 */
 
 	/**
 	 * Error mode constants
@@ -155,9 +161,17 @@ class Error
 	 */
 	public function  __construct(App $app) {
 		// Read any config options
-		$config = $app->getResource(self::RES_CONFIG);
-		if (!is_null($config->error)) {
-			$errConfig = $config->error;
+		$this->_config = $app->getResource(self::RES_CONFIG);
+	}
+
+	/**
+	 * Initialise the resource
+	 *
+	 * @return void
+	 */
+	public function init() {
+		if (!is_null($this->_config->error)) {
+			$errConfig = $this->_config->error;
 			// Set display
 			if (isset($errConfig[self::CONF_DISPLAY])) {
 				$this->setDisplay($errConfig[self::CONF_DISPLAY]);
@@ -174,10 +188,10 @@ class Error
 		// Register handlers
 		$this->register();
 	}
-	
+
 	/**
 	 * Register handlers
-	 * 
+	 *
 	 * @return void
 	 */
 	public function register()
@@ -185,10 +199,10 @@ class Error
 		set_error_handler(array($this, 'errorHandler'), E_ALL);
 		set_exception_handler(array($this, 'exceptionHandler'));
 	}
-	
+
 	/**
 	 * Unregister handlers
-	 * 
+	 *
 	 * @return void
 	 */
 	public function unregister()
@@ -196,10 +210,10 @@ class Error
 		restore_error_handler();
 		restore_exception_handler();
 	}
-	
+
 	/**
 	 * Set error display
-	 * 
+	 *
 	 * @param bool $display
 	 * @return void
 	 */
@@ -220,10 +234,10 @@ class Error
 			$this->_mode = $mode;
 		}
 	}
-	
+
 	/**
 	 * Set error template
-	 * 
+	 *
 	 * @param string $template
 	 * @return void
 	 */
@@ -231,10 +245,10 @@ class Error
 	{
 		$this->_template = $template;
 	}
-	
+
 	/**
 	 * Error handler callback
-	 * 
+	 *
 	 * @param int $errno
 	 * @param string $errstr
 	 * @param string $errfile
@@ -257,10 +271,10 @@ class Error
 			);
 		}
 	}
-	
+
 	/**
 	 * Exception handler callback
-	 * 
+	 *
 	 * @param Exception $e
 	 */
 	public function exceptionHandler($e)
@@ -283,10 +297,10 @@ class Error
 		// All uncaught exceptions are fatal, display error page
 		$this->fatal();
 	}
-	
+
 	/**
 	 * Record an error to the log
-	 * 
+	 *
 	 * @param string $level
 	 * @param int $code
 	 * @param string $message
@@ -306,20 +320,20 @@ class Error
 		);
 		$this->_errors = true;
 	}
-	
+
 	/**
 	 * Check if errors have occured
-	 * 
+	 *
 	 * @return bool
 	 */
 	public function hasErrors()
 	{
 		return $this->_errors;
 	}
-	
+
 	/**
 	 * Get error log
-	 * 
+	 *
 	 * @return mixed
 	 */
 	public function getLog()
@@ -329,10 +343,10 @@ class Error
 		}
 		return false;
 	}
-	
+
 	/**
 	 * Fatal error handling
-	 * 
+	 *
 	 * @return void
 	 */
 	protected function fatal()
@@ -372,7 +386,7 @@ class Error
 				$entryHtml = str_replace('{' . self::LOG_MSG . '}', $entry[self::LOG_MSG], $entryHtml);
 				$entryHtml = str_replace('{' . self::LOG_FILE . '}', $entry[self::LOG_FILE], $entryHtml);
 				$entryHtml = str_replace('{' . self::LOG_LINE . '}', $entry[self::LOG_LINE], $entryHtml);
-						
+
 				// Include trace if there is one
 				if (isset($entry[self::LOG_TRACE])) {
 					$entryHtml .= self::HTML_TRACE;
@@ -418,5 +432,5 @@ class Error
 			);
 		}
 	}
-	
+
 }

@@ -3,18 +3,18 @@
  * LiteMVC Application Framework
  *
  * @author Phil Bayfield
- * @copyright 2010
- * @license Creative Commons Attribution-Share Alike 2.0 UK: England & Wales License
+ * @copyright 2010 - 2012
+ * @license GNU General Public License version 3
  * @package LiteMVC
- * @version 0.1.0
+ * @version 0.2.0
  */
 namespace LiteMVC;
 
-// Require autoloader class
-require_once 'App/Autoload.php';
-
 // Namespace aliases
 use LiteMVC\App as App;
+
+// Require autoloader class
+require_once 'App/Autoload.php';
 
 class App {
 
@@ -39,9 +39,8 @@ class App {
 	 *
 	 * @var string
 	 */
-	const CONF_PRELOAD	= 'preload';
-	const CONF_LOAD		= 'load';
-	const CONF_SKIP		= 'skip';
+	const CONF_LOAD	= 'load';
+	const CONF_SKIP	= 'skip';
 
 	/**
 	 * Resource names
@@ -172,12 +171,13 @@ class App {
 	public function init($configFile, $cacheModule = self::RES_FILE, $cacheParams = null)
 	{
 		// Load cache module
-		$cache = $this->getResource($cacheModule, is_null($cacheParams) ?
-				\PATH . self::PATH_CACHE : $cacheParams);
+		$cache = $this->getResource($cacheModule, is_null($cacheParams) ? \PATH . self::PATH_CACHE : $cacheParams);
+
 		// Load configuration
 		$config = $this->getResource(self::RES_CONF_INI);
 		$config->setCache($cache);
 		$config->load(\PATH . self::PATH_CONFIG . $configFile, \ENVIRONMENT);
+
 		// Config is special case and is saved as 'Config' resource for convenience
 		$this->setResource(self::RES_CONFIG, $config);
 
@@ -189,58 +189,59 @@ class App {
 			}
 		}
 
-		// Preload modules
-		if (!is_null($config->init)) {
-			$init = $config->init;
-			if (isset($init[self::CONF_PRELOAD]) && is_array($init[self::CONF_PRELOAD])) {
-				foreach ($init[self::CONF_PRELOAD] as $resource) {
-					$this->loadResource($resource);
+		// Load and initialise modules
+		$init = $config->init ? $config->init : array();
+		if (isset($init[self::CONF_LOAD]) && is_array($init[self::CONF_LOAD])) {
+			foreach ($init[self::CONF_LOAD] as $resource) {
+				$resource = $this->getResource($resource);
+				if (method_exists($resource, 'init')) {
+					$resource->init();
 				}
 			}
 		}
 
-		// Start session
-		session_start();
-
-		// Get request
-		$req = $this->getResource(self::RES_REQUEST);
-		$req->process();
-
-		// Load other resources
-		if (!is_null($config->init)) {
-			$init = $config->init;
-			// Application specific resources
-			if (isset($init[self::CONF_LOAD]) && is_array($init[self::CONF_LOAD])) {
-				foreach ($init[self::CONF_LOAD] as $resource) {
-					$this->loadResource($resource);
-				}
-			}
-
-			// Module/controller specific resources
-			if (isset($init[$req->getModule()][$req->getController()][self::CONF_LOAD]) && is_array($init[$req->getModule()][$req->getController()][self::CONF_LOAD])) {
-				foreach ($init[$req->getModule()][$req->getController()][self::CONF_LOAD] as $resource) {
-					$this->loadResource($resource);
-				}
-			}
-
-			// Allow a controller specific setting to skip main module loading
-			$skip = array();
-			if (isset($init[$req->getModule()][$req->getController()][self::CONF_SKIP]) && is_array($init[$req->getModule()][$req->getController()][self::CONF_SKIP])) {
-				foreach ($init[$req->getModule()][$req->getController()][self::CONF_SKIP] as $resource) {
-					$skip[] = $resource;
-				}
-			}
-
-			// Module specific resources
-			if (isset($init[$req->getModule()][self::CONF_LOAD]) && is_array($init[$req->getModule()][self::CONF_LOAD])) {
-				foreach ($init[$req->getModule()][self::CONF_LOAD] as $resource) {
-					if (!in_array($resource, $skip)) {
-						$this->loadResource($resource);
-					}
-				}
+		// If request module is loaded initialise other resources
+		if ($this->isResource(self::RES_REQUEST)) {
+			$req = $this->getResource(self::RES_REQUEST);
+			if (isset($init[$req->getModule()])) {
+				$this->initRequest($req, $init[$req->getModule()]);
 			}
 		}
+
 		return $this;
+	}
+
+	/**
+	 * Initialise request based resources
+	 *
+	 * @param Request $req
+	 * @param array $init
+	 */
+	public function initRequest(Request $req, array $init)
+	{
+		// Module/controller specific resources
+		if (isset($init[$req->getController()][self::CONF_LOAD]) && is_array($init[$req->getController()][self::CONF_LOAD])) {
+			foreach ($init[$req->getController()][self::CONF_LOAD] as $resource) {
+				$this->loadResource($resource);
+			}
+		}
+
+		// Allow a controller specific setting to skip main module loading
+		$skip = array();
+		if (isset($init[$req->getController()][self::CONF_SKIP]) && is_array($init[$req->getController()][self::CONF_SKIP])) {
+			foreach ($init[$req->getController()][self::CONF_SKIP] as $resource) {
+				$skip[] = $resource;
+			}
+		}
+
+		// Module specific resources
+		if (isset($init[self::CONF_LOAD]) && is_array($init[self::CONF_LOAD])) {
+			foreach ($init[self::CONF_LOAD] as $resource) {
+				if (!in_array($resource, $skip)) {
+					$this->loadResource($resource);
+				}
+			}
+		}
 	}
 
 	/**
@@ -250,7 +251,9 @@ class App {
 	 */
 	public function run() {
 		// Dispatch request
-		$this->getResource(self::RES_DISPATCH)->dispatch();
+		if ($this->isResource(self::RES_REQUEST)) {
+			$this->getResource(self::RES_DISPATCH)->dispatch();
+		}
 
 		// Page output
 		$output = false;

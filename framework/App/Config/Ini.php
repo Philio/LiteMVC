@@ -3,10 +3,10 @@
  * LiteMVC Application Framework
  *
  * @author Phil Bayfield
- * @copyright 2010
- * @license Creative Commons Attribution-Share Alike 2.0 UK: England & Wales License
- * @package LiteMVC\App\Config
- * @version 0.1.0
+ * @copyright 2010 - 2012
+ * @license GNU General Public License version 3
+ * @package LiteMVC
+ * @version 0.2.0
  */
 namespace LiteMVC\App\Config;
 
@@ -18,14 +18,14 @@ class Ini extends Config
 
 	/**
 	 * Section separator
-	 * 
+	 *
 	 * @var string
 	 */
 	const SECTION_SEPARATOR = ':';
-	
+
 	/**
 	 * Item separator
-	 * 
+	 *
 	 * @var string
 	 */
 	const ITEM_SEPARATOR = '.';
@@ -65,7 +65,7 @@ class Ini extends Config
 
 	/**
 	 * Process the ini data
-	 * 
+	 *
 	 * @param array $ini
 	 * @param string $section
 	 */
@@ -93,10 +93,10 @@ class Ini extends Config
 			}
 		}
 	}
-	
+
 	/**
 	 * Process a section of the ini file
-	 * 
+	 *
 	 * @param array $data
 	 */
 	protected function _processSection($data) {
@@ -106,10 +106,10 @@ class Ini extends Config
 		}
 		return $config;
 	}
-	
+
 	/**
 	 * Process a key
-	 * 
+	 *
 	 * @param array $config
 	 * @param string $key
 	 * @param mixed $value

@@ -8,6 +8,16 @@
  * @package LiteMVC
  * @version 0.2.0
  */
-namespace LiteMVC\App\Config;
+namespace LiteMVC\App;
 
-class Exception extends \Exception {}
+interface Resource
+{
+
+	/**
+	 * Initialise the resource
+	 *
+	 * @return void
+	 */
+	public function init();
+
+}

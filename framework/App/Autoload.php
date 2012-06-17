@@ -1,12 +1,12 @@
 <?php
 /**
  * LiteMVC Application Framework
- * 
+ *
  * @author Phil Bayfield
- * @copyright 2010
- * @license Creative Commons Attribution-Share Alike 2.0 UK: England & Wales License
- * @package LiteMVC\App
- * @version 0.1.0
+ * @copyright 2010 - 2012
+ * @license GNU General Public License version 3
+ * @package LiteMVC
+ * @version 0.2.0
  */
 namespace LiteMVC\App;
 
@@ -19,10 +19,10 @@ class Autoload
 	 * @var array
 	 */
 	private $_paths = array();
-	
+
 	/**
 	 * Autoload a class
-	 * 
+	 *
 	 * @param string $class
 	 * @return void
 	 */
@@ -45,20 +45,20 @@ class Autoload
 			}
 		}
 	}
-	
+
 	/**
 	 * Register autoloader
-	 * 
+	 *
 	 * @return void
 	 */
 	public function register()
 	{
 		spl_autoload_register(array($this, 'loader'));
 	}
-	
+
 	/**
 	 * Unregister autoloader
-	 * 
+	 *
 	 * @return void
 	 */
 	public function unregister()
@@ -76,5 +76,5 @@ class Autoload
 	{
 		$this->_paths[$namespace] = $path;
 	}
-	
+
 }
