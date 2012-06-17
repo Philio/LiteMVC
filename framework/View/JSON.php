@@ -10,7 +10,9 @@
  */
 namespace LiteMVC\View;
 
-class JSON extends \LiteMVC\View implements View
+use LiteMVC\View as View;
+
+class JSON extends View implements View\View
 {
 
 	/**
@@ -22,7 +24,7 @@ class JSON extends \LiteMVC\View implements View
 	{
 		// Set JSON header
 		header("Content-Type: application/json");
-		
+
 		// Encode page data as JSON
 		$this->_rendered = json_encode($this->_data);
 	}

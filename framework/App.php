@@ -1,7 +1,7 @@
 <?php
 /**
  * LiteMVC Application Framework
- * 
+ *
  * @author Phil Bayfield
  * @copyright 2010
  * @license Creative Commons Attribution-Share Alike 2.0 UK: England & Wales License
@@ -17,10 +17,10 @@ require_once 'App/Autoload.php';
 use LiteMVC\App as App;
 
 class App {
-	
+
 	/**
 	 * Resources
-	 * 
+	 *
 	 * @var array
 	 */
 	protected $_resources = array();
@@ -56,10 +56,10 @@ class App {
 	const RES_DISPATCH	= 'Dispatcher';
 	const RES_HTML		= 'View\HTML';
 	const RES_JSON		= 'View\JSON';
-	
+
 	/**
 	 * Constructor
-	 * 
+	 *
 	 * @return void
 	 */
 	public function __construct()
@@ -74,7 +74,7 @@ class App {
 
 	/**
 	 * Check if an application resource exists
-	 * 
+	 *
 	 * @param string $name
 	 * @return bool
 	 */
@@ -85,10 +85,10 @@ class App {
 		}
 		return false;
 	}
-	
+
 	/**
 	 * Get an application resource
-	 * 
+	 *
 	 * @param string $name
 	 * @param mixed $params
 	 * @return object
@@ -103,7 +103,7 @@ class App {
 
 	/**
 	 * Set an application resource
-	 * 
+	 *
 	 * @param string $name
 	 * @param object $object
 	 * @return void
@@ -115,17 +115,17 @@ class App {
 
 	/**
 	 * Unset an application resource
-	 * 
+	 *
 	 * @param string $name
 	 * @return void
 	 */
 	public function unsetResource($name)
 	{
 		unset($this->_resources[$name]);
-	}	
+	}
 	/**
 	 * Load an application resource
-	 * 
+	 *
 	 * @param string $name
 	 * @param mixed $params
 =	 * @return bool
@@ -145,10 +145,10 @@ class App {
 		}
 		return false;
 	}
-	
+
 	/**
 	 * Unload an application resource
-	 * 
+	 *
 	 * @param string $name
 	 * @return bool
 	 */
@@ -160,7 +160,7 @@ class App {
 		}
 		return false;
 	}
-	
+
 	/**
 	 * Initialise the applicatoin
 	 *
@@ -205,7 +205,7 @@ class App {
 		// Get request
 		$req = $this->getResource(self::RES_REQUEST);
 		$req->process();
-		
+
 		// Load other resources
 		if (!is_null($config->init)) {
 			$init = $config->init;
@@ -215,14 +215,14 @@ class App {
 					$this->loadResource($resource);
 				}
 			}
-			
+
 			// Module/controller specific resources
 			if (isset($init[$req->getModule()][$req->getController()][self::CONF_LOAD]) && is_array($init[$req->getModule()][$req->getController()][self::CONF_LOAD])) {
 				foreach ($init[$req->getModule()][$req->getController()][self::CONF_LOAD] as $resource) {
 					$this->loadResource($resource);
 				}
 			}
-			
+
 			// Allow a controller specific setting to skip main module loading
 			$skip = array();
 			if (isset($init[$req->getModule()][$req->getController()][self::CONF_SKIP]) && is_array($init[$req->getModule()][$req->getController()][self::CONF_SKIP])) {
@@ -230,7 +230,7 @@ class App {
 					$skip[] = $resource;
 				}
 			}
-			
+
 			// Module specific resources
 			if (isset($init[$req->getModule()][self::CONF_LOAD]) && is_array($init[$req->getModule()][self::CONF_LOAD])) {
 				foreach ($init[$req->getModule()][self::CONF_LOAD] as $resource) {
@@ -251,7 +251,7 @@ class App {
 	public function run() {
 		// Dispatch request
 		$this->getResource(self::RES_DISPATCH)->dispatch();
-		
+
 		// Page output
 		$output = false;
 		if ($this->isResource(self::RES_HTML)) {
@@ -264,5 +264,5 @@ class App {
 			echo $output;
 		}
 	}
-	
+
 }

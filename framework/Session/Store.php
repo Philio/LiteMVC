@@ -12,18 +12,18 @@ namespace LiteMVC\Session;
 
 class Store implements \Countable
 {
-	
+
 	/**
 	 * Session namespace
-	 * 
-	 * @var string 
+	 *
+	 * @var string
 	 */
 	private $_namespace = 'Store';
-	
+
 	/**
 	 * Set namespace
-	 * 
-	 * @param string $namespace 
+	 *
+	 * @param string $namespace
 	 */
 	public function __construct($namespace = null)
 	{
@@ -31,11 +31,13 @@ class Store implements \Countable
 		if (!is_null($namespace) && is_string($namespace)) {
 			$this->_namespace = $namespace;
 		}
-		
+
 		// Initialise
-		$_SESSION[$this->_namespace] = array();
+		if (is_null($_SESSION[$this->_namespace])) {
+			$_SESSION[$this->_namespace] = array();
+		}
 	}
-	
+
 	/**
 	 * Set magic method
 	 *
@@ -58,7 +60,7 @@ class Store implements \Countable
 	{
 		return $this->getVal($name);
 	}
-	
+
 	/**
 	 * Isset magic method
 	 *
@@ -95,34 +97,34 @@ class Store implements \Countable
 		}
 		return null;
 	}
-	
+
 	/**
 	 * Set data to the store
-	 * 
-	 * @param array $data 
+	 *
+	 * @param array $data
 	 */
 	public function setData(array $data)
 	{
 		$_SESSION[$this->_namespace] = $data;
 	}
-	
+
 	/**
 	 * Get all stored data
-	 * 
-	 * @return array 
+	 *
+	 * @return array
 	 */
-	public function getData()
+	public function &getData()
 	{
 		return $_SESSION[$this->_namespace];
 	}
 
 	/**
 	 * Count items
-	 * 
-	 * @return int 
+	 *
+	 * @return int
 	 */
 	public function count() {
 		return count($_SESSION[$this->_namespace]);
 	}
-	
+
 }
