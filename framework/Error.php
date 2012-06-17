@@ -13,7 +13,7 @@ namespace LiteMVC;
 // Namespace aliases
 use LiteMVC\App\Resource;
 
-class Error implements Resource
+class Error extends Resource
 {
 
 	/**

@@ -11,10 +11,11 @@
 namespace LiteMVC;
 
 // Namespace aliases
-use LiteMVC\App as App;
-use LiteMVC\Request as Request;
+use LiteMVC\App\Resource;
+use LiteMVC\App;
+use LiteMVC\Request;
 
-class Request
+class Request extends App\Resource
 {
 
 	/**
@@ -135,8 +136,8 @@ class Request
 		}
 
 		// Try and match pattern
+		$matches = array();
 		foreach ($patterns as $pattern) {
-			$matches = array();
 			preg_match('/' . $pattern . '/', $uri, $matches);
 			if (count($matches)) {
 				break;

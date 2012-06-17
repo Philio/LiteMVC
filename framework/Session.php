@@ -14,7 +14,7 @@ namespace LiteMVC;
 use LiteMVC\App\Resource;
 use LiteMVC\Session as Session;
 
-class Session implements Resource
+class Session extends Resource
 {
 
 	/**

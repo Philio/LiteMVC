@@ -114,7 +114,6 @@ class Server
 		}
 		$params[OAuth2::AUTH_REDIRECT_URI] = $redirectUri;
 
-		print_r($params);
 		return $params;
 	}
 

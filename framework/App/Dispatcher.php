@@ -8,10 +8,7 @@
  * @package LiteMVC
  * @version 0.2.0
  */
-namespace LiteMVC;
-
-// Namespace aliases
-use LiteMVC\App as App;
+namespace LiteMVC\App;
 
 class Dispatcher {
 

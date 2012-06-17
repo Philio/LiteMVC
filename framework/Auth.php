@@ -10,8 +10,25 @@
  */
 namespace LiteMVC;
 
-class Auth
+// Namespace aliases
+use LiteMVC\App\Resource;
+
+class Auth extends Resource
 {
+
+	/**
+	 * App instance
+	 *
+	 * @var App
+	 */
+	protected $_app;
+
+	/**
+	 * Config data
+	 *
+	 * @var array
+	 */
+	protected $_config = array();
 
 	/**
 	 * Store auth data in session
@@ -100,67 +117,80 @@ class Auth
 	 *
 	 * @param App $app
 	 * @return void
+	 * @throws Auth\Exception
 	 */
 	public function __construct(App $app = null)
 	{
-		// Check config
-		$config = $app->getResource(self::RES_CONFIG)->auth;
-		if (is_null($config)) {
-			throw new Auth\Exception('No database configuration has been specified.');
-		}
+		// Set app
+		$this->_app = $app;
 
-		// Check for session setting
-		if (!isset($config[self::CONF_SESSION])) {
-			$config[self::CONF_SESSION] = true;
+		// Check config
+		$this->_config = $app->getResource(self::RES_CONFIG)->auth;
+		if (is_null($this->_config)) {
+			throw new Auth\Exception('No authentication configuration has been specified.');
 		}
-		$this->_session = $config[self::CONF_SESSION];
+	}
+
+	/**
+	 * Init auth
+	 *
+	 * @return void
+	 * @throws Auth\Exception
+	 */
+	public function init()
+	{
+		// Check for session setting
+		if (!isset($this->_config[self::CONF_SESSION])) {
+			$this->_config[self::CONF_SESSION] = true;
+		}
+		$this->_session = $this->_config[self::CONF_SESSION];
 
 		// Check that a user model has been specified
-		if (isset($config[self::CONF_MODEL][self::CONF_USER])) {
+		if (isset($this->_config[self::CONF_MODEL][self::CONF_USER])) {
 			// Check session
 			if ($this->_session && isset($_SESSION[self::SESS_NS][self::SESS_NS_USER])) {
 				$this->_userModel = $_SESSION[self::SESS_NS][self::SESS_NS_USER];
 			// Instantiate new class
-			} elseif (class_exists($config[self::CONF_MODEL][self::CONF_USER])) {
-				$this->_userModel = new $config[self::CONF_MODEL][self::CONF_USER]($app->getResource(self::RES_DATABASE));
+			} elseif (class_exists($this->_config[self::CONF_MODEL][self::CONF_USER])) {
+				$this->_userModel = new $this->_config[self::CONF_MODEL][self::CONF_USER]($this->_app->getResource(self::RES_DATABASE));
 			// Invalid configuration
 			} else {
 				throw new Auth\Exception(
-					'Unable to load user model, class ' . $config[self::CONF_MODEL][self::CONF_USER] . ' not found.'
+					'Unable to load user model, class ' . $this->_config[self::CONF_MODEL][self::CONF_USER] . ' not found.'
 				);
 			}
 		}
 
 		// If an ACL model has been specified instanciate it
-		if (isset($config[self::CONF_MODEL][self::CONF_ACL])) {
-			$this->_aclModel = new $config[self::CONF_MODEL][self::CONF_ACL]($app->getResource(self::RES_DATABASE));
+		if (isset($this->_config[self::CONF_MODEL][self::CONF_ACL])) {
+			$this->_aclModel = new $this->_config[self::CONF_MODEL][self::CONF_ACL]($this->_app->getResource(self::RES_DATABASE));
 			// Setup ACL caching
-			if (isset($config[self::CONF_MODEL][self::CONF_CACHE][self::CONF_MODULE],
-					$config[self::CONF_MODEL][self::CONF_CACHE][self::CONF_LIFETIME])) {
+			if (isset($this->_config[self::CONF_MODEL][self::CONF_CACHE][self::CONF_MODULE],
+					$this->_config[self::CONF_MODEL][self::CONF_CACHE][self::CONF_LIFETIME])) {
 				// Cache object
 				$this->_aclModel->setCache(
-					$app->getResource($config[self::CONF_MODEL][self::CONF_CACHE][self::CONF_MODULE])
+					$this->_app->getResource($this->_config[self::CONF_MODEL][self::CONF_CACHE][self::CONF_MODULE])
 				);
 				// Cache lifetime
 				$this->_aclModel->setCacheLifetime(
-					$config[self::CONF_MODEL][self::CONF_CACHE][self::CONF_LIFETIME]
+					$this->_config[self::CONF_MODEL][self::CONF_CACHE][self::CONF_LIFETIME]
 				);
 			}
 		}
 
 		// Set allow policy
-		if (isset($config[self::CONF_ACL][self::CONF_POLICY])) {
-			$this->_policy = $config[self::CONF_ACL][self::CONF_POLICY];
+		if (isset($this->_config[self::CONF_ACL][self::CONF_POLICY])) {
+			$this->_policy = $this->_config[self::CONF_ACL][self::CONF_POLICY];
 		}
 
 		// Add allowed pages
-		if (isset($config[self::CONF_ACL][self::CONF_ALLOW]) && is_array($config[self::CONF_ACL][self::CONF_ALLOW])) {
-			$this->_allow = $config[self::CONF_ACL][self::CONF_ALLOW];
+		if (isset($this->_config[self::CONF_ACL][self::CONF_ALLOW]) && is_array($this->_config[self::CONF_ACL][self::CONF_ALLOW])) {
+			$this->_allow = $this->_config[self::CONF_ACL][self::CONF_ALLOW];
 		}
 
 		// Add denied pages
-		if (isset($config[self::CONF_ACL][self::CONF_DENY]) && is_array($config[self::CONF_ACL][self::CONF_DENY])) {
-			$this->_deny = $config[self::CONF_ACL][self::CONF_DENY];
+		if (isset($this->_config[self::CONF_ACL][self::CONF_DENY]) && is_array($this->_config[self::CONF_ACL][self::CONF_DENY])) {
+			$this->_deny = $this->_config[self::CONF_ACL][self::CONF_DENY];
 		}
 	}
 

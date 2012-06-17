@@ -10,8 +10,25 @@
  */
 namespace LiteMVC;
 
-class Captcha
+// Namespace aliases
+use LiteMVC\App\Resource;
+
+class Captcha extends Resource
 {
+
+	/**
+	 * App instance
+	 *
+	 * @var App
+	 */
+	protected $_app;
+
+	/**
+	 * Config data
+	 *
+	 * @var array
+	 */
+	protected $_config = array();
 
 	/**
 	 * Width of the output image
@@ -129,18 +146,29 @@ class Captcha
 	 * @param App $app
 	 * @return void
 	 */
-	public function __construct(App $app = null)
+	public function __construct(App $app)
 	{
-		if (!($app instanceof App)) {
+		// Set app
+		$this->_app = $app;
+
+		// Set config
+		$this->_config = $app->getResource(self::RES_CONFIG)->captcha;
+	}
+
+	/**
+	 * Initialise from config
+	 *
+	 * @return void
+	 */
+	public function init()
+	{
+		// Check config
+		if (!is_array($this->_config)) {
 			return;
 		}
-		// Get config
-		$config = $app->getResource(self::RES_CONFIG)->captcha;
-		if (is_null($config)) {
-			return;
-		}
+
 		// Set config options from config file
-		foreach ($config as $key => $value) {
+		foreach ($this->_config as $key => $value) {
 			switch ($key) {
 				// Image width (optional)
 				case self::CONF_WIDTH:

@@ -10,7 +10,7 @@
  */
 namespace LiteMVC\App;
 
-interface Resource
+abstract class Resource
 {
 
 	/**
@@ -18,6 +18,6 @@ interface Resource
 	 *
 	 * @return void
 	 */
-	public function init();
+	abstract public function init();
 
 }

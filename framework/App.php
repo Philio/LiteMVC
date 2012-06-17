@@ -47,12 +47,12 @@ class App {
 	 *
 	 * @var string
 	 */
+	const RES_CONF_INI	= 'App\Config\Ini';
+	const RES_DISPATCH	= 'App\Dispatcher';
+	const RES_LOADER	= 'Autoload';
 	const RES_FILE		= 'Cache\File';
 	const RES_CONFIG	= 'Config';
-	const RES_CONF_INI	= 'App\Config\Ini';
-	const RES_LOADER	= 'Autoload';
 	const RES_REQUEST	= 'Request';
-	const RES_DISPATCH	= 'Dispatcher';
 	const RES_HTML		= 'View\HTML';
 	const RES_JSON		= 'View\JSON';
 
@@ -139,6 +139,9 @@ class App {
 			} else {
 				$obj = new $class($params);
 			}
+			if ($obj instanceof App\Resource) {
+				$obj->init();
+			}
 			$this->setResource($name, $obj);
 			return true;
 		}
@@ -194,9 +197,6 @@ class App {
 		if (isset($init[self::CONF_LOAD]) && is_array($init[self::CONF_LOAD])) {
 			foreach ($init[self::CONF_LOAD] as $resource) {
 				$resource = $this->getResource($resource);
-				if (method_exists($resource, 'init')) {
-					$resource->init();
-				}
 			}
 		}
 
