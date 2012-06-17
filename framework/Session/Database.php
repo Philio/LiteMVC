@@ -3,16 +3,16 @@
  * LiteMVC Application Framework
  *
  * @author Phil Bayfield
- * @copyright 2010
- * @license Creative Commons Attribution-Share Alike 2.0 UK: England & Wales License
+ * @copyright 2010 - 2012
+ * @license GNU General Public License version 3
  * @package LiteMVC
- * @version 0.1.0
+ * @version 0.2.0
  */
 namespace LiteMVC\Session;
 
 class Database implements Session
 {
-	
+
 	/**
 	 * Model object
 	 *
@@ -26,10 +26,10 @@ class Database implements Session
 	 * @var string
 	 */
 	const CONFIG_MODEL = 'model';
-	
+
 	/**
 	 * Constructor
-	 * 
+	 *
 	 * @return void
 	 */
 	public function __construct($db, $config)
@@ -42,26 +42,26 @@ class Database implements Session
 			throw new Exception('The session database configuration is invalid.');
 		}
 	}
-	
+
 	/**
 	 * Open session
-	 * 
+	 *
 	 * @param string $path
 	 * @param string $name
 	 * @return void
 	 */
 	public function open($path, $name) {}
-	
+
 	/**
 	 * Close session
-	 * 
+	 *
 	 * @return void
 	 */
 	public function close() {}
-	
+
 	/**
 	 * Read session data
-	 * 
+	 *
 	 * @param string $id
 	 * @return string
 	 */
@@ -70,10 +70,10 @@ class Database implements Session
 		// Call model read
 		return $this->_model->read($id);
 	}
-	
+
 	/**
 	 * Write session data
-	 * 
+	 *
 	 * @param string $id
 	 * @param string $data
 	 * @return void
@@ -83,10 +83,10 @@ class Database implements Session
 		// Call model write
 		$this->_model->write($id, $data, $expiry);
 	}
-	
+
 	/**
 	 * Destroy session
-	 * 
+	 *
 	 * @param string $id
 	 * @return void
 	 */
@@ -95,10 +95,10 @@ class Database implements Session
 		// Call model destroy
 		$this->_model->destroy($id);
 	}
-	
+
 	/**
 	 * Garbage collection
-	 * 
+	 *
 	 * @return void
 	 */
 	public function gc()
@@ -106,5 +106,5 @@ class Database implements Session
 		// Call model garbage collection
 		$this->_model->gc();
 	}
-	
+
 }

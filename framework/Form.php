@@ -3,9 +3,10 @@
  * LiteMVC Application Framework
  *
  * @author Phil Bayfield
- * @copyright 2010
- * @license Creative Commons Attribution-Share Alike 2.0 UK: England & Wales License
+ * @copyright 2010 - 2012
+ * @license GNU General Public License version 3
  * @package LiteMVC
+ * @version 0.2.0
  */
 namespace LiteMVC;
 
@@ -139,7 +140,7 @@ abstract class Form {
 	/**
 	 * Constructor
 	 *
-	 * @param App $app 
+	 * @param App $app
 	 */
 	public function __construct($app = null)
 	{
@@ -349,7 +350,7 @@ abstract class Form {
 	 * Set options for a select
 	 *
 	 * @param string $field
-	 * @param array $options 
+	 * @param array $options
 	 */
 	public function setOptions($field, $options)
 	{

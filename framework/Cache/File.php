@@ -1,12 +1,12 @@
 <?php
 /**
  * LiteMVC Application Framework
- * 
+ *
  * @author Phil Bayfield
- * @copyright 2010
- * @license Creative Commons Attribution-Share Alike 2.0 UK: England & Wales License
- * @package LiteMVC\Cache
- * @version 0.1.0
+ * @copyright 2010 - 2012
+ * @license GNU General Public License version 3
+ * @package LiteMVC
+ * @version 0.2.0
  */
 namespace LiteMVC\Cache;
 
@@ -16,27 +16,27 @@ use LiteMVC\Cache\File as File;
 
 class File
 {
-	
+
 	/**
 	 * Cache path
-	 * 
+	 *
 	 * @var string
 	 */
 	private $_path;
-	
+
 	/**
 	 * Encoding flags
-	 * 
+	 *
 	 * @var int
 	 */
 	const ENC_NONE        = 0;
 	const ENC_SERIALIZE   = 1;
 	const ENC_JSON_ARRAY  = 2;
 	const ENC_JSON_OBJECT = 3;
-	
+
 	/**
 	 * Constructor
-	 * 
+	 *
 	 * @param string $path
 	 * @return void
 	 */
@@ -54,10 +54,10 @@ class File
 		}
 		$this->_path = $path;
 	}
-	
+
 	/**
 	 * Get a value from file cache
-	 * 
+	 *
 	 * @param string $key
 	 */
 	public function get($key)
@@ -99,10 +99,10 @@ class File
 		}
 		return false;
 	}
-	
+
 	/**
 	 * Set a value to file cache
-	 * 
+	 *
 	 * @param string $key
 	 * @param mixed $var
 	 * @param int $flag (this emulates memcache but we will use it for the encoding method)
@@ -185,5 +185,5 @@ class File
 			}
 		}
 	}
-	
+
 }

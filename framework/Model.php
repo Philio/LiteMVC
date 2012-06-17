@@ -3,10 +3,10 @@
  * LiteMVC Application Framework
  *
  * @author Phil Bayfield
- * @copyright 2010
- * @license Creative Commons Attribution-Share Alike 2.0 UK: England & Wales License
- * @package LiteMVC\App
- * @version 0.1.0
+ * @copyright 2010 - 2012
+ * @license GNU General Public License version 3
+ * @package LiteMVC
+ * @version 0.2.0
  */
 namespace LiteMVC;
 
@@ -18,8 +18,8 @@ abstract class Model
 
 	/**
 	 * Database connection
-	 * 
-	 * @var object 
+	 *
+	 * @var object
 	 */
 	protected $_conn;
 
@@ -393,11 +393,11 @@ abstract class Model
 		// Map data to object(s)
 		return $this->_mapData($data, self::MAPPING_MULTI);
 	}
-	
+
 	/**
 	 * Set autocommit state
 	 *
-	 * @param boolean $state 
+	 * @param boolean $state
 	 */
 	public function autocommit($state = true)
 	{
@@ -406,7 +406,7 @@ abstract class Model
 			throw new Model\Exception('Failed to set autocommit state.');
 		}
 	}
-	
+
 	/**
 	 * Commit current transaction
 	 */
@@ -416,7 +416,7 @@ abstract class Model
 			throw new Model\Exception('Commit transaction failed.');
 		}
 	}
-	
+
 	/**
 	 * Rollback last transaction
 	 */
@@ -429,7 +429,7 @@ abstract class Model
 
 	/**
 	 * Format a primary key for SQL query
-	 * 
+	 *
 	 * @param mixed $id
 	 * @return string
 	 */

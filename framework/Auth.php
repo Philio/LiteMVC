@@ -3,26 +3,26 @@
  * LiteMVC Application Framework
  *
  * @author Phil Bayfield
- * @copyright 2010
- * @license Creative Commons Attribution-Share Alike 2.0 UK: England & Wales License
+ * @copyright 2010 - 2012
+ * @license GNU General Public License version 3
  * @package LiteMVC
- * @version 0.1.0
+ * @version 0.2.0
  */
 namespace LiteMVC;
 
 class Auth
 {
-	
+
 	/**
 	 * Store auth data in session
-	 * 
-	 * @var bool 
+	 *
+	 * @var bool
 	 */
 	protected $_session;
 
 	/**
 	 * User model
-	 * 
+	 *
 	 * @var Auth\User
 	 */
 	protected $_userModel;
@@ -108,7 +108,7 @@ class Auth
 		if (is_null($config)) {
 			throw new Auth\Exception('No database configuration has been specified.');
 		}
-		
+
 		// Check for session setting
 		if (!isset($config[self::CONF_SESSION])) {
 			$config[self::CONF_SESSION] = true;
@@ -208,7 +208,7 @@ class Auth
 
 	/**
 	 * Check if a user is logged in
-	 * 
+	 *
 	 * @return bool
 	 */
 	public function isLoggedIn()

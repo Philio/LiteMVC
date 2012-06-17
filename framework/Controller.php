@@ -3,10 +3,10 @@
  * LiteMVC Application Framework
  *
  * @author Phil Bayfield
- * @copyright 2010
- * @license Creative Commons Attribution-Share Alike 2.0 UK: England & Wales License
+ * @copyright 2010 - 2012
+ * @license GNU General Public License version 3
  * @package LiteMVC
- * @version 0.1.0
+ * @version 0.2.0
  */
 namespace LiteMVC;
 
@@ -33,11 +33,11 @@ abstract class Controller
 	 * @var View\HTML | View\JSON
 	 */
 	protected $_view;
-	
+
 	/**
 	 * Exception object pushed from dispatch
 	 *
-	 * @var Exception 
+	 * @var Exception
 	 */
 	protected $_exception;
 
@@ -86,7 +86,7 @@ abstract class Controller
 
 		// Setup request
 		$this->_request = $this->getResource(self::RES_REQUEST);
-		
+
 		// Set exception
 		$this->_exception = $exception;
 
@@ -143,7 +143,7 @@ abstract class Controller
 		if (is_callable(array($this->_plugins[$name], 'process'))) {
 			return call_user_func_array(array($this->_plugins[$name], 'process'), $args);
 		}
-		
+
 		return $this->_plugins[$name];
 	}
 

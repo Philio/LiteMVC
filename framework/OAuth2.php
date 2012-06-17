@@ -3,44 +3,44 @@
  * LiteMVC Application Framework
  *
  * @author Phil Bayfield
- * @copyright 2012
- * @license Creative Commons Attribution-Share Alike 2.0 UK: England & Wales License
+ * @copyright 2010 - 2012
+ * @license GNU General Public License version 3
  * @package LiteMVC
- * @version 0.1.0
+ * @version 0.2.0
  */
 namespace LiteMVC;
 
 class OAuth2
 {
-	
+
 	/**
 	 * App object
 	 *
 	 * @var App
 	 */
 	protected $_app;
-	
+
 	/**
 	 * Config data
-	 * 
+	 *
 	 * @var array
 	 */
 	protected $_config = array();
 
 	/**
-	 * HTTP response codes 
-	 * 
+	 * HTTP response codes
+	 *
 	 * @var string
 	 */
 	const HTTP_FOUND		= '302 Found';
 	const HTTP_BAD_REQUEST	= '400 Bad Request';
 	const HTTP_UNAUTHORIZED	= '401 Unauthorized';
 	const HTTP_FORBIDDEN	= '403 Forbidden';
-	
+
 	/**
 	 * Authenticate params
-	 * 
-	 * @var string 
+	 *
+	 * @var string
 	 */
 	const AUTH_RESPONSE_TYPE	= 'response_type';
 	const AUTH_CLIENT_ID		= 'client_id';
@@ -48,11 +48,11 @@ class OAuth2
 	const AUTH_REDIRECT_URI		= 'redirect_uri';
 	const AUTH_SCOPE			= 'scope';
 	const AUTH_STATE			= 'state';
-	
+
 	/**
 	 * Error params
-	 * 
-	 * @var string 
+	 *
+	 * @var string
 	 */
 	const ERROR_INVALID_REQUEST				= 'invalid_request';
 	const ERROR_UNAUTHORIZED_CLIENT			= 'unauthorized_client';
@@ -61,16 +61,16 @@ class OAuth2
 	const ERROR_INVALID_SCOPE				= 'invalid_scope';
 	const ERROR_SERVER_ERROR				= 'server_error';
 	const ERROR_TEMPORARILY_UNAVAILABLE		= 'temporarily_unavailable';
-	
+
 	/**
 	 * Error response params
-	 * 
-	 * @var string 
+	 *
+	 * @var string
 	 */
 	const RES_ERROR				= 'error';
 	const RES_ERROR_DESCRIPTION	= 'error_description';
 	const RES_ERROR_URI			= 'error_uri';
-	
+
 	/**
 	 * Constructor
 	 *
@@ -80,18 +80,18 @@ class OAuth2
 	{
 		// Reference App object for resource loading
 		$this->_app = $app;
-		
+
 		// Check config
 		$config = $app->getResource('Config')->oauth2;
 		if (!is_null($config)) {
 			$this->_config = $config;
 		}
 	}
-	
+
 	/**
 	 * Get an OAuth2 instance based on config namespace
-	 * 
-	 * @param string $namespace 
+	 *
+	 * @param string $namespace
 	 */
 	public function getFromConfig($namespace)
 	{
@@ -99,12 +99,12 @@ class OAuth2
 		if (!array_key_exists($namespace, $this->_config)) {
 			throw new OAuth2\Exception('Unknown OAuth2 config');
 		}
-		
+
 		// Check that a role is defined
 		if (!isset($this->_config[$namespace]['role'])) {
 			throw new OAuth2\Exception('OAuth2 role is undefined');
 		}
-		
+
 		// Return new OAuth instance based on role
 		switch ($this->_config[$namespace]['role']) {
 			case 'client':
@@ -114,12 +114,12 @@ class OAuth2
 				if (!isset($this->_config[$namespace]['client'])) {
 					throw new OAuth2\Exception('OAuth2 server requires a client implementation');
 				}
-				
+
 				// Check token is set in config
 				if (!isset($this->_config[$namespace]['token'])) {
 					throw new OAuth2\Exception('OAuth2 server requires a token implementation');
 				}
-				
+
 				// Instantiate client object
 				if (isset($this->_config[$namespace]['client']['model'])) {
 					$client = new $this->_config[$namespace]['client']['model']($this->_app->getResource('Database'));
@@ -128,7 +128,7 @@ class OAuth2
 				} else {
 					throw new OAuth2\Exception('OAuth2 server requires a client class or model to be defined');
 				}
-				
+
 				// Instantiate client object
 				if (isset($this->_config[$namespace]['code']['model'])) {
 					$code = new $this->_config[$namespace]['code']['model']($this->_app->getResource('Database'));
@@ -137,7 +137,7 @@ class OAuth2
 				} else {
 					throw new OAuth2\Exception('OAuth2 server requires a code class or model to be defined');
 				}
-				
+
 				// Instantiate token object
 				if (isset($this->_config[$namespace]['token']['model'])) {
 					$token = new $this->_config[$namespace]['token']['model']($this->_app->getResource('Database'));
@@ -146,10 +146,10 @@ class OAuth2
 				} else {
 					throw new OAuth2\Exception('OAuth2 server requires a token class or model to be defined');
 				}
-				
+
 				// Return new server isntance
 				return new OAuth2\Server($client, $code, $token);
 		}
 	}
-	
+
 }

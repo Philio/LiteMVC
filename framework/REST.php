@@ -3,49 +3,49 @@
  * LiteMVC Application Framework
  *
  * @author Phil Bayfield
- * @copyright 2012
- * @license Creative Commons Attribution-Share Alike 2.0 UK: England & Wales License
+ * @copyright 2010 - 2012
+ * @license GNU General Public License version 3
  * @package LiteMVC
- * @version 0.1.0
+ * @version 0.2.0
  */
 namespace LiteMVC;
 
 class REST
 {
-	
+
 	/**
 	 * Base URL of the REST server
 	 *
 	 * @var string
 	 */
 	protected $_baseUrl;
-	
+
 	/**
 	 * Parser to handle responses
-	 * 
+	 *
 	 * @var REST\Parser
 	 */
 	protected $_parser;
-	
+
 	/**
 	 * Response of last call
-	 * 
-	 * @var string 
+	 *
+	 * @var string
 	 */
 	protected $_response;
-	
+
 	/**
 	 * Default cURL options
-	 * 
+	 *
 	 * @var array
 	 */
 	protected $_options = array(
 		CURLOPT_RETURNTRANSFER => true
 	);
-	
+
 	/**
 	 * HTTP errors that are likely to be returned by a REST service
-	 * 
+	 *
 	 * @var array
 	 */
 	protected $_errors = array(
@@ -59,10 +59,10 @@ class REST
 		501 => 'Not Implemented',
 		503 => 'Service Unavailable'
 	);
-	
+
 	/**
 	 * Set REST server URL and response parser
-	 * 
+	 *
 	 * @param string $url
 	 */
 	public function __construct($baseUrl, REST\Parser $parser = null)
@@ -70,19 +70,19 @@ class REST
 		$this->_baseUrl = $baseUrl;
 		$this->_parser = $parser;
 	}
-	
+
 	/**
 	 * Set options for basic auth
-	 * 
+	 *
 	 * @param string $username
-	 * @param string $password 
+	 * @param string $password
 	 */
 	public function setBasicAuth($username, $password)
 	{
 		$this->_options[CURLOPT_HTTPAUTH] = CURLAUTH_BASIC;
 		$this->_options[CURLOPT_USERPWD] = $username . ':' . $password;
 	}
-	
+
 	/**
 	 * Perform a GET request
 	 *
@@ -93,10 +93,10 @@ class REST
 	{
 		return $this->_request($this->_baseUrl . $path);
 	}
-	
+
 	/**
 	 * Perform a POST request
-	 * 
+	 *
 	 * @param string $path
 	 * @param string | array $data
 	 * @return mixed
@@ -109,10 +109,10 @@ class REST
 		}
 		return $this->_request($this->_baseUrl . $path, $options);
 	}
-	
+
 	/**
 	 * Perform a PUT request
-	 * 
+	 *
 	 * @param string $path
 	 * @param string | array $data
 	 * @return mixed
@@ -125,10 +125,10 @@ class REST
 		}
 		return $this->_request($this->_baseUrl . $path, $options);
 	}
-	
+
 	/**
 	 * Perform a DELETE request
-	 * 
+	 *
 	 * @param string $path
 	 * @return mixed
 	 */
@@ -136,21 +136,21 @@ class REST
 	{
 		return $this->_request($this->_baseUrl . $path, array(CURLOPT_CUSTOMREQUEST => 'DELETE'));
 	}
-	
+
 	/**
 	 * Get the response of the most recent request
-	 * 
-	 * @return string 
+	 *
+	 * @return string
 	 */
 	public function getResponse()
 	{
 		return $this->_response;
 	}
-	
+
 	/**
 	 * Get a parsed version of the response of the most recent request
-	 * 
-	 * @return mixed 
+	 *
+	 * @return mixed
 	 */
 	public function getParsedResponse()
 	{
@@ -159,40 +159,40 @@ class REST
 		}
 		return $this->_response;
 	}
-	
+
 	/**
 	 * Send request
-	 * 
+	 *
 	 * @param string $url
-	 * @param array $options 
+	 * @param array $options
 	 */
 	protected function _request($url, $options = array())
 	{
 		// Merge options
 		$options += $this->_options;
-		
+
 		// Send cURL request
 		$curl = curl_init($url);
 		curl_setopt_array($curl, $options);
 		$this->_response = curl_exec($curl);
 		$meta = curl_getinfo($curl);
 		curl_close($curl);
-    	
+
     	// Check for errors
     	$this->_checkResult($meta);
-		
+
 		// Return response
 		if ($this->_parser) {
 			return $this->_parser->parse($this->_response);
 		}
 		return $this->_response;
 	}
-	
+
 	/**
 	 * Check result for errors
-	 * 
+	 *
 	 * @param array $meta
-	 * @throws Exception 
+	 * @throws Exception
 	 */
 	protected function _checkResult($meta)
 	{
@@ -200,5 +200,5 @@ class REST
 			throw new REST\Exception($this->_errors[$meta['http_code']], $meta['http_code']);
 		}
 	}
-	
+
 }
