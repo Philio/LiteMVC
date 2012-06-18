@@ -124,7 +124,7 @@ class Auth extends Resource
 		// Set app
 		$this->_app = $app;
 
-		// Check config
+		// Set config
 		$this->_config = $app->getResource(self::RES_CONFIG)->auth;
 		if (is_null($this->_config)) {
 			throw new Auth\Exception('No authentication configuration has been specified.');

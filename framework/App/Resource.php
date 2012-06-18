@@ -14,10 +14,10 @@ abstract class Resource
 {
 
 	/**
-	 * Initialise the resource
+	 * Current version of the resource
 	 *
-	 * @return void
+	 * @var string
 	 */
-	abstract public function init();
+	const VERSION = '0.2.0';
 
 }

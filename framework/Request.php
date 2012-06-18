@@ -87,14 +87,9 @@ class Request extends App\Resource
 		if (!is_null($config)) {
 			$this->_config = $config;
 		}
+
 		// Set app path
 		$this->_appPath = $app::PATH_APP;
-		// Determine script path relative to doc root
-		// Allows for flexible deployment
-		// e.g. framework root could reside at example.com/a/b/c/d/
-		$this->_relativePath = substr($_SERVER['SCRIPT_NAME'], 0 , strrpos($_SERVER['SCRIPT_NAME'], '/'));
-		// Determine URI relative to framework root
-		$this->_uri = str_replace($this->_relativePath, '', $_SERVER['REQUEST_URI']);
 	}
 
 	/**
@@ -104,6 +99,13 @@ class Request extends App\Resource
 	 */
 	public function init()
 	{
+		// Determine script path relative to doc root
+		// Allows for flexible deployment
+		// e.g. framework root could reside at example.com/a/b/c/d/
+		$this->_relativePath = substr($_SERVER['SCRIPT_NAME'], 0 , strrpos($_SERVER['SCRIPT_NAME'], '/'));
+
+		// Determine URI relative to framework root
+		$this->_uri = str_replace($this->_relativePath, '', $_SERVER['REQUEST_URI']);
 		$uri = $this->_uri;
 
 		// Ignore query strings

@@ -170,6 +170,7 @@ class Error extends Resource
 	 * @return void
 	 */
 	public function init() {
+		// Set from config
 		if (!is_null($this->_config->error)) {
 			$errConfig = $this->_config->error;
 			// Set display
@@ -185,6 +186,7 @@ class Error extends Resource
 				$this->setTemplate($errConfig[self::CONF_TEMPLATE]);
 			}
 		}
+
 		// Register handlers
 		$this->register();
 	}

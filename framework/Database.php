@@ -56,11 +56,9 @@ class Database
 	 * @return void
 	 */
 	public function  __construct(App $app) {
-		// Check config
-		$config = $app->getResource(self::RES_CONFIG)->database;
-		if (!is_null($config)) {
-			$this->_config = $config;
-		} else {
+		// Set config
+		$this->_config = $app->getResource(self::RES_CONFIG)->database;
+		if (is_null($this->_config)) {
 			throw new Database\Exception('No database configuration has been specified.');
 		}
 	}
