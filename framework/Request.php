@@ -10,7 +10,7 @@
  */
 namespace LiteMVC;
 
-class Request extends Resource
+class Request extends Resource\Loadable
 {
 
 	/**

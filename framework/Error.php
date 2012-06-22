@@ -10,7 +10,7 @@
  */
 namespace LiteMVC;
 
-class Error extends Resource
+class Error extends Resource\Loadable
 {
 
 	/**

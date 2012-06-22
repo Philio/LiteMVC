@@ -10,7 +10,7 @@
  */
 namespace LiteMVC;
 
-class REST
+class REST extends Resource
 {
 
 	/**

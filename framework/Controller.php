@@ -10,7 +10,7 @@
  */
 namespace LiteMVC;
 
-abstract class Controller
+abstract class Controller extends Resource
 {
 
 	/**

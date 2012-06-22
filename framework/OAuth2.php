@@ -10,7 +10,7 @@
  */
 namespace LiteMVC;
 
-class OAuth2
+class OAuth2 extends Resource
 {
 
 	/**

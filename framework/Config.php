@@ -13,7 +13,7 @@ namespace LiteMVC;
 // Namespace aliases
 use LiteMVC\Config as Config;
 
-class Config implements \Countable
+class Config extends Resource\Dataset implements \Countable
 {
 
 	/**
@@ -22,13 +22,6 @@ class Config implements \Countable
 	 * @var Cache
 	 */
 	protected $_cache;
-
-	/**
-	 * Data
-	 *
-	 * @var array
-	 */
-	protected $_data = array();
 
 	/**
 	 * Cache prefix
@@ -43,79 +36,6 @@ class Config implements \Countable
 	 * @var int
 	 */
 	const CACHE_LIFETIME = 86400;
-
-	/**
-	 * Set magic method
-	 *
-	 * @param string $name
-	 * @param mixed $value
-	 * @return void
-	 */
-	public function __set($name, $value)
-	{
-		$this->_data[$name] = $value;
-	}
-
-	/**
-	 * Get magic method
-	 *
-	 * @param string $name
-	 * @return mixed
-	 */
-	public function &__get($name)
-	{
-		if (array_key_exists($name, $this->_data)) {
-			return $this->_data[$name];
-		}
-		return null;
-	}
-
-	/**
-	 * Set value method
-	 *
-	 * @param string $name
-	 * @param mixed $value
-	 * @return void
-	 */
-	public function setVal($name, $value)
-	{
-		$this->_data[$name] = $value;
-	}
-
-	/**
-	 * Get value method
-	 *
-	 * @param string $name
-	 * @return mixed
-	 */
-	public function &getVal($name)
-	{
-		if (array_key_exists($name, $this->_data)) {
-			return $this->_data[$name];
-		}
-		return null;
-	}
-
-	/**
-	 * Isset magic method
-	 *
-	 * @param string $name
-	 * @return bool
-	 */
-	public function __isset($name)
-	{
-		return isset($this->_data[$name]);
-	}
-
-	/**
-	 * Get count of items
-	 *
-	 * @return int
-	 */
-	public function count()
-	{
-		return count($this->_data);
-	}
 
 	/**
 	 * Set cache module

@@ -13,7 +13,7 @@ namespace LiteMVC;
 // Namespace aliases
 use LiteMVC\Model as Model;
 
-abstract class Model
+abstract class Model extends Resource\Dataset implements \Countable
 {
 
 	/**
@@ -66,13 +66,6 @@ abstract class Model
 	protected $_autoIncrement = null;
 
 	/**
-	 * Data contained within a row
-	 *
-	 * @var array
-	 */
-	protected $_data = array();
-
-	/**
 	 * Cache prefix
 	 *
 	 * @var string
@@ -101,58 +94,6 @@ abstract class Model
 		} else {
 			$this->_conn = $conn;
 		}
-	}
-
-	/**
-	 * Set the value of a column
-	 *
-	 * @param string $key
-	 * @param mixed $value
-	 */
-	public function __set($key, $value)
-	{
-		if (isset($this->_data[$key])) {
-			$this->_data[$key] = $value;
-		}
-	}
-
-	/**
-	 * Get the value of a column
-	 *
-	 * @param string $key
-	 */
-	public function &__get($key)
-	{
-		if (isset($this->_data[$key])) {
-			return $this->_data[$key];
-		}
-		return null;
-	}
-
-	/**
-	 * Set the value of a column
-	 *
-	 * @param string $key
-	 * @param mixed $value
-	 */
-	public function setVal($key, $value)
-	{
-		if (isset($this->_data[$key])) {
-			$this->_data[$key] = $value;
-		}
-	}
-
-	/**
-	 * Get the value of a column
-	 *
-	 * @param string $key
-	 */
-	public function &getVal($key)
-	{
-		if (isset($this->_data[$key])) {
-			return $this->_data[$key];
-		}
-		return null;
 	}
 
 	/**

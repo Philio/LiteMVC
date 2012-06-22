@@ -10,7 +10,7 @@
  */
 namespace LiteMVC;
 
-class Theme
+class Theme extends Resource
 {
 
 	/**

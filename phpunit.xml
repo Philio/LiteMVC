@@ -7,7 +7,6 @@
   </testsuite>
  </testsuites>
 
-<!--
  <logging>
   <log type="coverage-html" target="build/coverage" title="dnshub"
     charset="UTF-8" yui="true" highlight="true"
@@ -16,5 +15,4 @@
   <log type="junit" target="build/logs/junit.xml"
     logIncompleteSkipped="false"/>
  </logging>
--->
 </phpunit>

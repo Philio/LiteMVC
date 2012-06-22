@@ -14,8 +14,8 @@ namespace LiteMVC;
 use LiteMVC\App as App;
 
 // Require resource and autoloader classes
-require_once 'Resource.php';
 require_once 'Autoload.php';
+require_once 'Resource.php';
 
 class App extends Resource {
 
@@ -126,7 +126,7 @@ class App extends Resource {
 		} else {
 			$obj = new $class($params);
 		}
-		if ($obj instanceof Resource) {
+		if ($obj instanceof Resource\Loadable) {
 			$obj->init();
 		}
 		$this->setResource($name, $obj);

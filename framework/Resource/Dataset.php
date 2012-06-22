@@ -13,7 +13,7 @@ namespace LiteMVC\Resource;
 // Namespace aliases
 use LiteMVC\Resource as Resource;
 
-abstract class Dataset extends Resource
+abstract class Dataset extends Resource implements \Countable
 {
 
 	/**
@@ -47,6 +47,17 @@ abstract class Dataset extends Resource
 	}
 
 	/**
+	 * Isset magic method
+	 *
+	 * @param string $name
+	 * @return bool
+	 */
+	public function __isset($name)
+	{
+		return isset($this->_data[$name]);
+	}
+
+	/**
 	 * Set value method
 	 *
 	 * @param string $name
@@ -70,6 +81,16 @@ abstract class Dataset extends Resource
 			return $this->_data[$name];
 		}
 		return $default;
+	}
+
+	/**
+	 * Get count of items
+	 *
+	 * @return int
+	 */
+	public function count()
+	{
+		return count($this->_data);
 	}
 
 }

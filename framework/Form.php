@@ -10,7 +10,8 @@
  */
 namespace LiteMVC;
 
-abstract class Form {
+abstract class Form extends Resource
+{
 
 	/**
 	 * Instance of App

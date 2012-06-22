@@ -10,7 +10,7 @@
  */
 namespace LiteMVC;
 
-class Auth extends Resource
+class Auth extends Resource\Loadable
 {
 
 	/**

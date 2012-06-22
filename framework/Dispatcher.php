@@ -10,7 +10,8 @@
  */
 namespace LiteMVC;
 
-class Dispatcher {
+class Dispatcher extends Resource
+{
 
 	/**
 	 * App object

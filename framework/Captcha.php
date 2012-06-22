@@ -10,7 +10,7 @@
  */
 namespace LiteMVC;
 
-class Captcha extends Resource
+class Captcha extends Resource\Loadable
 {
 
 	/**

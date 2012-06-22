@@ -13,7 +13,7 @@ namespace LiteMVC;
 // Namespace aliases
 use LiteMVC\Database as Database;
 
-class Database
+class Database extends Resource
 {
 
 	/**

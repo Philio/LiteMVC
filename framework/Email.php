@@ -10,7 +10,8 @@
  */
 namespace LiteMVC;
 
-class Email {
+class Email extends Resource\Dataset implements \Countable
+{
 
 	/**
 	 * Recipient addresses
@@ -74,56 +75,6 @@ class Email {
 	 * Email new line constant
 	 */
 	const NL = "\r\n";
-
-	/**
-	 * Set a value
-	 *
-	 * @param string $name
-	 * @param string $value
-	 * @return void
-	 */
-	public function __set($name, $value) {
-		$this->_data[$name] = $value;
-	}
-
-	/**
-	 * Get a value
-	 *
-	 * @param string $name
-	 * @return mixed
-	 */
-	public function &__get($name)
-	{
-		if (isset($this->_data[$name])) {
-			return $this->_data[$name];
-		}
-		return null;
-	}
-
-	/**
-	 * Set a value
-	 *
-	 * @param string $name
-	 * @param string $value
-	 * @return void
-	 */
-	public function setVal($name, $value) {
-		$this->_data[$name] = $value;
-	}
-
-	/**
-	 * Get a value
-	 *
-	 * @param string $name
-	 * @return mixed
-	 */
-	public function &getVal($name)
-	{
-		if (isset($this->_data[$name])) {
-			return $this->_data[$name];
-		}
-		return null;
-	}
 
 	/**
 	 * Add a recipient address

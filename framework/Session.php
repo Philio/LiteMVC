@@ -13,7 +13,7 @@ namespace LiteMVC;
 // Namespace aliases
 use LiteMVC\Session as Session;
 
-class Session extends Resource
+class Session extends Resource\Loadable
 {
 
 	/**

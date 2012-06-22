@@ -12,7 +12,7 @@ namespace LiteMVC;
 
 use LiteMVC\View as View;
 
-abstract class View
+abstract class View extends Resource\Dataset implements \Countable
 {
 
 	/**
@@ -49,13 +49,6 @@ abstract class View
 	 * @var string
 	 */
 	protected $_page;
-
-	/**
-	 * Page data
-	 *
-	 * @var array
-	 */
-	protected $_data = array();
 
 	/**
 	 * Page mode
@@ -116,32 +109,6 @@ abstract class View
 	}
 
 	/**
-	 * Set a value
-	 *
-	 * @param string $key
-	 * @param mixed $value
-	 * @return void
-	 */
-	public function __set($key, $value)
-	{
-		$this->_data[$key] = $value;
-	}
-
-	/**
-	 * Get a value
-	 *
-	 * @return mixed;
-	 */
-	public function &__get($key)
-	{
-		$default = null;
-		if (isset($this->_data[$key])) {
-			return $this->_data[$key];
-		}
-		return $default;
-	}
-
-	/**
 	 * Call magic method
 	 *
 	 * @param string $name
@@ -167,32 +134,6 @@ abstract class View
 			return call_user_func_array(array($this->_plugins[$name], 'process'), $args);
 		}
 		return $this->_plugins[$name];
-	}
-
-	/**
-	 * Set a value
-	 *
-	 * @param string $key
-	 * @param mixed $value
-	 * @return void
-	 */
-	public function setVal($key, $value)
-	{
-		$this->_data[$key] = $value;
-	}
-
-	/**
-	 * Get a value
-	 *
-	 * @return mixed;
-	 */
-	public function &getVal($key)
-	{
-		$default = null;
-		if (isset($this->_data[$key])) {
-			return $this->_data[$key];
-		}
-		return $default;
 	}
 
 	/**
