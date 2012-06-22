@@ -8,10 +8,10 @@
  * @package LiteMVC
  * @version 0.2.0
  */
-namespace LiteMVC\App;
+namespace LiteMVC;
 
 // Namespace aliases
-use LiteMVC\App\Config as Config;
+use LiteMVC\Config as Config;
 
 class Config implements \Countable
 {

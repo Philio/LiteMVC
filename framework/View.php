@@ -279,4 +279,11 @@ abstract class View
 		return $this->_rendered;
 	}
 
+	/**
+	 * Render the page
+	 *
+	 * @return void
+	 */
+	abstract public function render();
+
 }

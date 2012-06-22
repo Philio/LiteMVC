@@ -10,9 +10,6 @@
  */
 namespace LiteMVC;
 
-// Namespace aliases
-use LiteMVC\App\Resource;
-
 class Auth extends Resource
 {
 

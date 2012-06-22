@@ -11,7 +11,6 @@
 namespace LiteMVC;
 
 // Namespace aliases
-use LiteMVC\App\Resource;
 use LiteMVC\Session as Session;
 
 class Session extends Resource

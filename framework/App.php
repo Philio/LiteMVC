@@ -13,10 +13,11 @@ namespace LiteMVC;
 // Namespace aliases
 use LiteMVC\App as App;
 
-// Require autoloader class
-require_once 'App/Autoload.php';
+// Require resource and autoloader classes
+require_once 'Resource.php';
+require_once 'Autoload.php';
 
-class App {
+class App extends Resource {
 
 	/**
 	 * Resources
@@ -43,20 +44,6 @@ class App {
 	const CONF_SKIP	= 'skip';
 
 	/**
-	 * Resource names
-	 *
-	 * @var string
-	 */
-	const RES_CONF_INI	= 'App\Config\Ini';
-	const RES_DISPATCH	= 'App\Dispatcher';
-	const RES_LOADER	= 'Autoload';
-	const RES_FILE		= 'Cache\File';
-	const RES_CONFIG	= 'Config';
-	const RES_REQUEST	= 'Request';
-	const RES_HTML		= 'View\HTML';
-	const RES_JSON		= 'View\JSON';
-
-	/**
 	 * Constructor
 	 *
 	 * @return void
@@ -64,9 +51,9 @@ class App {
 	public function __construct()
 	{
 		// Setup the autoloader
-		$loader = new App\Autoload();
+		$loader = new Autoload();
 		$loader->register();
-		$loader->setPath(__NAMESPACE__, realpath(__DIR__));
+
 		// Save autoloader as an application resource
 		$this->setResource(self::RES_LOADER, $loader);
 	}
@@ -83,21 +70,6 @@ class App {
 			return true;
 		}
 		return false;
-	}
-
-	/**
-	 * Get an application resource
-	 *
-	 * @param string $name
-	 * @param mixed $params
-	 * @return object
-	 */
-	public function getResource($name, $params = null)
-	{
-		if (isset($this->_resources[$name]) || $this->loadResource($name, $params)) {
-			return $this->_resources[$name];
-		}
-		return null;
 	}
 
 	/**
@@ -122,6 +94,22 @@ class App {
 	{
 		unset($this->_resources[$name]);
 	}
+
+	/**
+	 * Get an application resource
+	 *
+	 * @param string $name
+	 * @param mixed $params
+	 * @return object
+	 */
+	public function getResource($name, $params = null)
+	{
+		if (isset($this->_resources[$name]) || $this->loadResource($name, $params)) {
+			return $this->_resources[$name];
+		}
+		return null;
+	}
+
 	/**
 	 * Load an application resource
 	 *
@@ -133,19 +121,16 @@ class App {
 	{
 		// Attempt to load a class from the specified name
 		$class = __NAMESPACE__ . '\\' . $name;
-		if (class_exists(($class))) {
-			if (is_null($params)) {
-				$obj = new $class($this);
-			} else {
-				$obj = new $class($params);
-			}
-			if ($obj instanceof App\Resource) {
-				$obj->init();
-			}
-			$this->setResource($name, $obj);
-			return true;
+		if (is_null($params)) {
+			$obj = new $class($this);
+		} else {
+			$obj = new $class($params);
 		}
-		return false;
+		if ($obj instanceof Resource) {
+			$obj->init();
+		}
+		$this->setResource($name, $obj);
+		return true;
 	}
 
 	/**
@@ -262,7 +247,7 @@ class App {
 		} elseif ($this->isResource(self::RES_JSON)) {
 			$output = $this->getResource(self::RES_JSON);
 		}
-		if ($output) {
+		if ($output instanceof View) {
 			$output->render();
 			echo $output;
 		}

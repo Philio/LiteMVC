@@ -8,10 +8,10 @@
  * @package LiteMVC
  * @version 0.2.0
  */
-namespace LiteMVC\App\Resource;
+namespace LiteMVC\Resource;
 
 // Namespace aliases
-use LiteMVC\App\Resource as Resource;
+use LiteMVC\Resource as Resource;
 
 abstract class Dataset extends Resource
 {

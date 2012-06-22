@@ -10,9 +10,7 @@
  */
 namespace LiteMVC\View;
 
-use LiteMVC\View as View;
-
-class HTML extends View implements View\View
+class HTML extends \LiteMVC\View
 {
 
 	/**

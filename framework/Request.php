@@ -10,12 +10,7 @@
  */
 namespace LiteMVC;
 
-// Namespace aliases
-use LiteMVC\App\Resource;
-use LiteMVC\App;
-use LiteMVC\Request;
-
-class Request extends App\Resource
+class Request extends Resource
 {
 
 	/**

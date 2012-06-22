@@ -8,16 +8,6 @@
  * @package LiteMVC
  * @version 0.2.0
  */
-namespace LiteMVC\App;
+namespace LiteMVC\Config;
 
-abstract class Resource
-{
-
-	/**
-	 * Current version of the resource
-	 *
-	 * @var string
-	 */
-	const VERSION = '0.2.0';
-
-}
+class Exception extends \Exception {}

@@ -8,10 +8,10 @@
  * @package LiteMVC
  * @version 0.2.0
  */
-namespace LiteMVC\App\Config;
+namespace LiteMVC\Config;
 
 // Namespace aliases
-use LiteMVC\App\Config as Config;
+use LiteMVC\Config as Config;
 
 class Ini extends Config
 {
