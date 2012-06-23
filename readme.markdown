@@ -1,4 +1,4 @@
-LiteMVC 0.2.0
+LiteMVC 0.2.1
 =============
 
 A fast, lightweight framework for PHP 5.3+
