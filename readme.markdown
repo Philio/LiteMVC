@@ -27,24 +27,24 @@ greater flexibility for unit testing
 Module status
 -------------
 
-<font color="green">App - Stable</font>  
-<font color="green">Auth - Stable</font>  
-<font color="green">Autoload - Stable</font>  
-<font color="green">Captcha - Stable</font>  
-<font color="green">Config - Stable</font>  
-<font color="green">Controller - Stable</font>  
-<font color="green">Database - Stable</font>  
-<font color="green">Dispatcher - Stable</font>  
+**App - Stable**  
+**Auth - Stable**  
+**Autoload - Stable**  
+**Captcha - Stable**  
+**Config - Stable**  
+**Controller - Stable**  
+**Database - Stable**  
+**Dispatcher - Stable**  
 Email - Incomplete  
-<font color="green">Error - Stable</font>  
-Form - Testing  
-<font color="green">Model - Stable</font>  
+**Error - Stable**  
+*Form - Testing*  
+**Model - Stable**  
 OAuth2 - Incomplete  
-REST - Testing  
-<font color="green">Request - Stable</font>  
-<font color="green">Session - Stable</font>  
-<font color="green">Theme - Stable</font>  
-<font color="green">View - Stable</font>
+*REST - Testing*  
+**Request - Stable**  
+**Session - Stable**  
+**Theme - Stable**  
+**View - Stable**
 
 License
 -------
