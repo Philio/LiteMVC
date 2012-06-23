@@ -7,23 +7,6 @@ caching enabled are around 5ms.
 
 Some modules are incomplete or for testing purposes, see below for details
 
-Changes from 0.1.0
-------------------
-
-* Mostly moved main modules into the framework root
-* New abstract resource types Resource, Loadable, Dataset added
-* All modules  are a type of resource based on functionality required by the  
-module
-* Remove preload in favour of load, loaded in order specified in config
-* Started to add PHPUnit tests
-* Request module now must be loaded, allows init without processing request for  
-unit testing
-* Loable module dependencies are now processed by init method to allow for  
-greater flexibility for unit testing
-* Added class map loading to autoload to speed up loading framework classes
-* Various tweaks and improvements
-* License changed to GPLv3
-
 Module status
 -------------
 
@@ -45,6 +28,25 @@ OAuth2 - Incomplete
 **Session - Stable**  
 **Theme - Stable**  
 **View - Stable**
+
+Changelog
+---------
+
+**0.2.0**
+
+* Mostly moved main modules into the framework root
+* New abstract resource types Resource, Loadable, Dataset added
+* All modules  are a type of resource based on functionality required by the  
+module
+* Remove preload in favour of load, loaded in order specified in config
+* Started to add PHPUnit tests
+* Request module now must be loaded, allows init without processing request for  
+unit testing
+* Loable module dependencies are now processed by init method to allow for  
+greater flexibility for unit testing
+* Added class map loading to autoload to speed up loading framework classes
+* Various tweaks and improvements
+* License changed to GPLv3
 
 License
 -------
