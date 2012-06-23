@@ -117,7 +117,7 @@ class App extends Resource {
 	 * @param mixed $params
 =	 * @return bool
 	 */
-	public function loadResource($name, $params = null)
+	public function loadResource($name, $params = null, $init = true)
 	{
 		// Attempt to load a class from the specified name
 		$class = __NAMESPACE__ . '\\' . $name;
@@ -126,7 +126,7 @@ class App extends Resource {
 		} else {
 			$obj = new $class($params);
 		}
-		if ($obj instanceof Resource\Loadable) {
+		if ($init && $obj instanceof Resource\Loadable) {
 			$obj->init();
 		}
 		$this->setResource($name, $obj);
