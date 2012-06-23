@@ -31,13 +31,6 @@ class Database extends Resource
 	protected $_connections = array();
 
 	/**
-	 * Resource names
-	 *
-	 * @var string
-	 */
-	const RES_CONFIG = 'Config';
-
-	/**
 	 * Configuration keys
 	 *
 	 * @var string

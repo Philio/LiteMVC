@@ -49,16 +49,6 @@ abstract class Controller extends Resource
 	protected $_plugins = array();
 
 	/**
-	 * Resource names
-	 *
-	 * @var string
-	 */
-	const RES_REQUEST	= 'Request';
-	const RES_HTML		= 'View\HTML';
-	const RES_JSON		= 'View\JSON';
-	const RES_DATABASE	= 'Database';
-
-	/**
 	 * Default namespace prefix
 	 *
 	 * @var string

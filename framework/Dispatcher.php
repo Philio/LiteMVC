@@ -41,16 +41,6 @@ class Dispatcher extends Resource
 	const CONF_EXP		= 'exception';
 
 	/**
-	 * Resource names
-	 *
-	 * @var string
-	 */
-	const RES_REQUEST	= 'Request';
-	const RES_AUTH		= 'Auth';
-	const RES_HTML		= 'View\HTML';
-	const RES_JSON		= 'View\JSON';
-
-	/**
 	 * Constructor
 	 *
 	 * @param App $app

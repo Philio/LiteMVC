@@ -144,13 +144,6 @@ class Error extends Resource\Loadable
 	const CONF_TEMPLATE	= 'template';
 
 	/**
-	 * Resource names
-	 *
-	 * @var string
-	 */
-	const RES_CONFIG	= 'Config';
-
-	/**
 	 * Constructor
 	 *
 	 * @param App $app

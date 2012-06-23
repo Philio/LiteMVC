@@ -67,9 +67,9 @@ class OAuth2 extends Resource
 	 *
 	 * @var string
 	 */
-	const RES_ERROR				= 'error';
-	const RES_ERROR_DESCRIPTION	= 'error_description';
-	const RES_ERROR_URI			= 'error_uri';
+	const RESP_ERROR				= 'error';
+	const RESP_ERROR_DESCRIPTION	= 'error_description';
+	const RESP_ERROR_URI			= 'error_uri';
 
 	/**
 	 * Constructor

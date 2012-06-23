@@ -102,14 +102,6 @@ class Auth extends Resource\Loadable
 	const CONF_LIFETIME	= 'lifetime';
 
 	/**
-	 * Resource names
-	 *
-	 * @var string
-	 */
-	const RES_CONFIG = 'Config';
-	const RES_DATABASE = 'Database';
-
-	/**
 	 * Constructor
 	 *
 	 * @param App $app

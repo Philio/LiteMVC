@@ -32,6 +32,10 @@ OAuth2 - Incomplete
 Changelog
 ---------
 
+**0.2.1**
+
+* Completed abstracting into resource classes  
+
 **0.2.0**
 
 * Mostly moved main modules into the framework root

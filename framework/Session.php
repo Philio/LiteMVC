@@ -65,15 +65,6 @@ class Session extends Resource\Loadable
 	const HANDLER_DATABASE = 'database';
 
 	/**
-	 * Resource names
-	 *
-	 * @var string
-	 */
-	const RES_FILE = 'Cache\File';
-	const RES_MEMCACHE = 'Cache\Memcache';
-	const RES_DATABASE = 'Database';
-
-	/**
 	 * Default session length
 	 *
 	 * @var int

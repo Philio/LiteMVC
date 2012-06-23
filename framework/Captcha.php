@@ -123,13 +123,6 @@ class Captcha extends Resource\Loadable
 	const CONF_IMG_URL		= 'url';
 
 	/**
-	 * Resource names
-	 *
-	 * @var string
-	 */
-	const RES_CONFIG = 'Config';
-
-	/**
 	 * Character set
 	 *
 	 *
