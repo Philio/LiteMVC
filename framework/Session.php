@@ -60,9 +60,9 @@ class Session extends Resource\Loadable
 	 *
 	 * @var string
 	 */
-	const HANDLER_FILE = 'File';
-	const HANDLER_MEMCACHE = 'Memcache';
-	const HANDLER_DATABASE = 'Database';
+	const HANDLER_FILE = 'file';
+	const HANDLER_MEMCACHE = 'memcache';
+	const HANDLER_DATABASE = 'database';
 
 	/**
 	 * Resource names
@@ -116,7 +116,7 @@ class Session extends Resource\Loadable
 
 		// Initialise handlers
 		foreach ($this->_config[self::CONF_HANDLER] as $handler) {
-			switch ($handler) {
+			switch (strtolower($handler)) {
 				// File based sessions
 				case self::HANDLER_FILE:
 					$this->_handlers[self::HANDLER_FILE] = new Session\File(
@@ -138,6 +138,10 @@ class Session extends Resource\Loadable
 						isset($this->_config[self::CONF_DATABASE]) ?
 							$this->_config[self::CONF_DATABASE] : array()
 					);
+					break;
+				// Invalid handler
+				default:
+					throw new Session\Exception('Invalid session handler has been specified.');
 					break;
 			}
 		}
