@@ -28,7 +28,7 @@ class AppTest extends PHPUnit_Framework_TestCase
 	public function testLoadResource()
 	{
 		$app = new \LiteMVC\App();
-		$app->init('../tests/simple.ini');
+		$app->init('../tests/empty.ini');
 
 		// Instantiate new autoloader
 		$autoload = new \LiteMVC\Autoload();
@@ -49,6 +49,35 @@ class AppTest extends PHPUnit_Framework_TestCase
 				$reflection = new ReflectionClass($class);
 				if (!$reflection->isAbstract()) {
 					$this->assertTrue($app->loadResource($matches[1]));
+				}
+			}
+		}
+	}
+
+	public function testGetResource()
+	{
+		$app = new \LiteMVC\App();
+		$app->init('../tests/empty.ini');
+
+		// Instantiate new autoloader
+		$autoload = new \LiteMVC\Autoload();
+
+		// Relect autoloader to get classmap list
+		$reflection = new ReflectionObject($autoload);
+		$classMap = $reflection->getProperty('_classMap');
+		$classMap->setAccessible(true);
+
+		// Check that all classes in the map appear valid
+		foreach (array_keys($classMap->getValue($autoload)) as $class) {
+			if ($class == 'LiteMVC\App') {
+				continue;
+			}
+			$matches = array();
+			preg_match('/^LiteMVC\\\([\w]+)$/', $class, $matches);
+			if (count($matches)) {
+				$reflection = new ReflectionClass($class);
+				if (!$reflection->isAbstract()) {
+					$this->assertTrue($app->getResource($matches[1]) instanceof $class);
 				}
 			}
 		}
