@@ -102,9 +102,9 @@ class App extends Resource {
 	 * @param mixed $params
 	 * @return object
 	 */
-	public function getResource($name, $params = null)
+	public function getResource($name, $params = null, $init = false)
 	{
-		if (isset($this->_resources[$name]) || $this->loadResource($name, $params)) {
+		if (isset($this->_resources[$name]) || $this->loadResource($name, $params, $init)) {
 			return $this->_resources[$name];
 		}
 		return null;
@@ -115,9 +115,10 @@ class App extends Resource {
 	 *
 	 * @param string $name
 	 * @param mixed $params
+	 * @param bool $init
 =	 * @return bool
 	 */
-	public function loadResource($name, $params = null, $init = true)
+	public function loadResource($name, $params = null, $init = false)
 	{
 		// Attempt to load a class from the specified name
 		$class = __NAMESPACE__ . '\\' . $name;
@@ -126,7 +127,7 @@ class App extends Resource {
 		} else {
 			$obj = new $class($params);
 		}
-		if ($init && $obj instanceof Resource\Loadable) {
+		if ($init && ($obj instanceof Resource\Loadable)) {
 			$obj->init();
 		}
 		$this->setResource($name, $obj);
@@ -181,7 +182,7 @@ class App extends Resource {
 		$init = $config->init ? $config->init : array();
 		if (isset($init[self::CONF_LOAD]) && is_array($init[self::CONF_LOAD])) {
 			foreach ($init[self::CONF_LOAD] as $resource) {
-				$resource = $this->getResource($resource);
+				$resource = $this->loadResource($resource, null, true);
 			}
 		}
 
@@ -207,7 +208,7 @@ class App extends Resource {
 		// Module/controller specific resources
 		if (isset($init[$req->getController()][self::CONF_LOAD]) && is_array($init[$req->getController()][self::CONF_LOAD])) {
 			foreach ($init[$req->getController()][self::CONF_LOAD] as $resource) {
-				$this->loadResource($resource);
+				$this->loadResource($resource, null, true);
 			}
 		}
 
@@ -223,7 +224,7 @@ class App extends Resource {
 		if (isset($init[self::CONF_LOAD]) && is_array($init[self::CONF_LOAD])) {
 			foreach ($init[self::CONF_LOAD] as $resource) {
 				if (!in_array($resource, $skip)) {
-					$this->loadResource($resource);
+					$this->loadResource($resource, null, true);
 				}
 			}
 		}

@@ -33,7 +33,9 @@ abstract class Resource
 	const RES_CONF_INI	= 'Config\Ini';
 	const RES_DATABASE	= 'Database';
 	const RES_DISPATCH	= 'Dispatcher';
+	const RES_ERROR		= 'Error';
 	const RES_REQUEST	= 'Request';
+	const RES_SESSION	= 'Session';
 	const RES_HTML		= 'View\HTML';
 	const RES_JSON		= 'View\JSON';
 

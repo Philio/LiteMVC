@@ -10,7 +10,7 @@
  */
 namespace LiteMVC;
 
-class Theme extends Resource
+class Theme extends Resource\Loadable
 {
 
 	/**
@@ -62,6 +62,10 @@ class Theme extends Resource
 	 * @return void
 	 */
 	public function __construct(App $app)
+	{
+	}
+
+	public function init()
 	{
 		// Get config
 		$config = $app->getResource('Config')->theme;

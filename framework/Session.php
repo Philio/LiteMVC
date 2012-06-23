@@ -81,11 +81,8 @@ class Session extends Resource\Loadable
 		// Set app
 		$this->_app = $app;
 
-		// Check config
+		// Set config
 		$this->_config = $this->_app->getResource('Config')->session;
-		if (is_null($this->_config)) {
-			throw new Session\Exception('No session configuration has been specified.');
-		}
 	}
 
 	/**
@@ -95,6 +92,11 @@ class Session extends Resource\Loadable
 	 */
 	public function init()
 	{
+		// Check config
+		if (is_null($this->_config)) {
+			throw new Session\Exception('No session configuration has been specified.');
+		}
+
 		// Load handlers
 		if (!isset($this->_config[self::CONF_HANDLER])) {
 			throw new Session\Exception('No session handlers specified in configuration.');

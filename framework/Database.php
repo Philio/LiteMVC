@@ -51,9 +51,6 @@ class Database extends Resource
 	public function  __construct(App $app) {
 		// Set config
 		$this->_config = $app->getResource(self::RES_CONFIG)->database;
-		if (is_null($this->_config)) {
-			throw new Database\Exception('No database configuration has been specified.');
-		}
 	}
 
 	/**
@@ -64,6 +61,11 @@ class Database extends Resource
 	 */
 	public function getConnection($name)
 	{
+		// Check config
+		if (is_null($this->_config)) {
+			throw new Database\Exception('No database configuration has been specified.');
+		}
+
 		// If connection exists return it
 		if (!isset($this->_connections[$name])) {
 			// Check if configuration exists

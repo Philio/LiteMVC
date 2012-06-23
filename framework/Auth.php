@@ -115,9 +115,6 @@ class Auth extends Resource\Loadable
 
 		// Set config
 		$this->_config = $app->getResource(self::RES_CONFIG)->auth;
-		if (is_null($this->_config)) {
-			throw new Auth\Exception('No authentication configuration has been specified.');
-		}
 	}
 
 	/**
@@ -128,6 +125,11 @@ class Auth extends Resource\Loadable
 	 */
 	public function init()
 	{
+		// Check config
+		if (is_null($this->_config)) {
+			throw new Auth\Exception('No authentication configuration has been specified.');
+		}
+
 		// Check for session setting
 		if (!isset($this->_config[self::CONF_SESSION])) {
 			$this->_config[self::CONF_SESSION] = true;
