@@ -35,6 +35,7 @@ Changelog
 **0.2.1**
 
 * Completed abstracting into resource classes  
+* Added configuration for Jenkins/Hudson, PHPDox, PHPCS, PHPMD
 
 **0.2.0**
 
