@@ -168,6 +168,9 @@ abstract class View extends Resource\Dataset implements \Countable
 	 */
 	public function setLayout($layout)
 	{
+		if (is_null($layout)) {
+			return;
+		}
 		if (is_null($this->_module)) {
 			throw new View\Exception('Cannot determine path, module unknown');
 		}

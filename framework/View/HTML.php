@@ -42,6 +42,8 @@ class HTML extends \LiteMVC\View
 			ob_start();
 			include $this->_layout;
 			$this->_rendered = ob_get_clean();
+		} elseif($this->_pageRendered) {
+			$this->_rendered = &$this->_pageRendered;
 		}
 	}
 
