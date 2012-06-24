@@ -80,7 +80,7 @@ class AppTest extends PHPUnit_Framework_TestCase
 			if (count($matches)) {
 				$reflection = new ReflectionClass($class);
 				if (!$reflection->isAbstract()) {
-					$this->assertTrue($app->getResource($matches[1]) instanceof $class);
+					$this->assertInstanceOf($class, $app->getResource($matches[1]));
 				}
 			}
 		}
