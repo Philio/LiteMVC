@@ -452,15 +452,10 @@ class Request extends Resource\Loadable
 	public function redirect($action = null, $controller = null, $module = null, $params = null, $return = false)
 	{
 		// Replace null values with current values
-		if (is_null($module)) {
-			$module = $this->_module;
-		}
-		if (is_null($controller)) {
-			$controller = $this->_controller;
-		}
-		if (is_null($action)) {
-			$action  = $this->_action;
-		}
+		$module = is_null($module) ? $this->_module : $module;
+		$controller = is_null($controller) ? $this->_controller : $controller;
+		$action  = is_null($action) ? $this->_action : $action;
+
 		// Redirect to new uri
 		$uri = $this->_relativePath . '/';
 		if (isset($this->_config['default']['module']) && $module != $this->_config['default']['module']) {
