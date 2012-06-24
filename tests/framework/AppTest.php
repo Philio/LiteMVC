@@ -2,12 +2,18 @@
 class AppTest extends PHPUnit_Framework_TestCase
 {
 
+	/**
+	 * Basic instantiation test
+	 */
 	public function testInstantiateApp()
 	{
 		$app = new \LiteMVC\App();
 		$this->assertTrue($app instanceof \LiteMVC\App);
 	}
 
+	/**
+	 * Basic init test
+	 */
 	public function testEmptyConfig()
 	{
 		$app = new \LiteMVC\App();
@@ -15,6 +21,9 @@ class AppTest extends PHPUnit_Framework_TestCase
 		$this->assertTrue($app->isResource(\LiteMVC\App::RES_CONFIG));
 	}
 
+	/**
+	 * Basic init test with some module loading
+	 */
 	public function testSimpleConfig()
 	{
 		$app = new \LiteMVC\App();
@@ -25,6 +34,9 @@ class AppTest extends PHPUnit_Framework_TestCase
 		$this->assertTrue($app->isResource(\LiteMVC\App::RES_HTML));
 	}
 
+	/**
+	 * Load all modules test
+	 */
 	public function testLoadResource()
 	{
 		$app = new \LiteMVC\App();
@@ -57,6 +69,9 @@ class AppTest extends PHPUnit_Framework_TestCase
 		$this->assertFalse($app->loadResource('Invalid'));
 	}
 
+	/**
+	 * Get all modules test
+	 */
 	public function testGetResource()
 	{
 		$app = new \LiteMVC\App();
@@ -89,6 +104,9 @@ class AppTest extends PHPUnit_Framework_TestCase
 		$this->assertNull($app->getResource('Invalid'));
 	}
 
+	/**
+	 * Load all modules and test isResource
+	 */
 	public function testIsResource()
 	{
 		$app = new \LiteMVC\App();
@@ -122,6 +140,9 @@ class AppTest extends PHPUnit_Framework_TestCase
 		$this->assertFalse($app->isResource('Invalid'));
 	}
 
+	/**
+	 * Unload all modules test
+	 */
 	public function testUnloadResource()
 	{
 		$app = new \LiteMVC\App();
@@ -155,6 +176,9 @@ class AppTest extends PHPUnit_Framework_TestCase
 		$this->assertFalse($app->unloadResource('Invalid'));
 	}
 
+	/**
+	 * Run the test app
+	 */
 	public function testRun()
 	{
 		$this->expectOutputString('<p>test</p>' . PHP_EOL);
