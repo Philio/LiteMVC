@@ -94,13 +94,17 @@ class Request extends Resource\Loadable
 	 */
 	public function init()
 	{
+		// Check that server variables exist
+		$scriptName = isset($_SERVER['SCRIPT_NAME']) ? $_SERVER['SCRIPT_NAME'] : null;
+		$requestUri = isset($_SERVER['REQUEST_URI']) ? $_SERVER['REQUEST_URI'] : null;
+
 		// Determine script path relative to doc root
 		// Allows for flexible deployment
 		// e.g. framework root could reside at example.com/a/b/c/d/
-		$this->_relativePath = substr($_SERVER['SCRIPT_NAME'], 0 , strrpos($_SERVER['SCRIPT_NAME'], '/'));
+		$this->_relativePath = substr($scriptName, 0 , strrpos($scriptName, '/'));
 
 		// Determine URI relative to framework root
-		$this->_uri = str_replace($this->_relativePath, '', $_SERVER['REQUEST_URI']);
+		$this->_uri = str_replace($this->_relativePath, '', $requestUri);
 		$uri = $this->_uri;
 
 		// Ignore query strings

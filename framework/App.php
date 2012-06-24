@@ -122,16 +122,19 @@ class App extends Resource {
 	{
 		// Attempt to load a class from the specified name
 		$class = __NAMESPACE__ . '\\' . $name;
-		if (is_null($params)) {
-			$obj = new $class($this);
-		} else {
-			$obj = new $class($params);
+		if (class_exists($class)) {
+			if (is_null($params)) {
+				$obj = new $class($this);
+			} else {
+				$obj = new $class($params);
+			}
+			if ($init && ($obj instanceof Resource\Loadable)) {
+				$obj->init();
+			}
+			$this->setResource($name, $obj);
+			return true;
 		}
-		if ($init && ($obj instanceof Resource\Loadable)) {
-			$obj->init();
-		}
-		$this->setResource($name, $obj);
-		return true;
+		return false;
 	}
 
 	/**
@@ -142,7 +145,7 @@ class App extends Resource {
 	 */
 	public function unloadResource($name)
 	{
-		if ($this->getResource($name)) {
+		if ($this->isResource($name)) {
 			$this->unsetResource($name);
 			return true;
 		}

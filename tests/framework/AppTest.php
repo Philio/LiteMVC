@@ -52,6 +52,9 @@ class AppTest extends PHPUnit_Framework_TestCase
 				}
 			}
 		}
+
+		// Check that an invalid class name returns false
+		$this->assertFalse($app->loadResource('Invalid'));
 	}
 
 	public function testGetResource()
@@ -81,6 +84,50 @@ class AppTest extends PHPUnit_Framework_TestCase
 				}
 			}
 		}
+
+		// Check that and invalid class name returns null
+		$this->assertNull($app->getResource('Invalid'));
+	}
+
+	public function testIsResource()
+	{
+		$app = new \LiteMVC\App();
+		$app->init('../tests/empty.ini');
+
+		// Instantiate new autoloader
+		$autoload = new \LiteMVC\Autoload();
+
+		// Relect autoloader to get classmap list
+		$reflection = new ReflectionObject($autoload);
+		$classMap = $reflection->getProperty('_classMap');
+		$classMap->setAccessible(true);
+
+		// Check that all classes in the map return true once loaded
+		foreach (array_keys($classMap->getValue($autoload)) as $class) {
+			if ($class == 'LiteMVC\App') {
+				continue;
+			}
+			$matches = array();
+			preg_match('/^LiteMVC\\\([\w]+)$/', $class, $matches);
+			if (count($matches)) {
+				$reflection = new ReflectionClass($class);
+				if (!$reflection->isAbstract()) {
+					$app->loadResource($matches[1]);
+					$this->assertTrue($app->isResource($matches[1]));
+				}
+			}
+		}
+
+		// Check that an invalid/unset class returns false
+		$this->assertFalse($app->isResource('Invalid'));
+	}
+
+	public function testRun()
+	{
+		$app = new \LiteMVC\App();
+		$app->init('../tests/test.ini');
+		$app->run();
+		$this->assertTrue(true);
 	}
 
 }

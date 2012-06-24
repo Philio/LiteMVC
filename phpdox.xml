@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8" ?>
 <phpdox xmlns="http://phpdox.de/config">
- <project name="LiteMVC" source="framework" workdir="build/phpdox">
+ <project name="LiteMVC" source="" workdir="build/phpdox">
   <collector publiconly="false">
    <include mask="*.php" />
    <include mask="*.phtml" />
