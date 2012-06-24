@@ -11,14 +11,14 @@ class AppTest extends PHPUnit_Framework_TestCase
 	public function testEmptyConfig()
 	{
 		$app = new \LiteMVC\App();
-		$app->init('../tests/empty.ini');
+		$app->init('../tests/configs/empty.ini');
 		$this->assertTrue($app->isResource(\LiteMVC\App::RES_CONFIG));
 	}
 
 	public function testSimpleConfig()
 	{
 		$app = new \LiteMVC\App();
-		$app->init('../tests/simple.ini');
+		$app->init('../tests/configs/simple.ini');
 		$this->assertTrue($app->isResource(\LiteMVC\App::RES_CONFIG));
 		$this->assertTrue($app->isResource(\LiteMVC\App::RES_ERROR));
 		$this->assertTrue($app->isResource(\LiteMVC\App::RES_SESSION));
@@ -28,7 +28,7 @@ class AppTest extends PHPUnit_Framework_TestCase
 	public function testLoadResource()
 	{
 		$app = new \LiteMVC\App();
-		$app->init('../tests/empty.ini');
+		$app->init('../tests/configs/empty.ini');
 
 		// Instantiate new autoloader
 		$autoload = new \LiteMVC\Autoload();
@@ -60,7 +60,7 @@ class AppTest extends PHPUnit_Framework_TestCase
 	public function testGetResource()
 	{
 		$app = new \LiteMVC\App();
-		$app->init('../tests/empty.ini');
+		$app->init('../tests/configs/empty.ini');
 
 		// Instantiate new autoloader
 		$autoload = new \LiteMVC\Autoload();
@@ -92,7 +92,7 @@ class AppTest extends PHPUnit_Framework_TestCase
 	public function testIsResource()
 	{
 		$app = new \LiteMVC\App();
-		$app->init('../tests/empty.ini');
+		$app->init('../tests/configs/empty.ini');
 
 		// Instantiate new autoloader
 		$autoload = new \LiteMVC\Autoload();
@@ -125,7 +125,7 @@ class AppTest extends PHPUnit_Framework_TestCase
 	public function testRun()
 	{
 		$app = new \LiteMVC\App();
-		$app->init('../tests/test.ini');
+		$app->init('../tests/configs/test.ini');
 		$app->run();
 		$this->assertTrue(true);
 	}
