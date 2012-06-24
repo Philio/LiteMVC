@@ -1,7 +1,7 @@
 <?php
-namespace Testapp\Controller;
+namespace Test\Controller;
 
-class Dummy extends \LiteMVC\Controller
+class Test extends \LiteMVC\Controller
 {
 
 	/**
