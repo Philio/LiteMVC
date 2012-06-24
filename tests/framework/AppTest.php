@@ -124,7 +124,7 @@ class AppTest extends PHPUnit_Framework_TestCase
 
 	public function testRun()
 	{
-		$this->expectOutputString('<p>test</p>');
+		$this->expectOutputString('<p>test</p>' . PHP_EOL);
 		$app = new \LiteMVC\App();
 		$app->init('../tests/configs/test.ini');
 		$app->run();

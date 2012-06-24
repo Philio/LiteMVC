@@ -174,7 +174,7 @@ abstract class View extends Resource\Dataset implements \Countable
 		if (is_null($this->_module)) {
 			throw new View\Exception('Cannot determine path, module unknown');
 		}
-		$layout = $this->_path . $this->_module . '/View/Layouts/' . $layout . '.phtml';
+		$layout = $this->_path . $this->_module . '/View/Layouts/' . ucfirst($layout) . '.phtml';
 		// Run theme processing
 		if ($this->_theme instanceof Theme) {
 			$this->_layout = $this->_theme->layout($layout);
