@@ -27,9 +27,3 @@ class Captcha implements Validator {
 	}
 
 }
-
-namespace A\B;
-class C{}
-
-namespace A;
-new B\C();
