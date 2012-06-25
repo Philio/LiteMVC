@@ -33,7 +33,7 @@ class UserTest extends ModelTestCase
 	/**
 	 * Test inserting a record into the database
 	 *
-	 * @return void
+	 * @large
 	 */
 	public function testInsert()
 	{
@@ -45,6 +45,8 @@ class UserTest extends ModelTestCase
 
 	/**
 	 * Test inserting several records into the database
+	 *
+	 * @large
 	 */
 	public function testInsertMany()
 	{
@@ -58,6 +60,8 @@ class UserTest extends ModelTestCase
 
 	/**
 	 * Test selecting first row inserted
+	 *
+	 * @large
 	 */
 	public function testSelect()
 	{
@@ -77,6 +81,8 @@ class UserTest extends ModelTestCase
 
 	/**
 	 * Test selecting multiple rows inserted
+	 *
+	 * @large
 	 */
 	public function testSelectMany()
 	{
