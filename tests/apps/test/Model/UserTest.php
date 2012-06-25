@@ -59,6 +59,21 @@ class UserTest extends ModelTestCase
 	}
 
 	/**
+	 * Test inserting a record into the database
+	 *
+	 * @large
+	 */
+	public function testInsertTransactionRollback()
+	{
+		$model = $this->getModel();
+		$this->assertTrue($model->autocommit(false));
+		$model->username = 'test';
+		$model->password = sha1('test');
+		$this->assertTrue($model->save());
+		$this->assertTrue($model->rollback());
+	}
+
+	/**
 	 * Test inserting several records into the database
 	 *
 	 * @large
@@ -90,8 +105,13 @@ class UserTest extends ModelTestCase
 		// Load the inserted row
 		$model = $this->getModel();
 		$model->load($id);
+		$this->assertEquals($model->id, $id);
 		$this->assertEquals($model->username, 'test');
 		$this->assertEquals($model->password, sha1('test'));
+		$data = $model->getData();
+		$this->assertEquals($data['id'], $id);
+		$this->assertEquals($data['username'], 'test');
+		$this->assertEquals($data['password'], sha1('test'));
 	}
 
 	/**
@@ -125,6 +145,11 @@ class UserTest extends ModelTestCase
 		$this->assertEquals(count($foos) + count($bars), 100);
 	}
 
+	/**
+	 * Test caching
+	 *
+	 * @large
+	 */
 	public function testSelectCache()
 	{
 		// Insert a row first
@@ -153,6 +178,25 @@ class UserTest extends ModelTestCase
 		// Clear cache and verify that it's been deleted
 		$this->assertTrue($model->clearCache($id));
 		$this->assertFalse($cache->get('Model:Test\Model\User:1'));
+	}
+
+	/**
+	 * Test connection handling
+	 *
+	 * @large
+	 */
+	public function testConnection()
+	{
+		$model = $this->getModel();
+		$reflection = new ReflectionObject($model);
+		$dbname = $reflection->getProperty('_database');
+		$dbname->setAccessible(true);
+		$namespace = $dbname->getValue($model);
+		$reflection = new ReflectionObject($this->_db);
+		$config = $reflection->getProperty('_config');
+		$config->setAccessible(true);
+		$dbConfig = $config->getValue($this->_db);
+		$this->assertInstanceOf('\LiteMVC\Database\\' . $dbConfig[$namespace]['driver'], $model->getConnection());
 	}
 
 }

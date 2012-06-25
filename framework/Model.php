@@ -86,13 +86,10 @@ abstract class Model extends Resource\Dataset implements \Countable
 	 *
 	 * @param Database | object $conn
 	 */
-	public function __construct($conn)
+	public function __construct($conn = null)
 	{
-		if ($conn instanceof Database) {
-			// Get the database connection
-			$this->_conn = $conn->getConnection($this->_database);
-		} else {
-			$this->_conn = $conn;
+		if (!is_null($conn)) {
+			$this->setConnection($conn);
 		}
 	}
 
@@ -101,9 +98,13 @@ abstract class Model extends Resource\Dataset implements \Countable
 	 *
 	 * @param Database $conn
 	 */
-	public function setConnection(Database $conn)
+	public function setConnection($conn)
 	{
-		$this->_conn = $conn;
+		if ($conn instanceof Database) {
+			$this->_conn = $conn->getConnection($this->_database);
+		} else {
+			$this->_conn = $conn;
+		}
 	}
 
 	/**
