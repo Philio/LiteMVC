@@ -116,12 +116,19 @@ class File
 		if ($f === false) {
 			throw new File\Exception('Unable to open the output file.');
 		}
+
+		// Check data, override flag in some circumstances or will fail
+		if ($flag == self::ENC_NONE && (is_array($var) || is_object($var))) {
+			$flag = self::ENC_JSON_ARRAY;
+		}
+
 		// Write header
 		$header = ($expire > time() ? $expire : $expire + time()) . '::' . $flag . \PHP_EOL;
 		$res = fwrite($f, $header);
 		if ($res === false) {
 			throw new File\Exception('Unable to write to the output file.');
 		}
+
 		// Write data
 		switch ($flag) {
 			default:
@@ -142,6 +149,20 @@ class File
 		}
 		fclose($f);
 		return true;
+	}
+
+	/**
+	 * Delete a file from the cache
+	 *
+	 * @return bool
+	 */
+	public function delete($key)
+	{
+		// Check if file exists
+		if (file_exists($this->_path . $key)) {
+			return unlink($this->_path . $key);
+		}
+		return false;
 	}
 
 	/**

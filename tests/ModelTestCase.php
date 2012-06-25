@@ -31,6 +31,13 @@ abstract class ModelTestCase extends PHPUnit_Framework_TestCase
 	protected $_modelClass;
 
 	/**
+	 * Instance of the application
+	 *
+	 * @var \LiteMVC\App
+	 */
+	protected $_app;
+
+	/**
 	 * Instance of the database
 	 *
 	 * @var \LiteMVC\Database
@@ -44,9 +51,9 @@ abstract class ModelTestCase extends PHPUnit_Framework_TestCase
 	 */
 	public function setUp()
 	{
-		$app = new \LiteMVC\App();
-		$app->init($this->_config);
-		$this->_db = $app->getResource($app::RES_DATABASE);
+		$this->_app = new \LiteMVC\App();
+		$this->_app->init($this->_config);
+		$this->_db = $this->_app->getResource(\LiteMVC\App::RES_DATABASE);
 		if ($this->_schema) {
 			if ($this->_connection) {
 				$conn = $this->_db->getConnection($this->_connection);

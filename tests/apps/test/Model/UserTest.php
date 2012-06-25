@@ -44,6 +44,21 @@ class UserTest extends ModelTestCase
 	}
 
 	/**
+	 * Test inserting a record into the database
+	 *
+	 * @large
+	 */
+	public function testInsertTransaction()
+	{
+		$model = $this->getModel();
+		$this->assertTrue($model->autocommit(false));
+		$model->username = 'test';
+		$model->password = sha1('test');
+		$this->assertTrue($model->save());
+		$this->assertTrue($model->commit());
+	}
+
+	/**
 	 * Test inserting several records into the database
 	 *
 	 * @large
@@ -108,6 +123,36 @@ class UserTest extends ModelTestCase
 			$this->assertEquals($bar->password, sha1('bar'));
 		}
 		$this->assertEquals(count($foos) + count($bars), 100);
+	}
+
+	public function testSelectCache()
+	{
+		// Insert a row first
+		$model = $this->getModel();
+		$model->username = 'test';
+		$model->password = sha1('test');
+		$this->assertTrue($model->save());
+		$id = $model->id;
+
+		$model = $this->getModel();
+		$cache = $this->_app->getResource(\LiteMVC\App::RES_FILE);
+		$model->setCache($cache);
+		$model->setCacheLifetime(60);
+
+		// Should save cache
+		$model->load($id);
+		$this->assertEquals($model->username, 'test');
+		$this->assertEquals($model->password, sha1('test'));
+
+		// Check cache exists
+		$data = $cache->get('Model:Test\Model\User:1');
+		$this->assertEquals($data[0]['id'], $id);
+		$this->assertEquals($data[0]['username'], 'test');
+		$this->assertEquals($data[0]['password'], sha1('test'));
+
+		// Clear cache and verify that it's been deleted
+		$this->assertTrue($model->clearCache($id));
+		$this->assertFalse($cache->get('Model:Test\Model\User:1'));
 	}
 
 }

@@ -366,6 +366,7 @@ abstract class Model extends Resource\Dataset implements \Countable
 		if ($res === false) {
 			throw new Model\Exception('Failed to set autocommit state.');
 		}
+		return true;
 	}
 
 	/**
@@ -376,6 +377,7 @@ abstract class Model extends Resource\Dataset implements \Countable
 		if ($res === false) {
 			throw new Model\Exception('Commit transaction failed.');
 		}
+		return true;
 	}
 
 	/**
@@ -386,6 +388,7 @@ abstract class Model extends Resource\Dataset implements \Countable
 		if ($res === false) {
 			throw new Model\Exception('Rollback transation failed.');
 		}
+		return true;
 	}
 
 	/**
