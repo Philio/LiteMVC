@@ -183,7 +183,7 @@ class AppTest extends PHPUnit_Framework_TestCase
 	{
 		$this->expectOutputString('<p>test</p>' . PHP_EOL);
 		$app = new \LiteMVC\App();
-		$app->init('../tests/configs/test.ini');
+		$app->init('test.ini');
 		$app->run();
 	}
 

@@ -5,7 +5,7 @@ class ConfigTest extends PHPUnit_Framework_TestCase
 	public function testIni()
 	{
 		$config = new \LiteMVC\Config\Ini();
-		$config->load(\PATH . '/tests/configs/test.ini', 'test');
+		$config->load(\PATH . '/configs/test.ini', 'development');
 		$this->assertEquals($config['autoload']['test'], '/apps/test');
 		$this->assertEquals($config['init']['load'], array('Request'));
 		$this->assertEquals($config['init']['test']['test']['load'], array('View\HTML'));
@@ -13,20 +13,34 @@ class ConfigTest extends PHPUnit_Framework_TestCase
 		$this->assertEquals($config['request']['test']['default']['controller'], 'test');
 		$this->assertEquals($config['request']['test']['default']['action'], 'index');
 		$this->assertEquals($config['request']['test']['test']['layout'], 'test');
+		$this->assertEquals($config['database']['test']['driver'], 'MySQL');
+		$this->assertEquals($config['database']['test']['host'], 'localhost');
+		$this->assertEquals($config['database']['test']['username'], 'root');
+		$this->assertEquals($config['database']['test']['password'], '');
+		$this->assertEquals($config['database']['test']['database'], 'litemvc_test');
 		$this->assertNull($config['invalid']);
 	}
 
 	public function testIniExtend()
 	{
 		$config = new \LiteMVC\Config\Ini();
-		$config->load(\PATH . '/tests/configs/test.ini', 'extend');
+		$config->load(\PATH . '/configs/test.ini', 'test');
 		$this->assertEquals($config['autoload']['test'], '/apps/test');
 		$this->assertEquals($config['init']['load'], array('Request'));
 		$this->assertEquals($config['init']['test']['test']['load'], array('View\HTML'));
-		$this->assertEquals($config['request']['default']['module'], 'extend');
-		$this->assertEquals($config['request']['test']['default']['controller'], 'extend');
+		$this->assertEquals($config['request']['default']['module'], 'test');
+		$this->assertEquals($config['request']['test']['default']['controller'], 'test');
 		$this->assertEquals($config['request']['test']['default']['action'], 'index');
-		$this->assertEquals($config['request']['test']['test']['layout'], 'extend');
+		$this->assertEquals($config['request']['test']['test']['layout'], 'test');
+		$this->assertEquals($config['database']['test']['driver'], 'MySQL');
+		$this->assertEquals($config['database']['test']['host'], 'localhost');
+		$this->assertEquals($config['database']['test']['username'], 'root');
+		$this->assertEquals($config['database']['test']['password'], '');
+		$this->assertEquals($config['database']['test']['database'], 'litemvc_test');
+		$this->assertEquals($config['database']['setup']['driver'], 'MySQL');
+		$this->assertEquals($config['database']['setup']['host'], 'localhost');
+		$this->assertEquals($config['database']['setup']['username'], 'root');
+		$this->assertEquals($config['database']['setup']['password'], '');
 		$this->assertNull($config['invalid']);
 	}
 

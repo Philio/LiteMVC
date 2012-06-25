@@ -97,6 +97,26 @@ abstract class Model extends Resource\Dataset implements \Countable
 	}
 
 	/**
+	 * Set database connection
+	 *
+	 * @param Database $conn
+	 */
+	public function setConnection(Database $conn)
+	{
+		$this->_conn = $conn;
+	}
+
+	/**
+	 * Get database connection
+	 *
+	 * @return Database
+	 */
+	public function getConnection()
+	{
+		return $this->_conn;
+	}
+
+	/**
 	 * Set row data
 	 *
 	 * @param array $data

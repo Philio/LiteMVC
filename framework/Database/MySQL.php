@@ -90,17 +90,38 @@ class MySQL extends \mysqli
 	 * Query the database
 	 *
 	 * @param string $sql
-	 * @return bool|mysqli_result
+	 * @return bool | mysqli_result
+	 * @throws Exception
 	 */
-	public function query($sql)
+	public function query($sql, $resultmode = MYSQLI_STORE_RESULT)
 	{
 		// Run query
-		$res = parent::query($sql);
+		$res = parent::query($sql, $resultmode);
+
 		// Check result is valid
 		if (!$this->_noerrors && ($res === false || $this->errno != 0)) {
 			throw new Exception('#' . $this->errno . ' ' . $this->error . ' occurred in query ' . $sql, $this->errno);
 		}
 		return $res;
+	}
+
+	/**
+	 * Query the database with multiple statements
+	 *
+	 * @param string $sql
+	 * @return bool
+	 * @throws Exception
+	 */
+	public function multiQuery($sql)
+	{
+		// Run query
+		$res = parent::multi_query($sql);
+
+		// Check result is valid
+		if (!$this->_noerrors && ($res === false || $this->errno != 0)) {
+			throw new Exception('#' . $this->errno . ' ' . $this->error . ' occurred in query ' . $sql, $this->errno);
+		}
+		return true;
 	}
 
 }
