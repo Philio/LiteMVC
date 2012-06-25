@@ -181,6 +181,26 @@ class UserTest extends ModelTestCase
 	}
 
 	/**
+	 * Test deleting an inserted row
+	 *
+	 * @large
+	 */
+	public function testDelete()
+	{
+		// Insert a row first
+		$model = $this->getModel();
+		$model->username = 'test';
+		$model->password = sha1('test');
+		$this->assertTrue($model->save());
+		$id = $model->id;
+
+		// Load the inserted row
+		$model = $this->getModel();
+		$this->assertTrue($model->delete($id));
+		$this->assertFalse($model->load($id));
+	}
+
+	/**
 	 * Test connection handling
 	 *
 	 * @large
