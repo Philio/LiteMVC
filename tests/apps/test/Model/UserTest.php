@@ -31,11 +31,9 @@ class UserTest extends ModelTestCase
 	protected $_modelClass = '\Test\Model\User';
 
 	/**
-	 * Login using the provided username / password
+	 * Test login method
 	 *
-	 * @param string $username
-	 * @param string $password
-	 * @return bool
+	 * @large
 	 */
 	public function testLogin()
 	{
@@ -47,6 +45,23 @@ class UserTest extends ModelTestCase
 
 		$model = $this->getModel();
 		$this->assertTrue($model->login('test', 'test'));
+	}
+
+	/**
+	 * Test getUserId method
+	 *
+	 * @large
+	 */
+	public function testGetUserId()
+	{
+		$model = $this->getModel();
+		$model->username = 'test';
+		$model->password = sha1('test');
+		$this->assertTrue($model->save());
+		$id = $model->id;
+
+		$model = $this->getModel();
+		$model->login('test', 'test');
 		$this->assertEquals($model->getUserId(), $id);
 	}
 

@@ -5,10 +5,13 @@ class ConfigTest extends PHPUnit_Framework_TestCase
 	public function testIni()
 	{
 		$config = new \LiteMVC\Config\Ini();
-		$config->load(\PATH . '/configs/test.ini', 'development');
+		$config->load(\PATH . '/configs/test.ini', 'production');
 		$this->assertEquals($config['autoload']['test'], '/apps/test');
-		$this->assertEquals($config['init']['load'], array('Request'));
+		$this->assertEquals($config['init']['load'], array('Error', 'Session', 'Auth', 'Request'));
 		$this->assertEquals($config['init']['test']['test']['load'], array('View\HTML'));
+		$this->assertEquals($config['error']['display'], false);
+		$this->assertEquals($config['session']['handler'], array('file'));
+		$this->assertEquals($config['auth']['model']['user'], '\Test\Model\User');
 		$this->assertEquals($config['request']['default']['module'], 'test');
 		$this->assertEquals($config['request']['test']['default']['controller'], 'test');
 		$this->assertEquals($config['request']['test']['default']['action'], 'index');
@@ -26,8 +29,11 @@ class ConfigTest extends PHPUnit_Framework_TestCase
 		$config = new \LiteMVC\Config\Ini();
 		$config->load(\PATH . '/configs/test.ini', 'test');
 		$this->assertEquals($config['autoload']['test'], '/apps/test');
-		$this->assertEquals($config['init']['load'], array('Request'));
+		$this->assertEquals($config['init']['load'], array('Error', 'Session', 'Auth', 'Request'));
 		$this->assertEquals($config['init']['test']['test']['load'], array('View\HTML'));
+		$this->assertEquals($config['error']['display'], true);
+		$this->assertEquals($config['session']['handler'], array('file'));
+		$this->assertEquals($config['auth']['model']['user'], '\Test\Model\User');
 		$this->assertEquals($config['request']['default']['module'], 'test');
 		$this->assertEquals($config['request']['test']['default']['controller'], 'test');
 		$this->assertEquals($config['request']['test']['default']['action'], 'index');
