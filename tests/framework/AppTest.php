@@ -5,32 +5,22 @@ class AppTest extends PHPUnit_Framework_TestCase
 	/**
 	 * Basic instantiation test
 	 */
-	public function testInstantiateApp()
+	public function testInstantiate()
 	{
 		$app = new \LiteMVC\App();
-		$this->assertTrue($app instanceof \LiteMVC\App);
+		$this->assertInstanceOf('\LiteMVC\App', $app);
 	}
 
 	/**
-	 * Basic init test
+	 * Init test
 	 */
-	public function testEmptyConfig()
+	public function testInit()
 	{
 		$app = new \LiteMVC\App();
-		$app->init('../tests/configs/empty.ini');
-		$this->assertTrue($app->isResource(\LiteMVC\App::RES_CONFIG));
-	}
-
-	/**
-	 * Basic init test with some module loading
-	 */
-	public function testSimpleConfig()
-	{
-		$app = new \LiteMVC\App();
-		$app->init('../tests/configs/simple.ini');
-		$this->assertTrue($app->isResource(\LiteMVC\App::RES_CONFIG));
+		$app->init('../tests/configs/test.ini');
 		$this->assertTrue($app->isResource(\LiteMVC\App::RES_ERROR));
 		$this->assertTrue($app->isResource(\LiteMVC\App::RES_SESSION));
+		$this->assertTrue($app->isResource(\LiteMVC\App::RES_REQUEST));
 		$this->assertTrue($app->isResource(\LiteMVC\App::RES_HTML));
 	}
 
@@ -40,10 +30,9 @@ class AppTest extends PHPUnit_Framework_TestCase
 	public function testLoadResource()
 	{
 		$app = new \LiteMVC\App();
-		$app->init('../tests/configs/empty.ini');
 
-		// Instantiate new autoloader
-		$autoload = new \LiteMVC\Autoload();
+		// Get autoloader
+		$autoload = $app->getResource(\LiteMVC\App::RES_LOADER);
 
 		// Relect autoloader to get classmap list
 		$reflection = new ReflectionObject($autoload);
@@ -75,10 +64,9 @@ class AppTest extends PHPUnit_Framework_TestCase
 	public function testGetResource()
 	{
 		$app = new \LiteMVC\App();
-		$app->init('../tests/configs/empty.ini');
 
-		// Instantiate new autoloader
-		$autoload = new \LiteMVC\Autoload();
+		// Get autoloader
+		$autoload = $app->getResource(\LiteMVC\App::RES_LOADER);
 
 		// Relect autoloader to get classmap list
 		$reflection = new ReflectionObject($autoload);
@@ -110,10 +98,9 @@ class AppTest extends PHPUnit_Framework_TestCase
 	public function testIsResource()
 	{
 		$app = new \LiteMVC\App();
-		$app->init('../tests/configs/empty.ini');
 
-		// Instantiate new autoloader
-		$autoload = new \LiteMVC\Autoload();
+		// Get autoloader
+		$autoload = $app->getResource(\LiteMVC\App::RES_LOADER);
 
 		// Relect autoloader to get classmap list
 		$reflection = new ReflectionObject($autoload);
@@ -146,10 +133,9 @@ class AppTest extends PHPUnit_Framework_TestCase
 	public function testUnloadResource()
 	{
 		$app = new \LiteMVC\App();
-		$app->init('../tests/configs/empty.ini');
 
-		// Instantiate new autoloader
-		$autoload = new \LiteMVC\Autoload();
+		// Get autoloader
+		$autoload = $app->getResource(\LiteMVC\App::RES_LOADER);
 
 		// Relect autoloader to get classmap list
 		$reflection = new ReflectionObject($autoload);
@@ -179,12 +165,14 @@ class AppTest extends PHPUnit_Framework_TestCase
 	/**
 	 * Run the test app
 	 */
+	/*
 	public function testRun()
 	{
-		$this->expectOutputString('<p>test</p>' . PHP_EOL);
+		$this->expectOutputRegex('/A functional demo of the LiteMVC framework in action/');
 		$app = new \LiteMVC\App();
-		$app->init('test.ini');
+		$app->init('../tests/configs/test.ini');
 		$app->run();
 	}
+	 */
 
 }

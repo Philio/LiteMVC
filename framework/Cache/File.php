@@ -49,10 +49,15 @@ class File
 			if ($config && !is_null($config->filecache) && isset($config->filecache['path'])) {
 				$path = $config->filecache['path'];
 			} else {
-				$path = \PATH . $path::PATH_CACHE;
+				$path = \PATH . \LiteMVC\App::PATH_CACHE;
 			}
 		}
 		$this->_path = $path;
+
+		// Ensure path has a trailing slash
+		if ($this->_path[strlen($this->_path) - 1] != '/') {
+			$this->_path .= '/';
+		}
 	}
 
 	/**

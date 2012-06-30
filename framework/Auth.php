@@ -110,11 +110,55 @@ class Auth extends Resource\Loadable
 	 */
 	public function __construct(App $app = null)
 	{
-		// Set app
-		$this->_app = $app;
+		// Set app and config
+		if ($app) {
+			$this->_app = $app;
+			$this->_config = $app->getResource(self::RES_CONFIG)->auth;
+		}
+	}
 
-		// Set config
-		$this->_config = $app->getResource(self::RES_CONFIG)->auth;
+	/**
+	 * Set app
+	 *
+	 * @param App $app
+	 * @return Auth
+	 */
+	public function setApp(App $app)
+	{
+		$this->_app = $app;
+		return $this;
+	}
+
+	/**
+	 * Get app
+	 *
+	 * @return App
+	 */
+	public function getApp()
+	{
+		return $this->_app;
+	}
+
+	/**
+	 * Set config
+	 *
+	 * @param Config $config
+	 * @return Auth
+	 */
+	public function setConfig(Config $config)
+	{
+		$this->_config = $config;
+		return $this;
+	}
+
+	/**
+	 * Get config
+	 *
+	 * @return array
+	 */
+	public function getConfig()
+	{
+		return $this->_config;
 	}
 
 	/**

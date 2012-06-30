@@ -2,6 +2,9 @@
 class AutoloadTest extends PHPUnit_Framework_TestCase
 {
 
+	/**
+	 * Test register
+	 */
 	public function testRegister()
 	{
 		// Instantiate new autoloader
@@ -18,6 +21,9 @@ class AutoloadTest extends PHPUnit_Framework_TestCase
 		$this->assertTrue($inArray);
 	}
 
+	/**
+	 * Test unregister
+	 */
 	public function testUnregister()
 	{
 		// Instantiate new autoloader
@@ -37,6 +43,9 @@ class AutoloadTest extends PHPUnit_Framework_TestCase
 		$this->assertFalse($inArray);
 	}
 
+	/**
+	 * Test that all classes in the class map load
+	 */
 	public function testClassMapLoader()
 	{
 		// Instantiate new autoloader

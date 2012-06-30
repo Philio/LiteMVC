@@ -48,9 +48,45 @@ class Database extends Resource
 	 * @param App $app
 	 * @return void
 	 */
-	public function  __construct(App $app) {
-		// Set config
-		$this->_config = $app->getResource(self::RES_CONFIG)->database;
+	public function  __construct(App $app = null) {
+		// Set config from app
+		if ($app) {
+			$this->_config = $app->getResource(self::RES_CONFIG)->database;
+		}
+	}
+
+	/**
+	 * Set configuration data
+	 *
+	 * @param Config $config
+	 * @return \LiteMVC\Database
+	 */
+	public function setConfig(Config $config)
+	{
+		$this->_config = $config->database;
+		return $this;
+	}
+
+	/**
+	 * Get configuration data
+	 *
+	 * @return array
+	 */
+	public function getConfig()
+	{
+		return $this->_config;
+	}
+
+	/**
+	 * Set new database connection
+	 *
+	 * @param string $name
+	 * @param Database\Connection $object
+	 * @return void
+	 */
+	public function setConnection($name, $object)
+	{
+		$this->_connections[$name] = $object;
 	}
 
 	/**
@@ -90,18 +126,6 @@ class Database extends Resource
 			}
 		}
 		return $this->_connections[$name];
-	}
-
-	/**
-	 * Set new database connection
-	 *
-	 * @param string $name
-	 * @param Database\Connection $object
-	 * @return void
-	 */
-	public function setConnection($name, $object)
-	{
-		$this->_connections[$name] = $object;
 	}
 
 }

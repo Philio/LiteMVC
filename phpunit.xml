@@ -3,7 +3,7 @@
   backupStaticAttributes="false" strict="true" verbose="true">
  <testsuites>
   <testsuite name="LiteMVC">
-   <directory suffix="Test.php">tests</directory>
+   <directory suffix="Test.php">tests/framework</directory>
   </testsuite>
  </testsuites>
 
